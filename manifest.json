@@ -1,0 +1,9 @@
+{
+ "manifest_version":3,"name":"AbleVerse AI","version":"0.1.0","minimum_chrome_version":"114",
+ "description":"User-controlled reading, sensory comfort and verified SVG bar-chart accessibility. Reversible, with no AI uploads.",
+ "permissions":["activeTab","scripting","storage","sidePanel"],
+ "action":{"default_popup":"popup.html","default_title":"AbleVerse AI"},
+ "background":{"service_worker":"background.js","type":"module"},
+ "side_panel":{"default_path":"sidepanel.html"},
+ "content_security_policy":{"extension_pages":"script-src 'self'; object-src 'none'"}
+}
