@@ -6,6 +6,7 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 |---|---|---|
 | Invalid/null saved values | Clamp/allowlist tests | PASS |
 | Prose vs forms/code/alerts/editables | DOM tests | PASS |
+| Original text size hierarchy | Computed 36/18px at 100%, 54/27px at 150%, restore | PASS |
 | Nested prose | No compound typography scaling test | PASS |
 | Apply/restore twice, fresh site text | Exact DOM restoration tests | PASS |
 | Chart values and distinct textures | Table and SVG tests | PASS |
@@ -26,7 +27,11 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Grouped/transformed SVG bars | Unsupported without mutation test | PASS |
 | UI visual review | In-app preview; Reading at 320px | PASS (preview only) |
 | Narrow Reading/Charts/Settings | DOM scrollWidth <= 320 at 320px; Sensory inspected | PASS (preview only) |
-| Fresh Chrome load, popup, side panel/activeTab | Not run | PENDING |
+| Fresh unpacked Chrome load, popup, side panel/activeTab | Installed in cyan profile; localhost article; popup -> panel | PASS (smoke) |
+| Installed Reading and Restore | Native Chrome visual inspection; heading-size defect fixed, reloaded and rechecked | PASS (smoke) |
+| Restore acknowledgement | Internal state notification no longer replaces explicit confirmation | PASS |
+| Keyboard controls | React user-event Tab/Space/Enter activation/restore | PASS (DOM; native walkthrough pending) |
+| Semantic accessibility | axe wcag2a/wcag2aa/wcag21aa across five modules, contrast excluded | PASS (automated; screen reader pending) |
 | Real voice/pause/stop/hide/navigation | Not run installed | PENDING |
 | Keyboard-only, screen reader, 360/400px | Not run fully | PENDING |
 | Installed behavior on two layouts plus form | Fixtures supplied; runtime checks not run | PENDING |
@@ -35,4 +40,4 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 
 Release gates remain open. Record actual browser version/results/defects and evidence; do not infer manual PASS from unit tests.
 
-29 automated tests currently pass. After explicit install approval, native browser testing was attempted in the existing cyan profile but the controller stopped at current-URL verification on navigation to the extensions page. Installation did not occur; no pending installed-browser result is promoted to PASS.
+34 automated tests currently pass. After the earlier interrupted attempt, installation succeeded on the next turn in the existing cyan profile. Native popup/full-panel, activeTab, Reading and Restore smoke tests passed. A heading-size defect was reproduced, fixed, reloaded and rechecked. Further browser input stopped when URL verification failed during chart navigation; native chart/form/audio results remain pending.

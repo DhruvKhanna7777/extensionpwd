@@ -11,7 +11,25 @@ import {
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { App } from "../src/App";
 import { defaults } from "../src/settings";
+import userEvent from "@testing-library/user-event";
+import axe from "axe-core";
 type Message = { type: string; settings?: typeof defaults };
+it("keeps the Restore confirmation when the page state notification arrives", async () => {
+  render(<App />);
+  await screen.findByText("Showing this page’s current preferences.");
+  fireEvent.click(screen.getByRole("button", { name: /Restore original/ }));
+  await screen.findByText("Original page restored. Speech stopped.");
+  await act(async () => {
+    for (const listener of stateListeners)
+      listener(
+        { type: "PAGE_STATE_CHANGED", reason: "restored" },
+        { tab: { id: 7 } },
+      );
+  });
+  expect(screen.getByRole("status").textContent).toBe(
+    "Original page restored. Speech stopped.",
+  );
+});
 let active = {
   id: 7,
   url: "https://example.com/article",
@@ -24,6 +42,7 @@ let listeners = new Set<() => void>();
 let saved: unknown;
 let pageSettings = { ...defaults };
 let pendingApply: Promise<void> | undefined;
+let stateListeners = new Set<(message: unknown, sender: unknown) => void>();
 beforeEach(() => {
   active = {
     id: 7,
@@ -34,11 +53,20 @@ beforeEach(() => {
   failInjection = false;
   applied = [];
   listeners = new Set();
+  stateListeners = new Set();
   saved = undefined;
   pageSettings = { ...defaults };
   pendingApply = undefined;
   history.replaceState({}, "", "/sidepanel.html");
   vi.stubGlobal("chrome", {
+    runtime: {
+      onMessage: {
+        addListener: (f: (m: unknown, s: unknown) => void) =>
+          stateListeners.add(f),
+        removeListener: (f: (m: unknown, s: unknown) => void) =>
+          stateListeners.delete(f),
+      },
+    },
     tabs: {
       query: async () => [{ ...active }],
       sendMessage: async (id: number, m: Message) => {
@@ -76,6 +104,63 @@ beforeEach(() => {
     windows: { WINDOW_ID_CURRENT: -2 },
   });
 });
+it("keeps focused controls enabled while a speech status update is pending", async () => {
+  render(<App />);
+  await screen.findByText("Showing this page’s current preferences.");
+  const checkbox = screen.getByRole("checkbox", {
+    name: /Reading Studio/,
+  }) as HTMLInputElement;
+  checkbox.focus();
+  const original = chrome.tabs.sendMessage;
+  let complete!: (v: unknown) => void;
+  (chrome.tabs as any).sendMessage = (id: number, m: Message) =>
+    m.type === "GET_STATE"
+      ? new Promise((r) => (complete = r))
+      : original(id, m);
+  await act(async () => {
+    for (const listener of stateListeners)
+      listener({ type: "PAGE_STATE_CHANGED" }, { tab: { id: 7 } });
+  });
+  expect(checkbox.disabled).toBe(false);
+  expect(document.activeElement).toBe(checkbox);
+  await act(async () =>
+    complete({ ok: true, settings: defaults, speech: { state: "paused" } }),
+  );
+  expect(screen.getByRole("status").textContent).toMatch(/paused/i);
+});
+it("supports keyboard navigation, Space to enable and Enter to restore", async () => {
+  const user = userEvent.setup();
+  render(<App />);
+  await screen.findByText("Showing this page’s current preferences.");
+  await user.tab();
+  expect(document.activeElement).toBe(
+    screen.getByRole("button", { name: /Restore original/ }),
+  );
+  for (let i = 0; i < 6; i++) await user.tab();
+  const checkbox = screen.getByRole("checkbox", {
+    name: /Reading Studio/,
+  }) as HTMLInputElement;
+  expect(document.activeElement).toBe(checkbox);
+  await user.keyboard("[Space]");
+  await waitFor(() => expect(applied).toEqual([7]));
+  expect(checkbox.checked).toBe(true);
+  screen.getByRole("button", { name: /Restore original/ }).focus();
+  await user.keyboard("[Enter]");
+  await screen.findByText("Original page restored. Speech stopped.");
+  expect(checkbox.checked).toBe(false);
+});
+it("has no automated semantic accessibility violations in each module", async () => {
+  const { container } = render(<App />);
+  await screen.findByText("Showing this page’s current preferences.");
+  for (const name of ["Overview", "Reading", "Sensory", "Charts", "Settings"]) {
+    fireEvent.click(screen.getByRole("button", { name }));
+    const result = await axe.run(container, {
+      runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
+      rules: { "color-contrast": { enabled: false } },
+    });
+    expect(result.violations.map((v) => `${name}: ${v.id}`)).toEqual([]);
+  }
+}, 15000);
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();

@@ -43,11 +43,13 @@ export function usePageController() {
       return;
     }
     let mounted = true;
-    const refresh = async () => {
+    const refresh = async (reason?: string) => {
       const generation = ++revision.current;
-      setCanApply(false);
-      setSettings({ ...defaults });
-      setError(false);
+      if (!reason) {
+        setCanApply(false);
+        setSettings({ ...defaults });
+        setError(false);
+      }
       try {
         const [tab] = await chrome.tabs.query({
           active: true,
@@ -73,7 +75,7 @@ export function usePageController() {
           return;
         }
         setCanApply(true);
-        tell("Choose a setting to enable this page.");
+        if (!reason) tell("Choose a setting to enable this page.");
         if (tab.id !== undefined)
           try {
             const result = await chrome.tabs.sendMessage(tab.id, {
@@ -91,7 +93,10 @@ export function usePageController() {
                 );
               else if (result.speech?.state === "paused")
                 tell("Speech paused. Choose Pause / resume to continue.");
-              else tell("Showing this page’s current preferences.");
+              else if (reason === "restored")
+                tell("Original page restored. Speech stopped.");
+              else if (!reason)
+                tell("Showing this page’s current preferences.");
             }
           } catch {
             /* No content script until an explicit action. */
@@ -119,14 +124,14 @@ export function usePageController() {
     chrome.tabs.onActivated.addListener(activated);
     chrome.tabs.onUpdated.addListener(updated);
     const pageChanged = (
-      message: { type?: string },
+      message: { type?: string; reason?: string },
       sender: chrome.runtime.MessageSender,
     ) => {
       if (
         message?.type === "PAGE_STATE_CHANGED" &&
         sender.tab?.id === targetRef.current?.id
       )
-        void refresh();
+        void refresh(message.reason || "state");
     };
     chrome.runtime?.onMessage?.addListener(pageChanged);
     return () => {

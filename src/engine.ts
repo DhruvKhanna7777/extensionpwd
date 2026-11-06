@@ -18,6 +18,7 @@ export class PageEngine {
     const s = validateSettings(raw);
     const rules: string[] = [];
     if (s.reading || s.calm !== "default") {
+      const originalSizes = new Set<number>();
       for (const el of this.doc.querySelectorAll(
         "article p,article h1,article h2,article h3,article li,main p,main h1,main h2,main h3,main li",
       )) {
@@ -26,14 +27,26 @@ export class PageEngine {
           !el.closest(protectedSelector) &&
           !el.querySelector(protectedSelector) &&
           !el.querySelector("p,h1,h2,h3,li")
-        )
-          this.mark(el, "data-ableverse-prose");
+        ) {
+          const computed = Number.parseFloat(
+            this.doc.defaultView?.getComputedStyle(el).fontSize || "",
+          );
+          const original =
+            Number.isFinite(computed) && computed > 0 ? computed : 16;
+          originalSizes.add(original);
+          this.mark(el, "data-ableverse-prose", String(original));
+        }
       }
       const prose = "[data-ableverse-prose]";
-      if (s.reading)
+      if (s.reading) {
         rules.push(
-          `${prose}{font-family:${s.fontFamily}!important;font-size:${s.fontScale / 100}em!important;line-height:${s.lineHeight}!important;letter-spacing:${s.letterSpacing}em!important;word-spacing:${s.wordSpacing}em!important;}`,
+          `${prose}{font-family:${s.fontFamily}!important;line-height:${s.lineHeight}!important;letter-spacing:${s.letterSpacing}em!important;word-spacing:${s.wordSpacing}em!important;}`,
         );
+        for (const size of originalSizes)
+          rules.push(
+            `[data-ableverse-prose="${size}"]{font-size:${(size * s.fontScale) / 100}px!important;}`,
+          );
+      }
       const palettes: Record<string, string> = {
         warm: "color:#302719!important;background:#fff4dd!important",
         dark: "color:#f7f9fc!important;background:#142339!important",

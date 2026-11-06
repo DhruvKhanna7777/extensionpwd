@@ -6,7 +6,17 @@ Branch: `feat/ableverse-core`. First implementation from the 50-page product blu
 
 MV3 build and React popup/five-section panel; typography/presets/preview/reset; selected-text speech; sensory CSS; verified SVG bar labels/patterns/table; reversible owned-change registry; effective per-page state; explicit save/load; three fixtures; docs and locked dependencies.
 
-29 automated tests across settings, engine, charts, speech lifecycle and React UI. TypeScript/bundles pass. Full dependency audit: zero vulnerabilities (Node 22.12+). Initial UI preview visually inspected at 320px; new voice controls still require updated visual QA. See TEST-MATRIX.md for verification scope.
+34 automated tests across settings, engine, charts, speech lifecycle and React UI. TypeScript/bundles pass. Full dependency audit: zero vulnerabilities (Node 22.12+). Initial UI preview visually inspected at 320px; new voice controls still require updated visual QA. See TEST-MATRIX.md for verification scope.
+
+## Third checkpoint: installed Chrome smoke test
+
+- Successfully loaded `work/extensionpwd/dist` as an unpacked extension into the existing cyan dhruvkhanna1522 profile, with prior explicit user approval. Extension ID: `ddibeighmdafgbbnigmkojdkneemdghe`. Developer mode enabled for local loading. No other extensions changed.
+- Verified toolbar popup, activeTab access, popup -> full side panel, Reading application and Restore on the localhost article fixture. Browser-internal context showed disabled actions rather than attempting modification.
+- Live smoke test exposed a real font-size bug: relative em overrides flattened headings to parent paragraph size at 100%. Fixed by sampling each eligible element's original computed pixel size before applying owned CSS, then scaling those sizes independently. Added regression for 36px heading / 18px paragraph at 100% and 150%, plus restore.
+- Rebuilt, reloaded the installed extension, refreshed the article and verified the corrected heading hierarchy and exact Restore confirmation in Chrome.
+- Fixed state-notification feedback replacing the Restore acknowledgement; quiet status refresh no longer resets controls unnecessarily.
+- Added keyboard Tab/Space/Enter tests and axe semantic checks for all five modules. Color contrast is excluded from jsdom checks because jsdom has no layout engine; these are not screen-reader certification.
+- Browser automation stopped again during the subsequent chart-page navigation because current-URL verification could not be established confidently. No further UI input sent in that turn. Native chart/form/audio checks remain pending; installed extension stays enabled and loaded from the build directory.
 
 ## Second checkpoint
 
@@ -22,8 +32,8 @@ Final review fixes: speech-only SPA navigation now cancels playback; transformed
 
 ## Resume and release gates
 
-1. `npm ci`, `npm test`, `npm run build`. Load `dist` into a designated Chrome test profile. If operating the user's browser, honour cyan `dhruvkhanna1522` profile preference; do not open other profiles.
-2. Run DEMO.md with installed extension: activeTab, popup -> sidePanel.open, reopening state, selection retention and voices.
+1. `npm ci`, `npm test`, `npm run build`. Extension is already loaded from this checkout's dist; reload it after rebuilding. If operating the user's browser, honour cyan `dhruvkhanna1522` profile preference; do not open other profiles.
+2. Continue DEMO.md with the installed extension. Installation, activeTab, popup, full-panel opening, Reading and Restore have passed smoke checks. Remaining: source chart/form fixture, reopening state, selection retention and voices.
 3. Verify real pause/resume, Stop/Escape, tab hide, pagehide and SPA. Speech tests fake the device API, not actual audio.
 4. Complete keyboard-only/screen-reader and widths 320/360/400 checks; fix failures before release sign-off.
 5. Exercise site DOM updates. New prose needs the next explicit Apply; no automatic reapplication. SPA cleanup observes DOM mutation; a history-only route with no mutation is not detected immediately.

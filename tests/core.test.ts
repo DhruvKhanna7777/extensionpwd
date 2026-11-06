@@ -32,6 +32,30 @@ describe("safe settings", () => {
 });
 
 describe("reversible page adaptation", () => {
+  it("preserves original heading hierarchy and scales each rendered size", () => {
+    document.head.innerHTML =
+      "<style>h1{font-size:36px}p{font-size:18px}</style>";
+    document.body.innerHTML = "<main><h1>Heading</h1><p>Paragraph</p></main>";
+    const engine = new PageEngine(document);
+    engine.apply({ ...defaults, reading: true, fontScale: 100 });
+    expect(getComputedStyle(document.querySelector("h1")!).fontSize).toBe(
+      "36px",
+    );
+    expect(getComputedStyle(document.querySelector("p")!).fontSize).toBe(
+      "18px",
+    );
+    engine.apply({ ...defaults, reading: true, fontScale: 150 });
+    expect(getComputedStyle(document.querySelector("h1")!).fontSize).toBe(
+      "54px",
+    );
+    expect(getComputedStyle(document.querySelector("p")!).fontSize).toBe(
+      "27px",
+    );
+    engine.restore();
+    expect(getComputedStyle(document.querySelector("h1")!).fontSize).toBe(
+      "36px",
+    );
+  });
   it("changes eligible prose while protecting fields, code, alerts and editable content", () => {
     const engine = new PageEngine(document);
     engine.apply({ ...defaults, reading: true, fontScale: 140 });

@@ -6,9 +6,10 @@ const scope = globalThis as typeof globalThis & { __ableverse?: boolean };
 if (!scope.__ableverse) {
   scope.__ableverse = true;
   const engine = new PageEngine(document);
-  const changed = () => {
+  const changed = (reason = "state") => {
     const pending = chrome.runtime.sendMessage?.({
       type: "PAGE_STATE_CHANGED",
+      reason,
     });
     pending?.catch(() => {});
   };
@@ -62,7 +63,7 @@ if (!scope.__ableverse) {
     stop();
     engine.restore();
     current = { ...defaults };
-    changed();
+    changed("restored");
     window.removeEventListener("pagehide", restore);
   };
   const selection = () => {
