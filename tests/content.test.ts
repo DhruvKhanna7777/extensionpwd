@@ -3,12 +3,13 @@ import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {defaults} from '../src/settings';
 let handler:(m:unknown,s:unknown,r:(value:any)=>void)=>void;
 let spoken:string[]=[];
+let cancelled=0;
 beforeEach(async()=>{
  vi.resetModules();delete (globalThis as any).__ableverse;
  document.body.innerHTML='<main><p id="text">Original readable sentence.</p><input value="private"/><p contenteditable="true">Private draft</p></main>';
- spoken=[];
+ spoken=[];cancelled=0;
  vi.stubGlobal('chrome',{runtime:{onMessage:{addListener:(fn:typeof handler)=>{handler=fn;}}}});
- const synth={getVoices:()=>[{name:'test device voice'}],speak:(u:{text:string})=>spoken.push(u.text),cancel:()=>{},paused:false,pause:()=>{},resume:()=>{}};
+ const synth={getVoices:()=>[{name:'test device voice'}],speak:(u:{text:string})=>spoken.push(u.text),cancel:()=>{cancelled++;},paused:false,pause:()=>{},resume:()=>{}};
  vi.stubGlobal('speechSynthesis',synth);Object.defineProperty(window,'speechSynthesis',{value:synth,configurable:true});
  vi.stubGlobal('SpeechSynthesisUtterance',class{rate=1;constructor(public text:string){}});
  await import('../src/content');
@@ -29,4 +30,13 @@ it('refuses a selection spanning editable content',()=>{
 });
 it('refuses empty selection without unsolicited speech',()=>{
  getSelection()!.removeAllRanges();expect(request('READ').ok).toBe(false);expect(spoken).toEqual([]);
+});
+it('cancels speech on SPA navigation even without applying a mode first',async()=>{
+ const range=document.createRange();range.selectNodeContents(document.querySelector('#text')!);getSelection()!.removeAllRanges();getSelection()!.addRange(range);request('READ');
+ history.pushState({},'', '/next-article');document.querySelector('#text')!.textContent='A new article';await Promise.resolve();await Promise.resolve();expect(cancelled).toBe(1);
+});
+it('invalidates verified companions when source chart data change',async()=>{
+ document.body.innerHTML='<svg data-av-chart="bar" data-av-unit="units"><rect x="0" y="20" width="30" height="40" data-av-label="A" data-av-value="20"/></svg>';
+ request('APPLY',{...defaults,chroma:true});expect(document.querySelector('table')).not.toBeNull();
+ document.querySelector('rect[data-av-value]')!.setAttribute('data-av-value','77');await Promise.resolve();await Promise.resolve();expect(document.querySelector('table')).toBeNull();expect(document.querySelector('rect')!.getAttribute('data-av-value')).toBe('77');
 });

@@ -18,7 +18,7 @@ The supplied product blueprint's final Part II governs scope. AI simplification,
 
 ## Build and load
 
-Prerequisites: Node.js 22 LTS, npm, Chrome 114+ desktop.
+Prerequisites: Node.js 22.12+ LTS, npm, Chrome 114+ desktop.
 
 ```sh
 git clone https://github.com/DhruvKhanna7777/extensionpwd.git
@@ -61,7 +61,7 @@ No server, database, secret key or `.env` is needed. Production output is genera
 </svg>
 ```
 
-Each bar needs explicit category/value metadata and positive width/nonnegative height. Values are never inferred from geometry or colour. Malformed data aborts the transformation before changes. Original labels, axes and source text remain. Restore removes companions and restores fills unless the website changed them after application.
+Each bar needs explicit category/value metadata and positive width/nonnegative height. Bars must be direct children of the SVG without individual transforms; grouped/transformed bars are unsupported. Values are never inferred from geometry or colour. Malformed data aborts transformation before changes. Source-chart mutations remove stale companions and reset applied modes; apply explicitly again to regenerate. Original axes/text remain. Restore removes companions and restores fills unless the site changed them after application.
 
 ## Contributing
 

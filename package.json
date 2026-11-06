@@ -1,6 +1,25 @@
 {
-  "name": "ableverse-ai", "version": "0.1.0", "private": true, "type": "module",
-  "scripts": {"build": "tsc --noEmit && node build.mjs", "test": "vitest run", "demo": "vite --host 127.0.0.1"},
-  "dependencies": {"react": "^18.3.1", "react-dom": "^18.3.1"},
-  "devDependencies": {"@types/chrome": "^0.0.287", "@types/react": "^18.3.12", "@types/react-dom": "^18.3.1", "esbuild": "^0.25.0", "jsdom": "^26.0.0", "typescript": "^5.7.2", "vite": "^6.4.1", "vitest": "^3.2.4"}
+  "name": "ableverse-ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && node build.mjs",
+    "test": "vitest run",
+    "demo": "vite --host 127.0.0.1"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "esbuild": "^0.25.0",
+    "jsdom": "^26.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.4.1",
+    "vitest": "^5.1.0"
+  }
 }

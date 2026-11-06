@@ -6,7 +6,9 @@ Branch: `feat/ableverse-core`. First implementation from the 50-page product blu
 
 MV3 build and React popup/five-section panel; typography/presets/preview/reset; selected-text speech; sensory CSS; verified SVG bar labels/patterns/table; reversible owned-change registry; effective per-page state; explicit save/load; three fixtures; docs and locked dependencies.
 
-16 automated tests across settings, engine, charts and content router. TypeScript/bundles pass. Production audit: zero vulnerabilities. UI preview visually inspected at 320px; narrow dimensions checked. See TEST-MATRIX.md for verification scope.
+19 automated tests across settings, engine, charts and content router. TypeScript/bundles pass. Full dependency audit: zero vulnerabilities after upgrading Vitest to 5.1.0 (Node 22.12+). UI preview visually inspected at 320px; narrow dimensions checked. See TEST-MATRIX.md for verification scope.
+
+Final review fixes: speech-only SPA navigation now cancels playback; transformed/grouped bars fail safely instead of misplacing labels; source-chart mutations invalidate companions and reset applied modes rather than displaying stale verified values. Reopen the controls or apply explicitly after a dynamic chart update.
 
 ## Resume and release gates
 

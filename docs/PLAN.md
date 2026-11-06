@@ -10,10 +10,11 @@ An injected singleton owns reversible styles and chart companions. Scope typogra
 Alternative: a full portal is excluded by the brief. Full AI/ASL/hover/line/pie work is P1 and is deferred until P0 release gates pass. Native inline execution uses a separate feature branch and incremental commits.
 
 ## Tasks and checks
-- [ ] Settings and reversible content engine. Tests: clamp invalid persisted settings, protect forms/code, apply twice without duplicates, restore twice without damage, leave fresh site edits intact.
-- [ ] Verified bar charts. Tests: exact table values, unique labels/patterns, malformed/unsupported SVG stays unchanged, full restoration.
-- [ ] Popup/side-panel interface, selected-text speech, permissions and saved settings. Build and keyboard/manual browser checks; report unverified Chrome lifecycle separately.
-- [ ] Three sample layouts (article, busy page with form, chart/canvas), privacy/demo/setup documentation, handoff. Run whole test suite, production build, inspect output manifest, commit and push.
+- [x] Settings and reversible content engine: bounded validation, protected content, idempotent restore, fresh site text.
+- [x] Verified bar charts: exact values, distinct patterns, atomic rejection, mutation invalidation and restoration.
+- [x] Popup/side-panel, selection speech and explicit preferences implemented; build/preview checked.
+- [x] Three fixtures, setup/privacy/demo/handoff documents, package validation and committed contributor branch.
+- [ ] Installed Chrome lifecycle, actual audio, keyboard-only and screen-reader release gates remain pending in TEST-MATRIX.md.
 
 ## Risks and release boundaries
 Browser internal/store pages cannot be injected. Native browser speech may use online OS/browser voices; do not promise all speech stays offline. Unknown charts are unsupported. Focus mode must leave navigation/forms usable. No AI upload. Full extension installation, screen-reader testing and 320px panel QA must be recorded honestly, never inferred from DOM tests.

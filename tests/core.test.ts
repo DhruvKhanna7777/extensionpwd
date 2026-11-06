@@ -43,6 +43,10 @@ describe('reversible page adaptation', () => {
 
 function chart(value='30') {return `<svg data-av-chart="bar" data-av-unit="units" aria-label="Monthly results" viewBox="0 0 300 160"><rect data-av-label="March" data-av-value="${value}" x="30" y="80" width="40" height="60" fill="red"/><rect data-av-label="April" data-av-value="55" x="100" y="30" width="40" height="110" fill="green"/></svg>`;}
 describe('verified bar charts',()=>{
+ it('leaves transformed bars unchanged rather than misplacing labels',()=>{
+  document.body.innerHTML=chart().replace('<rect','<rect transform="translate(20 30)"');
+  const before=document.querySelector('svg')!.outerHTML;const result=new PageEngine(document).apply({...defaults,chroma:true});expect(result.charts).toBe(0);expect(document.querySelector('svg')!.outerHTML).toBe(before);
+ });
  it('shows exact values and distinct patterns, then restores original SVG',()=>{
   document.body.innerHTML=chart();const original=document.body.innerHTML;const engine=new PageEngine(document);
   const result=engine.apply({...defaults,chroma:true});expect(result.charts).toBe(1);

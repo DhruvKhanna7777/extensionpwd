@@ -14,7 +14,10 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Effective page settings/restore | Content-router tests | PASS |
 | Prose/empty/editable-overlap speech selection | API-boundary tests | PASS |
 | Production build | TypeScript + MV3 bundles | PASS |
-| Production dependencies | npm audit --omit=dev | 0 vulnerabilities at checkpoint |
+| All dependencies | npm audit --audit-level=high after Vitest 5.1.0 update | 0 vulnerabilities at checkpoint |
+| Speech-only SPA navigation | Route + DOM mutation cancellation test | PASS (API boundary) |
+| Dynamic chart source values | Invalidation removes stale companion test | PASS |
+| Grouped/transformed SVG bars | Unsupported without mutation test | PASS |
 | UI visual review | In-app preview; Reading at 320px | PASS (preview only) |
 | Narrow Reading/Charts/Settings | DOM scrollWidth <= 320 at 320px; Sensory inspected | PASS (preview only) |
 | Fresh Chrome load, popup, side panel/activeTab | Not run | PENDING |

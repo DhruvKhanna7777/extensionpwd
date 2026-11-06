@@ -7,7 +7,16 @@ if(!scope.__ableverse) {
  const visibility=()=>{if(document.hidden)stop();};
  const escape=(e:KeyboardEvent)=>{if(e.key==='Escape')stop();};
  const stop=()=>{if(speaking){speechSynthesis.cancel();speaking=false;}document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',escape);};
- const observer=new MutationObserver(()=>{if(location.href!==route)restore();});
+ const observer=new MutationObserver(records=>{
+  const sourceChartChanged=records.some(record=>{
+   const target=record.target instanceof Element?record.target:record.target.parentElement;
+   if(target?.closest('svg[data-av-chart="bar"]'))return true;
+   return [...record.removedNodes].some(node=>node instanceof Element&&(node.matches('svg[data-av-chart="bar"]')||node.querySelector('svg[data-av-chart="bar"]')));
+  });
+  // Do not keep calling a stale snapshot verified after a site updates its source.
+  if(location.href!==route || sourceChartChanged)restore();
+ });
+ const observe=()=>{route=location.href;observer.observe(document,{childList:true,subtree:true,attributes:true,characterData:true,attributeFilter:['data-av-value','data-av-label','data-av-unit','data-av-chart','aria-label','x','y','width','height','transform','style','fill']});window.addEventListener('pagehide',restore);};
  const restore=()=>{observer.disconnect();stop();engine.restore();current={...defaults};window.removeEventListener('pagehide',restore);};
  const selection=()=>{
   const sel=getSelection();if(!sel||sel.isCollapsed)return '';
@@ -22,12 +31,12 @@ if(!scope.__ableverse) {
    if(!msg||typeof msg.type!=='string')return;
    switch(msg.type){
     case 'GET_STATE':respond({ok:true,settings:current});break;
-    case 'APPLY':{stop();observer.disconnect();current=validateSettings(msg.settings);const result=engine.apply(current);route=location.href;observer.observe(document,{childList:true,subtree:true});window.addEventListener('pagehide',restore);respond({ok:true,...result});break;}
+    case 'APPLY':{stop();observer.disconnect();current=validateSettings(msg.settings);const result=engine.apply(current);observe();respond({ok:true,...result});break;}
     case 'RESTORE':restore();respond({ok:true});break;
     case 'READ':{
      const text=selection();if(!text){respond({ok:false,error:'Select up to 5,000 characters of page text first. Form fields and code are excluded.'});break;}
      if(!('speechSynthesis' in window)||!speechSynthesis.getVoices().length){respond({ok:false,error:'No browser speech voice is ready. Check your device speech settings, then retry.'});break;}
-     stop();const utterance=new SpeechSynthesisUtterance(text);utterance.rate=validateSettings(msg.settings).rate;utterance.onend=utterance.onerror=()=>{speaking=false;document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',escape);};speaking=true;document.addEventListener('visibilitychange',visibility);document.addEventListener('keydown',escape);window.addEventListener('pagehide',restore);speechSynthesis.speak(utterance);respond({ok:true});break;
+     stop();const utterance=new SpeechSynthesisUtterance(text);utterance.rate=validateSettings(msg.settings).rate;utterance.onend=utterance.onerror=()=>{speaking=false;document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',escape);};speaking=true;document.addEventListener('visibilitychange',visibility);document.addEventListener('keydown',escape);observe();speechSynthesis.speak(utterance);respond({ok:true});break;
     }
     case 'PAUSE':if(speaking)speechSynthesis.paused?speechSynthesis.resume():speechSynthesis.pause();respond({ok:true});break;
     case 'STOP':stop();respond({ok:true});break;

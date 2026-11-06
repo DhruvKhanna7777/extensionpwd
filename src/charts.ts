@@ -4,6 +4,7 @@ export function enhanceCharts(doc:Document,undo:(()=>void)[]) {
  let charts=0;const warnings:string[]=[];
  for(const svg of doc.querySelectorAll<SVGSVGElement>('svg[data-av-chart="bar"]')) {
   const bars=[...svg.querySelectorAll<SVGRectElement>('rect[data-av-value]')];
+  if(bars.some(bar=>bar.parentNode!==svg || bar.hasAttribute('transform') || !!bar.style.transform)){warnings.push('Chart cannot be enhanced reliably: transformed or grouped bars are unsupported.');continue;}
   const rows=bars.map(bar=>({bar,label:bar.getAttribute('data-av-label')?.trim(),raw:bar.getAttribute('data-av-value')??'',value:Number(bar.getAttribute('data-av-value')),x:Number(bar.getAttribute('x')),y:Number(bar.getAttribute('y')),width:Number(bar.getAttribute('width')),height:Number(bar.getAttribute('height'))}));
   if(!rows.length || rows.some(r=>!r.label || !r.raw.trim() || !Number.isFinite(r.value) || ![r.x,r.y,r.width,r.height].every(Number.isFinite) || r.width<=0 || r.height<0)) {warnings.push('Chart cannot be enhanced reliably: missing labels, values or geometry.');continue;}
   const owned=doc.createElementNS(ns,'g');owned.setAttribute('data-ableverse-owned','');owned.setAttribute('pointer-events','none');
