@@ -13,6 +13,12 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Unsupported canvas | No invented values/table | PASS |
 | Effective page settings/restore | Content-router tests | PASS |
 | Prose/empty/editable-overlap speech selection | API-boundary tests | PASS |
+| Cancelled utterance callbacks | Old onend cannot disable Stop on newer speech | PASS |
+| Voice/volume and voice errors | Selection, missing saved voice, async error, pause/resume | PASS (API boundary) |
+| Denied permissions | React controls roll back to effective state | PASS |
+| Unsupported page state | React actions disabled before injection | PASS |
+| Queued changes and stale replies | Click-time tab binding and generation checks | PASS |
+| Saved preference load | No page application until explicit action | PASS |
 | Production build | TypeScript + MV3 bundles | PASS |
 | All dependencies | npm audit --audit-level=high after Vitest 5.1.0 update | 0 vulnerabilities at checkpoint |
 | Speech-only SPA navigation | Route + DOM mutation cancellation test | PASS (API boundary) |
@@ -28,3 +34,5 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | AI/ASL/hover/line/pie | Deferred P1 | NOT IN CORE |
 
 Release gates remain open. Record actual browser version/results/defects and evidence; do not infer manual PASS from unit tests.
+
+29 automated tests currently pass. After explicit install approval, native browser testing was attempted in the existing cyan profile but the controller stopped at current-URL verification on navigation to the extensions page. Installation did not occur; no pending installed-browser result is promoted to PASS.

@@ -18,7 +18,7 @@ The supplied product blueprint's final Part II governs scope. AI simplification,
 
 ## Build and load
 
-Prerequisites: Node.js 22.12+ LTS, npm, Chrome 114+ desktop.
+Prerequisites: Node.js 22.12+ LTS, npm, Chrome 116+ desktop.
 
 ```sh
 git clone https://github.com/DhruvKhanna7777/extensionpwd.git
@@ -41,12 +41,15 @@ After rebuilding, reload the extension and demo tab. Browser-internal/store page
 
 ## Architecture
 
-- `src/ui.tsx`, `src/ui.css`: shared React popup/side-panel UI.
+- `src/ui.tsx`, `src/App.tsx`, `src/ui.css`: shared React popup/side-panel UI.
+- `src/usePageController.ts`: current-tab permissions, operation queue, state synchronization and errors.
+- `src/speech.ts`: voice selection, volume, speech ownership, cancellation and errors.
 - `src/settings.ts`: strict allowlist and bounded settings validation.
 - `src/content.ts`: injection singleton, messaging, speech and lifecycle cleanup.
 - `src/engine.ts`: reversible prose/sensory changes.
 - `src/charts.ts`: annotated SVG bar adapter and safe value-table rendering.
 - `manifest.json`, `build.mjs`: MV3 permissions and local bundles.
+- `assets/icon.svg`: original vector icon; build emits PNG sizes 16/32/48/128.
 - `demo/`: article, form/sensory, SVG and unsupported canvas fixtures.
 - `tests/`: jsdom integration and engine regression tests.
 
