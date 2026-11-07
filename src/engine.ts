@@ -53,7 +53,7 @@ export class PageEngine {
       const prose = "[data-ableverse-prose]";
       if (s.reading) {
         rules.push(
-          `${prose}{font-family:${s.fontFamily}!important;line-height:${s.lineHeight}!important;letter-spacing:${s.letterSpacing}em!important;word-spacing:${s.wordSpacing}em!important;}`,
+          `${prose}{font-family:${s.fontFamily}!important;line-height:${s.lineHeight}!important;letter-spacing:${s.letterSpacing}em!important;word-spacing:${s.wordSpacing}em!important;overflow-wrap:anywhere!important;}`,
         );
         for (const size of originalSizes)
           rules.push(
