@@ -1,5 +1,13 @@
 # AbleVerse AI checkpoint — 2026-11-07
 
+## Final baton-pass checkpoint (current)
+
+Owner requested a checkpoint, merge any authorized pending work, save everything and stop. GitHub check found zero open PRs; all implementation PRs through #12 are merged. Runtime baseline f86e2f117a9fc1a41d0f12a3c87bbf029422b4ec. This follow-up updates documentation only. Canonical current state is rewritten in CONTRIBUTOR-HANDOFF.md, START-HERE.md and CONTINUATION-PROMPT.md; old branch/open-PR instructions elsewhere in this historical log are superseded. PROMPTS.md includes eight copyable tasks; WORKFLOW.md and FEATURE-STATUS.md match the current baseline.
+
+Verified runtime baseline: 109 Vitest + 4 packaging checks, production typecheck/build and 19-file ZIP passed. Last actual browser-engine result is 35/35 on unchanged page-engine code. ZIP SHA-256 27302e9e43820adb5fd3f1799a387d0611fc37c64bd4cebdfb5c5e8dac004f05. No runtime tests rerun solely for the documentation checkpoint. Earlier native/listening results remain bounded historical evidence; real AI, current native/screen-reader/zoom/contrast and approved sign media remain open.
+
+Owned Vite service stopped for transfer. Optional adapter/model not started, no model downloaded, existing Chrome extension not uninstalled or permissions changed. Original workstation paths/profile restrictions are in the canonical handoff. No further implementation is running. The next contributor should start from updated main and installed reflow acceptance, then follow the ordered checklist; unavailable browser/model/data cases must stay BLOCKED/NOT RUN, not inferred PASS.
+
 ## Latest: AI operation lifecycle
 
 Starting from merged PR #11 (020a1e3), reproduced and fixed failed-recapture stale consent/text, un-discarded late capture after cancellation, duplicate Apply and stale Apply success/failure messages. Apply is now busy/once-only and is not misleadingly offered a cancellation action after dispatch. New capture resets previous review/consent immediately and discards the prior page token.

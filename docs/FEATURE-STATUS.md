@@ -1,6 +1,6 @@
 # AbleVerse feature and evidence status
 
-Checkpoint: 7 November 2026. Upstream main `6d30201cbaeb67f3952dbabb47b49a89f08b4b6e` includes PR #8. Implementation branch: `feat/reading-tools-and-chart-adapters` in `KrishChadha001/extensionpwd`. Tested runtime commit: `84035f8e78df1b5ad15c30865e759565583ee863`. Read the implementation PR and fetch current refs before treating this checkpoint as live state.
+Checkpoint: 7 November 2026. All implementation PRs #1–#12 are merged into upstream main. Latest runtime baseline: `f86e2f117a9fc1a41d0f12a3c87bbf029422b4ec`; a documentation-only stopping checkpoint follows. Start from fetched current main rather than an old contributor fork. See CONTRIBUTOR-HANDOFF.md for total completed work, current evidence and next tasks.
 
 This is a working development build, not release certification. A feature being implemented or passing automated tests does not close its installed Chrome, listening or screen-reader acceptance case.
 
@@ -44,10 +44,12 @@ Additional A1 P1 ideas such as richer site-specific decluttering rules/preset ma
 
 ## Current verification
 
-- Windows NT 10.0.26300.0, Node 24.16.0, npm 11.13.0.
-- `npm test`: 103 Vitest tests across 15 files and 4 packaging checks passed.
+- Original Windows workstation, Node 22.19.0, npm 10.9.3, runtime baseline f86e2f1.
+- `npm test`: 109 Vitest tests across 15 files and 4 packaging checks passed.
 - `npm run package`: production typecheck/build passed; 19 explicit shipping files verified byte for byte.
-- ZIP SHA-256: `39b3c70e9ab384ab43bc929dd00973cb30db8ce43ed61ab16633946f7d801e8f`.
-- Final preview layout: all five modules at 320/360/400px passed the measured 15-case matrix, including the later AI/sign/chart-option UI. Expanded hover, local-AI-unavailable and sign-miss states also fit at 320px. The current real engine harness passed 20/20. Preview OpenDyslexic loaded locally. This is not installed extension evidence.
+- ZIP SHA-256: `27302e9e43820adb5fd3f1799a387d0611fc37c64bd4cebdfb5c5e8dac004f05`.
+- Previously recorded preview layout: all five modules at 320/360/400px passed the 15-case matrix, including AI/sign/chart-option UI and expanded hover/unavailable/miss states at 320px. PR #11 expanded the real engine harness to 35/35 with line/pie/reading-tool/three-font coverage and measured the improved Stop border at 4.14:1. PR #12 changed only AI panel lifecycle, not that engine; the harness was not rerun for it. These are not installed extension/screen-reader certificates.
 - Independent reviews identified hidden hover text, malformed pie paths, custom-control shortcut interception and partial-inline AI undo defects. Each received a failing regression and a passing fix. Existing keyboard/semantic axe checks pass; axe excludes contrast.
 - Native Chrome inspection was blocked by current-URL verification. No bypass, new audible PASS, screen-reader PASS or release sign-off is claimed. Historical evidence is preserved in INSTALLED-ACCEPTANCE.md.
+
+PR #12 additionally fixes failed recapture retaining old text/consent/output, late cancelled capture cleanup, duplicate Apply and stale success/failure after navigation. Six new tests include denied optional permission with no fetch and actual loopback HTTP disconnect cancelling a simulated upstream request and allowing the next generation. This is not real model output evidence.

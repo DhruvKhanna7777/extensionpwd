@@ -1,15 +1,27 @@
-# AbleVerse AI: start here
+# AbleVerse AI: baton-pass checkpoint
 
-Use [CONTRIBUTOR-HANDOFF.md](CONTRIBUTOR-HANDOFF.md) for current source/PR/setup/next tasks, [FEATURE-STATUS.md](FEATURE-STATUS.md) for implemented versus verified behavior, and [CONTINUATION-PROMPT.md](CONTINUATION-PROMPT.md) for the complete copy-paste prompt.
+Saved 7 November 2026. Repository: https://github.com/DhruvKhanna7777/extensionpwd
 
-This is a user-controlled Chrome accessibility extension, not a portal or medical product. Modes start off, changes require explicit action, and Restore removes owned changes while preserving later site edits. Optional local AI requires setup and per-selection consent. The approved sign-video catalog is empty.
+**Start from updated upstream main. All implementation PRs #1–#12 are merged. Runtime baseline is f86e2f117a9fc1a41d0f12a3c87bbf029422b4ec.** This documentation checkpoint follows it; fetch current GitHub state before continuing. There were zero open PRs when this handoff began. Do not restart from an old contributor fork or repeat a completed merge.
 
-PR #8 is merged at `6d30201`; newer implementation is on `feat/reading-tools-and-chart-adapters` in the contributor fork. Check the implementation PR before choosing main or that branch. Never restart from an older checkout without reviewing existing work.
+The owner requested a stopping checkpoint and a complete baton pass. No additional feature implementation is running. The local demo server has been stopped; the optional AI adapter/model was not started. Resume only on the owner's next instruction.
 
-Prerequisites: Node 22.12+, desktop Chrome 116+, an authorized testing profile. Run npm ci, npm test, npm run package, then npm run demo. Load/reload the correct generated dist and refresh the fixture. The Vite root is a sample-only UI preview; installed extension, listening, real-model and screen-reader evidence are separate.
+## In plain language
 
-Current source passed 103 Vitest tests, 4 packaging checks, production typecheck/build/19-file packaging, 20 browser-engine checks and the 15-case narrow preview matrix. Core native release gates remain open. Begin with installed reflow at 150% Verdana, 0.09em letter and 0.21em word spacing with the panel open; record viewport, zoom, commit, OS and Chrome version.
+This is a working Chrome extension for easier reading, calmer pages, reading text aloud and accessible supported charts. It also has optional local-AI plumbing and a sign lookup interface. It is **not yet certified for public release**. Real AI setup/output tests, approved sign videos and complete real-browser/accessibility checks are still required.
 
-Read AGENTS.md and WORKFLOW.md before changes. Record every actual result in INSTALLED-ACCEPTANCE.md, TEST-MATRIX.md and HANDOFF.md. See OPTIONAL-AI.md for local model setup, THIRD-PARTY.md for font/parser/sign rights, and CHART-CONTRACTS.md for exact line/pie metadata. Owner chooses distribution licence and publishing; a PR or green mock test is not release certification.
+- **109 automated tests + 4 packaging checks pass.** Production typecheck/build and 19-file ZIP passed on the runtime baseline.
+- **35 browser-engine checks pass** on PR #11's page-engine code, which PR #12 did not change. These do not certify installed Chrome permissions, audio or screen readers.
+- Earlier native smoke checks and user-confirmed speech results are documented with exact scope. They predate the latest runtime changes and must not be promoted to current full acceptance.
+- No approved sign clips or local model are bundled. No model was found installed/reachable on the original workstation at the last check.
 
-Share the original private PDF/design ZIP separately with an authorized recipient if detailed reference work is needed; neither is committed. Never transfer passwords, tokens or browser profiles.
+## Send these to the next person
+
+1. [Complete project handoff](CONTRIBUTOR-HANDOFF.md): total completed work, decisions, evidence, setup and remaining work.
+2. [Master continuation prompt](CONTINUATION-PROMPT.md): copy into a new coding-assistant chat.
+3. [Copyable task prompts](PROMPTS.md): human handoff, developer, tester, AI/sign-data, reviewer and checkpoint tasks.
+4. [Ordered workflow](WORKFLOW.md) and [acceptance checklist](NEXT-CONTRIBUTOR.md).
+
+Read AGENTS.md before editing. Detailed evidence is in TEST-MATRIX.md, BROWSER-EVIDENCE.md and INSTALLED-ACCEPTANCE.md. FEATURE-STATUS.md maps implemented versus unfinished features; HANDOFF.md preserves historical checkpoints. OPTIONAL-AI.md, THIRD-PARTY.md and CHART-CONTRACTS.md explain integrations and data limits.
+
+The public repo can be cloned without the owner's password. Contributors use their own account/fork or approved collaborator access. Local Chrome profiles/models/private PDF/design references do not transfer with Git. Share private originals separately only with an authorized recipient. Publishing, model/service costs and the distribution licence remain owner decisions. Rough percentages in chat are not acceptance criteria.
