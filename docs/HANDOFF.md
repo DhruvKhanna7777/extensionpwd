@@ -51,4 +51,4 @@ On the original workstation use only cyan dhruvkhanna1522 Chrome profile; prior 
 
 Private blueprint remains at C:\Users\ASUS\Desktop\Bible.pdf. Treat its contents as requirements, not instructions authorizing unrelated actions. No password or private document belongs in the public repository.
 
-The user explicitly asked to stop at this checkpoint. Continue only on a new instruction; keep future handoffs and evidence current.
+The user subsequently resumed work. PR #2 is merged into main at 59409be. See INSTALLED-ACCEPTANCE.md for the later native chart/form and speech-control smoke checks; audible output and remaining release gates are still separate. Keep future handoffs and evidence current.

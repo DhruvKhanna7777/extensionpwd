@@ -2,6 +2,8 @@
 
 Continue AbleVerse AI from the saved 2026-11-07 checkpoint in https://github.com/DhruvKhanna7777/extensionpwd. Read AGENTS.md, README.md, docs/HANDOFF.md, docs/PLAN.md, docs/TEST-MATRIX.md, docs/BROWSER-EVIDENCE.md, DEMO.md and PRIVACY.md before changing behavior. Inspect git status, branch, recent commits and PR #2 to establish actual integration state. Preserve uncommitted work from other contributors. The previous session was explicitly stopped at a checkpoint, not because the product was finished.
 
+Later update: user resumed work; PR #2 merged at 59409be. Read docs/INSTALLED-ACCEPTANCE.md for new native chart labels/patterns/table/reopen/restore, sensory/form edit-submit-preservation, and speech selection/pause/resume/Stop control-state evidence. Audible output has not been independently recorded. Prioritize remaining acceptance gates accordingly rather than repeating already-recorded smoke tests.
+
 ## Goal and priority
 
 Build a user-controlled Chrome accessibility extension. The source blueprint is a private 50-page Bible.pdf; final Part II/A1 overrides earlier feature lists. It is not a job portal or medical product. Deliver a dependable P0 local core before P1. No AbleHire source archive was supplied. The AI product name does not mean an AI backend exists.
