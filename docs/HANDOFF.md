@@ -1,5 +1,9 @@
 # AbleVerse AI checkpoint — 2026-11-07
 
+## Latest handoff pack (read first)
+
+PR #5 by Arihant2007 merged into main at f257cda. Integration reviewer reran 48 Vitest + 3 package checks, production build/package and audit successfully; tested PR and merged main matched. Native acceptance for the new preview/protection/Restore paths remains pending. START-HERE.md is the entry point, WORKFLOW.md gives milestones and done conditions, PROMPTS.md has copyable role/task messages, and CONTINUATION-PROMPT.md is rewritten for the latest baseline. Earlier chronology below is historical evidence. This task creates handoff documentation, not further runtime features or release certification.
+
 ## Implementation follow-up - 2026-11-07
 
 Read the private blueprint, including final A1 priorities and A3-A7/A16-A17 contracts. Implemented P0 refinements: optional local typography draft with explicit Apply, draft discard on tab/navigation/module change or Restore, Reading colour control, sticky Restore with keyboard scroll clearance, stronger input/select borders, custom-widget/form/focus-target protection, and safe h4-h6 scaling. No permissions or dependencies added. P1 remains deferred by A1 until native P0 gates pass.
@@ -8,7 +12,7 @@ Current evidence: 48 Vitest + 3 package checks pass; production package verifies
 
 Next contributor: review the implementation PR, reload its built dist in Chrome, test preview Apply/discard and protected widgets/headings, then complete the native cases in NEXT-CONTRIBUTOR.md. Do not begin AI/ASL/hover/stretch-chart work until required P0 gates pass.
 
-## Latest follow-up � 2026-11-07
+## Latest follow-up — 2026-11-07
 
 PR #4 is merged at `ecf757653b25fb97ca62ffc7327c4695b8b30f1f`; prior work is integrated into main. Fresh Windows checkout: Node 24.21.0 / npm 11.19.0, npm ci succeeded with zero reported vulnerabilities, 44 Vitest + 3 packaging checks passed, and production packaging verified 11 files. This follow-up changes documentation only; no new native acceptance is claimed. Follow [NEXT-CONTRIBUTOR.md](NEXT-CONTRIBUTOR.md) for ordered remaining cases and evidence requirements. Historical stopping notes below describe the previous session.
 

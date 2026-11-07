@@ -1,6 +1,6 @@
 # Contributor instructions
 
-Read README.md, docs/HANDOFF.md, docs/TEST-MATRIX.md and docs/CONTINUATION-PROMPT.md before continuing. The latest user instruction takes precedence over historical autonomous-work requests.
+Read docs/START-HERE.md, docs/WORKFLOW.md, README.md, docs/HANDOFF.md, docs/TEST-MATRIX.md and docs/CONTINUATION-PROMPT.md before continuing. Task prompts are in docs/PROMPTS.md. The latest user instruction takes precedence over historical autonomous-work requests.
 
 ## Product decisions
 
