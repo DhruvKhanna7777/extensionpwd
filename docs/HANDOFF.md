@@ -76,3 +76,11 @@ Latest evidence: PR #3 merged at 417d183. User explicitly confirmed hearing the 
 User requested STOP AT CHECKPOINT again after confirming audio. PR #4 saves that confirmation and this final handoff. No further feature work or browser testing is in progress. Resume only when asked. Read CONTINUATION-PROMPT.md and INSTALLED-ACCEPTANCE.md first. All completed source and evidence belong on main; confirm the final GitHub main commit when resuming. Existing native extension remains installed; the local demo server is stopped at handoff and must be restarted with npm run demo.
 
 Next contributor should prioritize remaining P0 checks, not P1 features: other voices/rate/volume, audible Stop/Escape timing, tab hide/pagehide/SPA, permission errors, dynamic chart contract invalidation, keyboard/screen-reader/full UI contrast/zoom, browser version/icon checks and distribution licence. Do not repeat completed chart/form smoke checks unless code changes justify it. No runtime changes followed the 44+3 passing automated baseline; later changes are fixture copy and recorded evidence.
+
+## Local verification checkpoint on `1fb60e1` (2026-11-07)
+
+PR #6 added contributor documentation after `f257cda`. GitHub reported zero open PRs at the time of the check. See TEST-MATRIX.md for fresh automated and browser engine results and the local esbuild blocker. First next task: rerun `npm run package` in an environment where esbuild can enumerate the checkout ancestors, load the resulting `dist` in the authorized Chrome testing profile, and start with installed Reading preview Apply/discard and sticky Restore.
+
+Packaging follow-up: the 11-file production ZIP is verified. Windows denied launching the isolated Chrome profile. Resume at Load unpacked from `dist` in an open Chrome testing profile, then verify Reading preview and sticky Restore against the local article fixture.
+
+The installed P0 follow-up is recorded in INSTALLED-ACCEPTANCE.md. The next listening run should confirm audible pause, resume, Stop and Escape with measured timing and alternate voices/rates/volumes. Additional tab and permission races, chart and Reading edge cases, full accessibility and release checks remain open.

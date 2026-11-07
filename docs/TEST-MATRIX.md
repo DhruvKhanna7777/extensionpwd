@@ -67,3 +67,23 @@ On Windows, Node 24.21.0 / npm 11.19.0: npm ci succeeded (0 vulnerabilities repo
 - Expanded browser-engine harness 19/19 PASS (adds custom-control protection and h4 scaling).
 - Preview layout 15/15 module/width combinations at 320/360/400px: no horizontal overflow/clipped controls. Reading preview changed to 150%; sticky Restore remained at top (0px) with keyboard focus near speech controls after 1054px scroll.
 - No new installed Chrome, audible or screen-reader acceptance. Native tests must use the updated build.
+
+## Contributor verification on `1fb60e1` (2026-11-07)
+
+- PASS (Windows, Node 24.20.0, npm 11.19.0): `npm ci` with a workspace-local npm cache, `npm test` (48 Vitest and 3 packaging checks), `tsc --noEmit`, and `npm audit --audit-level=high` (zero vulnerabilities reported).
+- PASS (in-app browser engine): `/demo/validation.html` reported 19/19 after clicking **Run browser checks**. Vite was started locally with dependency discovery disabled for this run.
+- BLOCKED (production bundle and ZIP): `npm run package` reached esbuild after typechecking. esbuild reported access denied when enumerating an ancestor directory and then failed to resolve the existing UI entry point. A separate filesystem check identified the Windows profile root as inaccessible for directory enumeration. The default `npm run demo` encountered the same failure during dependency discovery.
+- BLOCKED (installed Chrome acceptance): this run produced no complete loadable extension. Reading preview and Restore, audible speech, lifecycle, access, dynamic charts, keyboard and screen reader, zoom, contrast and installed icon checks remain open. The browser engine results are separate evidence.
+
+### Packaging follow-up
+
+- PASS: mapped this checkout temporarily to `Z:` and ran unmodified `npm run package`. Typecheck and production bundling succeeded, and the packager verified the 11-file ZIP. Independently checked SHA-256: `b3a31e54d6d96002e105450270479066b4e0b279035702dbc8c20e95b194ae0c`. Removed the temporary drive mapping.
+- BLOCKED: Windows denied launching Chrome with an isolated test profile. Installed Reading preview and sticky Restore remain unverified. The local demo fixture can run with Vite dependency discovery disabled.
+
+Installed Reading follow-up: the popup and side panel opened on the local article. Preview before Apply, explicit Apply, sticky Restore and discard on switching modules passed. See INSTALLED-ACCEPTANCE.md for the exact scope and remaining cases.
+
+Installed P0 follow-up: default selected-text audio was confirmed by the listener. Native chart source invalidation, normal and history-only navigation cleanup, ungranted-tab isolation, and a keyboard Charts spot check passed. See INSTALLED-ACCEPTANCE.md for limits and remaining cases.
+
+Audible speech cancellation passed on tab switch, normal navigation, and history-only navigation. See INSTALLED-ACCEPTANCE.md for the evidence and timing limits.
+
+Reading reflow follow-up (2026-11-07): eligible prose now breaks an overlong word when needed while Reading is on. Restore removes the rule. The regression failed before the fix and the full suite then passed 49 Vitest and 3 packaging checks. The browser engine harness passed 20/20, including a 240px column with 150% Verdana and 0.09em letter and 0.21em word spacing. The rebuilt package verified 11 files. Retest the installed build and complete the zoom and screen-reader checks.
