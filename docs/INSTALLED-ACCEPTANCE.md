@@ -1,5 +1,27 @@
 # Installed Chrome acceptance — 2026-11-07
 
+## Current continuation: installed verification blocked (2026-11-07)
+
+Source/build: `6d227bc3f52e8387f44c0849f5850c5bc4b045b4`, upstream main after merged PR #7. Earlier results below are preserved, not rerun or superseded.
+
+Environment: Windows NT 10.0.26300.0, Node 24.16.0, npm 11.13.0. Chrome windows were discoverable, but Chrome version, profile, viewport, zoom and installed source were not verified. Tester: coding assistant; no new listener or screen-reader observations.
+
+Attempted steps: locate the existing Chrome window and bind it through supported Computer Use before inspecting the installed build. Actual result: the tool stopped before returning browser state because it could not determine the current URL with enough confidence to enforce policy. This recurred on a later user-requested retry. Browser interaction stopped; no alternate UI route bypassed verification. No profile, grant or extension setting was changed.
+
+| Case | Result this continuation | Steps / expected result still to verify |
+|---|---|---|
+| P0-RF: installed reflow | BLOCKED | Reload this build; article at 150% Verdana, 0.09em letter/0.21em word spacing with side panel open. Record viewport width and zoom. Heading wraps, prose adds no horizontal scrolling, Restore returns baseline. |
+| P0-RD: Reading edges | NOT RUN | Navigation discards changed draft; Apply preserves other modes; heading hierarchy and forms/custom controls stay usable. |
+| P0-AC: access/ownership | NOT RUN | Internal/store pages, supported real grant revocation, and tab switch proven to occur while Apply is pending. Destination must stay unchanged. |
+| P0-DY: dynamic pages | NOT RUN | With Charts off, unrelated chart mutation preserves Reading. Restore preserves newer text/fill edits. Inserted prose adapts only after explicit reapply. |
+| P0-SP: speech gaps | NOT RUN | Measure audible Stop, page Escape, tab-switch, normal-navigation and history-only cancellation latency in fresh runs. Test rate/volume endpoints separately; record voices/settings/listener outcomes. |
+| P0-AX: accessibility | NOT RUN | All modules, popup/panel, keyboard and named/versioned screen reader; focus, names, values, announcements, errors, table headers. Zoom 100/200/400%, narrow widths, all palettes, normal/error contrast and icons. |
+| P0-RL: release materials | NOT RUN | After P0 passes, owner chooses licence; prepare supported-feature store/privacy copy, screenshots and package evidence. Owner decides publishing. |
+
+These are environment/procedure outcomes, not product failures. No new installed, audible or screen-reader PASS is claimed. Resume at P0-RF when URL verification works or an authorized human tester can execute and report the case. P1 remains deferred until required P0 gates pass.
+
+Build preparation passed separately: `npm ci` (zero vulnerabilities reported) and `npm run package` (production typecheck/build, 11 verified ZIP files). SHA-256: `0238a53ea0bac1213fa9e28979ca395cc49f8d2ea20be867c3e5ef5c318dd9df`, matching the supplied reflow checksum. Automated suites were not rerun; packaging evidence does not close installed gates.
+
 Environment: original Windows workstation, existing cyan dhruvkhanna1522 Chrome profile, unpacked AbleVerse AI 0.1.0, extension ID ddibeighmdafgbbnigmkojdkneemdghe. User reported reloading the current build after main checkpoint 59409be. Browser version has not yet been captured.
 
 ## Chart smoke test: PASS

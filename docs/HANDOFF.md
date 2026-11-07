@@ -1,5 +1,17 @@
 # AbleVerse AI checkpoint — 2026-11-07
 
+## Current continuation: start from merged PR #7
+
+The user resumed pending work from upstream main `6d227bc3f52e8387f44c0849f5850c5bc4b045b4`, without repeating completed checks. Fresh fetch confirmed that baseline; GitHub reported PR #7 merged and no open upstream PRs before this continuation PR. Older checkpoint/stop instructions below are history.
+
+Prepared the unchanged source on Windows NT 10.0.26300.0, Node 24.16.0 / npm 11.13.0. Dependency install and production typecheck/build/package passed; 11 verified ZIP files and SHA-256 `0238a53ea0bac1213fa9e28979ca395cc49f8d2ea20be867c3e5ef5c318dd9df` match the supplied reflow package. No runtime or dependency changes; existing automated suites were not rerun.
+
+Installed reflow remains BLOCKED: Computer Use stopped before inspecting Chrome because it could not confidently verify the current URL, including on a later requested retry. No browser bypass, new listening observation or screen-reader test occurred. INSTALLED-ACCEPTANCE.md records seven case groups, with reflow BLOCKED and the other groups NOT RUN in this continuation. Earlier completed evidence is preserved.
+
+Next: reload this build in an authorized Chrome testing profile once supported URL verification works, or have an authorized human tester record the installed case. Start with reflow (150% Verdana, 0.09em letter/0.21em word spacing, side panel open, recorded viewport and zoom); then finish Reading, access/queue, dynamic-page, speech and accessibility gaps. Keep P1 behind P0. AI provider/consent/cost, verified sign-media licensing, distribution licence and publishing still require owner decisions; no service, asset or release was selected here.
+
+Local service prepared for the next check: Vite on `http://127.0.0.1:5173`; `/demo/article.html` returned HTTP 200. It is left running for the current tester. Generated dist/ZIP stay outside Git. Browser installation/reload is not established.
+
 ## Latest handoff pack (read first)
 
 PR #5 by Arihant2007 merged into main at f257cda. Integration reviewer reran 48 Vitest + 3 package checks, production build/package and audit successfully; tested PR and merged main matched. Native acceptance for the new preview/protection/Restore paths remains pending. START-HERE.md is the entry point, WORKFLOW.md gives milestones and done conditions, PROMPTS.md has copyable role/task messages, and CONTINUATION-PROMPT.md is rewritten for the latest baseline. Earlier chronology below is historical evidence. This task creates handoff documentation, not further runtime features or release certification.
