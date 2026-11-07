@@ -1,5 +1,11 @@
 # Next contributor: finish P0 acceptance
 
+## Latest implemented contribution
+
+The follow-up adds local preview-before-apply typography, a Reading colour selector, persistent Restore, clearer control borders, custom-widget/form protection and h4-h6 scaling. Current validation: 48 Vitest + 3 package checks, production package, 19/19 real-browser engine checks and 15/15 narrow preview layouts passed. Earlier 44/17 counts below describe the starting point.
+
+First review and merge the implementation PR. Rebuild/reload its dist in Chrome and verify preview Apply/discard (including tab changes and Restore), custom controls/form prose left intact and heading hierarchy. Then continue the ordered native gates below. This workstation had no connected Chrome profile; no new native/audio/screen-reader PASS is claimed. P1 starts only after P0 acceptance.
+
 ## Verified starting point — 2026-11-07
 
 PR #2 merged at `59409be`, PR #3 at `417d183`, and PR #4 at

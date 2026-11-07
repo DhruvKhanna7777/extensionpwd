@@ -8,12 +8,12 @@ Start here: [next contributor checklist](docs/NEXT-CONTRIBUTOR.md) for the verif
 
 Version 0.1.0 is the first local core, **not release-certified**. Installed Chrome lifecycle, actual voice playback and screen-reader acceptance still require manual verification. See [handoff](docs/HANDOFF.md) and [test matrix](docs/TEST-MATRIX.md).
 
-New contributors should read [project instructions](AGENTS.md) and the [complete continuation prompt](docs/CONTINUATION-PROMPT.md). Current checks: 44 core/UI tests, 3 package checks, 17 browser-engine checks and 15 preview layout combinations passed. Later [installed Chrome smoke checks](docs/INSTALLED-ACCEPTANCE.md) cover charts, form preservation and speech control states. Other speech combinations and full native release gates remain open.
+New contributors should read [project instructions](AGENTS.md) and the [complete continuation prompt](docs/CONTINUATION-PROMPT.md). Current checks: 48 core/UI tests, 3 package checks, 19 browser-engine checks and 15 preview layout combinations passed. Later [installed Chrome smoke checks](docs/INSTALLED-ACCEPTANCE.md) cover charts, form preservation and speech control states. Other speech combinations and full native release gates remain open.
 
-Stopped at the user's requested checkpoint on 2026-11-07. User confirmed audible selected text and working pause/resume on this device. Full native release gates remain open; see the final stopping checkpoint in the handoff. No further testing or feature work is running.
+Implementation resumed on 2026-11-07; see the latest handoff for new P0 refinements. Earlier stopping checkpoint: User confirmed audible selected text and working pause/resume on this device. Full native release gates remain open; see the final stopping checkpoint in the handoff. The updated build still needs native acceptance.
 
 - React popup and full side panel: Overview, Reading, Sensory, Charts and Settings.
-- Bounded font family, size, line/letter/word spacing; typography preview and reset.
+- Bounded font family, size, line/letter/word spacing; optional preview-before-apply draft and reset. Reading colour presets and persistent Restore.
 - Selected-prose speech, pause/resume, stop and Escape. Form fields and editable content excluded.
 - Reduced CSS motion, focus outline, control emphasis and warm/dark/high-contrast prose colours.
 - Opt-in hiding of explicitly marked noninteractive distractions; forms, links, alerts and keyboard targets remain visible.
@@ -47,7 +47,7 @@ After rebuilding, reload the extension and demo tab. Browser-internal/store page
 
 `npm run package` rebuilds and creates `artifacts/ableverse-ai-0.1.0.zip`. It packages an explicit build-file allowlist, checks manifest paths stay inside dist, verifies ZIP contents byte for byte, and prints a SHA-256 checksum. Unrelated leftovers and `.env` files are excluded. Extract the ZIP before using Load unpacked. Keep the allowlist current when adding legitimate new shipped assets.
 
-`npm test` runs the 44 core/UI tests and 3 packaging checks. `/demo/validation.html` provides 17 real-browser page-engine checks; it does not impersonate an installed extension or prove actual voice playback.
+`npm test` runs the 48 core/UI tests and 3 packaging checks. `/demo/validation.html` provides 19 real-browser page-engine checks; it does not impersonate an installed extension or prove actual voice playback.
 
 `npm run demo` also serves an interface-only preview at `/`. That preview cannot modify tabs or use extension APIs. See [demo script](DEMO.md).
 

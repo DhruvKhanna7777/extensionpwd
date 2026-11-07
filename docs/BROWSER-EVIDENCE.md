@@ -39,3 +39,7 @@ Reading was visually inspected at 320px and Settings at 400px. Vertical scrollin
 ## Remaining native gates
 
 Installed Chrome has earlier installation/popup/panel/Reading/Restore smoke evidence. Later native chart/form smoke checks and user-confirmed paragraph audio/pause/resume are recorded in INSTALLED-ACCEPTANCE.md. Other voice combinations, audible cancellation, native lifecycle, screen-reader walkthrough and full UI acceptance remain open. No browser-engine or preview result is substituted for those gates.
+
+## Implementation follow-up - 2026-11-07
+
+Reran the real engine in the in-app browser: 19/19 PASS, adding custom-control exclusion and 20px h4 -> 30px scaling. Reran five-module layout matrix at 320/360/400px: 15/15 with no horizontal overflow or clipped controls. Observed local typography preview at 150%, Reading colour selector, and sticky Restore at top 0px after keyboard focus moved to Pause/resume near the bottom. Temporary viewport override reset afterwards. This is browser-engine/interface evidence, not installed Chrome or audible evidence.

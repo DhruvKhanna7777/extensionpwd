@@ -16,7 +16,7 @@ import axe from "axe-core";
 type Message = { type: string; settings?: typeof defaults };
 it("ignores a pending state refresh after a newer Apply action", async () => {
   render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   const original = chrome.tabs.sendMessage;
   let complete!: (v: unknown) => void;
   (chrome.tabs as any).sendMessage = (id: number, message: Message) =>
@@ -58,7 +58,7 @@ it("clears the reading announcement when playback finishes", async () => {
 });
 it("keeps the Restore confirmation when the page state notification arrives", async () => {
   render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   fireEvent.click(screen.getByRole("button", { name: /Restore original/ }));
   await screen.findByText("Original page restored. Speech stopped.");
   await act(async () => {
@@ -148,7 +148,7 @@ beforeEach(() => {
 });
 it("keeps focused controls enabled while a speech status update is pending", async () => {
   render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   const checkbox = screen.getByRole("checkbox", {
     name: /Reading Studio/,
   }) as HTMLInputElement;
@@ -173,7 +173,7 @@ it("keeps focused controls enabled while a speech status update is pending", asy
 it("supports keyboard navigation, Space to enable and Enter to restore", async () => {
   const user = userEvent.setup();
   render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   await user.tab();
   expect(document.activeElement).toBe(
     screen.getByRole("button", { name: /Restore original/ }),
@@ -193,7 +193,7 @@ it("supports keyboard navigation, Space to enable and Enter to restore", async (
 });
 it("has no automated semantic accessibility violations in each module", async () => {
   const { container } = render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   for (const name of ["Overview", "Reading", "Sensory", "Charts", "Settings"]) {
     fireEvent.click(screen.getByRole("button", { name }));
     const result = await axe.run(container, {
@@ -209,7 +209,7 @@ afterEach(() => {
 });
 it("rolls controls back when page permission is denied", async () => {
   render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   failInjection = true;
   fireEvent.click(screen.getByRole("checkbox", { name: /Reading Studio/ }));
   await screen.findByText(/Cannot access this tab/);
@@ -242,7 +242,7 @@ it("keeps queued page changes bound to the tab selected at click time", async ()
   let release!: () => void;
   pendingApply = new Promise<void>((r) => (release = r));
   render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   fireEvent.click(screen.getByRole("checkbox", { name: /Reading Studio/ }));
   await waitFor(() => expect(applied).toEqual([7]));
   fireEvent.click(screen.getByRole("checkbox", { name: /Reduce motion/ }));
@@ -256,7 +256,7 @@ it("keeps queued page changes bound to the tab selected at click time", async ()
 it("loads saved preferences without injecting or applying page changes", async () => {
   saved = { ableverse: { ...defaults, reading: true, fontScale: 130 } };
   render(<App />);
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   fireEvent.click(screen.getByRole("button", { name: "Settings" }));
   fireEvent.click(screen.getByRole("button", { name: "Load saved" }));
   await screen.findByText(/Saved preferences loaded/);
@@ -283,7 +283,7 @@ it("does not let a stale tab-state response overwrite the new tab", async () => 
   await act(async () => {
     for (const fn of listeners) fn();
   });
-  await screen.findByText("Showing this page’s current preferences.");
+  await screen.findByText(/Showing this page/);
   await act(async () => {
     completeOld({ ok: true, settings: { ...defaults, reading: true } });
   });
@@ -294,4 +294,71 @@ it("does not let a stale tab-state response overwrite the new tab", async () => 
       }) as HTMLInputElement
     ).checked,
   ).toBe(false);
+});
+
+it("keeps typography preview local until explicitly applied and preserves other modes", async () => {
+  render(<App />);
+  await screen.findByText(/Showing this page/);
+  fireEvent.click(screen.getByRole("checkbox", { name: /Reduce motion/ }));
+  await waitFor(() => expect(applied).toHaveLength(1));
+  fireEvent.click(screen.getByRole("button", { name: "Reading" }));
+  fireEvent.click(
+    screen.getByRole("checkbox", { name: /Preview typography only/ }),
+  );
+  fireEvent.change(
+    screen.getByRole("spinbutton", { name: "Text size numeric value" }),
+    { target: { value: "150" } },
+  );
+  expect(applied).toHaveLength(1);
+  expect(pageSettings.fontScale).toBe(100);
+  fireEvent.click(
+    screen.getByRole("button", { name: "Apply typography preview" }),
+  );
+  await waitFor(() => expect(pageSettings.fontScale).toBe(150));
+  expect(pageSettings.reading).toBe(true);
+  expect(pageSettings.motion).toBe(true);
+});
+it("discards typography preview on tab changes and restores without applying the draft", async () => {
+  render(<App />);
+  await screen.findByText(/Showing this page/);
+  fireEvent.click(screen.getByRole("button", { name: "Reading" }));
+  fireEvent.click(
+    screen.getByRole("checkbox", { name: /Preview typography only/ }),
+  );
+  fireEvent.change(
+    screen.getByRole("spinbutton", { name: "Text size numeric value" }),
+    { target: { value: "160" } },
+  );
+  active = { ...active, id: 99 };
+  await act(async () => {
+    for (const fn of listeners) fn();
+  });
+  expect(
+    (
+      screen.getByRole("checkbox", {
+        name: /Preview typography only/,
+      }) as HTMLInputElement
+    ).checked,
+  ).toBe(false);
+  expect(
+    (
+      screen.getByRole("spinbutton", {
+        name: "Text size numeric value",
+      }) as HTMLInputElement
+    ).value,
+  ).toBe("100");
+  expect(applied).toEqual([]);
+  fireEvent.click(
+    screen.getByRole("checkbox", { name: /Preview typography only/ }),
+  );
+  fireEvent.change(
+    screen.getByRole("spinbutton", { name: "Text size numeric value" }),
+    { target: { value: "170" } },
+  );
+  fireEvent.click(screen.getByRole("button", { name: /Restore original/ }));
+  await screen.findByText("Original page restored. Speech stopped.");
+  expect(
+    screen.queryByRole("button", { name: "Apply typography preview" }),
+  ).toBeNull();
+  expect(applied).toEqual([]);
 });

@@ -59,3 +59,11 @@ Final review regressions: removing or changing an SVG chart contract removes sta
 ## Fresh follow-up verification — 2026-11-07
 
 On Windows, Node 24.21.0 / npm 11.19.0: npm ci succeeded (0 vulnerabilities reported), npm test passed 44 Vitest + 3 package checks, npm run package passed typechecking/build and verified 11 files. Documentation-only follow-up; no new browser or audible acceptance. See NEXT-CONTRIBUTOR.md for remaining native cases.
+
+## Implementation follow-up - 2026-11-07
+
+- 48 Vitest tests + 3 packaging checks PASS; production build/11-file package PASS.
+- New regressions: preview makes no Apply until explicit action, preserves other modes, clears on tab change/Restore; custom widgets, focus targets, dialog/form prose protected; h4-h6 preserve relative sizes.
+- Expanded browser-engine harness 19/19 PASS (adds custom-control protection and h4 scaling).
+- Preview layout 15/15 module/width combinations at 320/360/400px: no horizontal overflow/clipped controls. Reading preview changed to 150%; sticky Restore remained at top (0px) with keyboard focus near speech controls after 1054px scroll.
+- No new installed Chrome, audible or screen-reader acceptance. Native tests must use the updated build.
