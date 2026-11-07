@@ -32,6 +32,39 @@ describe("safe settings", () => {
 });
 
 describe("reversible page adaptation", () => {
+  it("protects custom controls, focus targets, dialogs and form prose", () => {
+    document.body.innerHTML = `<main><p id="safe">Article prose</p>
+      <p role="button">Custom action</p><p tabindex="0">Focus target</p>
+      <div role="slider"><p>Slider label</p></div>
+      <div role="dialog"><p>Dialog instructions</p></div>
+      <form><p>Form instructions</p></form><p><span role="switch">Switch</span></p></main>`;
+    const before = document.body.innerHTML;
+    const engine = new PageEngine(document);
+    engine.apply({ ...defaults, reading: true, calm: "contrast" });
+    expect(
+      [...document.querySelectorAll("[data-ableverse-prose]")].map(
+        (el) => el.id,
+      ),
+    ).toEqual(["safe"]);
+    engine.restore();
+    expect(document.body.innerHTML).toBe(before);
+  });
+  it("scales lower-level headings without flattening their hierarchy", () => {
+    document.head.innerHTML =
+      "<style>h4{font-size:24px}h5{font-size:20px}h6{font-size:18px}</style>";
+    document.body.innerHTML =
+      "<main><h4>Four</h4><h5>Five</h5><h6>Six</h6></main>";
+    const engine = new PageEngine(document);
+    engine.apply({ ...defaults, reading: true, fontScale: 150 });
+    expect(
+      ["h4", "h5", "h6"].map(
+        (tag) => getComputedStyle(document.querySelector(tag)!).fontSize,
+      ),
+    ).toEqual(["36px", "30px", "27px"]);
+    engine.restore();
+    expect(document.querySelector("[data-ableverse-prose]")).toBeNull();
+  });
+
   it("does not hide marked custom widgets or keyboard targets", () => {
     document.body.innerHTML =
       '<main><div data-av-distractor role="button" tabindex="0">Custom action</div><div data-av-distractor><div tabindex="0">Keyboard target</div></div></main>';

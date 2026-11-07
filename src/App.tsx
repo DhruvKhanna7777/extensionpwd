@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { validateSettings, type Settings } from "./settings";
 import { usePageController } from "./usePageController";
 import "./ui.css";
@@ -12,7 +12,8 @@ const sections = [
 export function App() {
   const [section, setSection] = useState<string>("Overview");
   const {
-    settings,
+    settings: effectiveSettings,
+    pageEpoch,
     setSettings,
     status,
     domain,
@@ -25,6 +26,45 @@ export function App() {
     restore,
     openPanel,
   } = usePageController();
+  const [typographyDraft, setTypographyDraft] =
+    useState<Partial<Settings> | null>(null);
+  useEffect(() => setTypographyDraft(null), [pageEpoch]);
+  const settings = { ...effectiveSettings, ...typographyDraft };
+  const editTypography = (patch: Partial<Settings>) => {
+    if (typographyDraft !== null)
+      setTypographyDraft((draft) => {
+        const next = validateSettings({
+          ...effectiveSettings,
+          ...draft,
+          ...patch,
+        });
+        return {
+          ...draft,
+          ...Object.fromEntries(
+            Object.keys(patch).map((key) => [key, next[key as keyof Settings]]),
+          ),
+        };
+      });
+    else change(patch);
+  };
+  const editSlider = (key: keyof Settings, value: number) =>
+    ["fontScale", "lineHeight", "letterSpacing", "wordSpacing"].includes(key)
+      ? editTypography({ [key]: value })
+      : change({ [key]: value });
+  const colourControl = (
+    <label className="field">
+      Reading colour preference
+      <select
+        value={effectiveSettings.calm}
+        onChange={(e) => change({ calm: e.target.value })}
+      >
+        <option value="default">Original colours</option>
+        <option value="warm">Warm paper</option>
+        <option value="dark">Midnight</option>
+        <option value="contrast">High contrast</option>
+      </select>
+    </label>
+  );
   const isPopup = location.pathname.endsWith("popup.html");
   const toggle = (
     key:
@@ -76,7 +116,7 @@ export function App() {
           max={max}
           step={step}
           value={settings[key]}
-          onChange={(e) => change({ [key]: Number(e.target.value) })}
+          onChange={(e) => editSlider(key, Number(e.target.value))}
         />
         <input
           aria-label={`${label} numeric value`}
@@ -86,8 +126,7 @@ export function App() {
           step={step}
           value={settings[key]}
           onChange={(e) => {
-            if (e.target.value !== "")
-              change({ [key]: Number(e.target.value) });
+            if (e.target.value !== "") editSlider(key, Number(e.target.value));
           }}
         />
       </div>
@@ -111,10 +150,19 @@ export function App() {
         <div className="site">
           <span aria-hidden="true">◉</span> {domain}
         </div>
-        <button className="restore" disabled={!canApply} onClick={restore}>
+      </header>
+      <div className="restore-bar">
+        <button
+          className="restore"
+          disabled={!canApply}
+          onClick={() => {
+            setTypographyDraft(null);
+            restore();
+          }}
+        >
           ↶ Restore original page
         </button>
-      </header>
+      </div>
       <div
         className={error ? "notice error" : "notice"}
         role="status"
@@ -129,7 +177,10 @@ export function App() {
               key={s}
               aria-pressed={section === s}
               className={section === s ? "active" : ""}
-              onClick={() => setSection(s)}
+              onClick={() => {
+                setTypographyDraft(null);
+                setSection(s);
+              }}
             >
               {s}
             </button>
@@ -221,11 +272,36 @@ export function App() {
                   "Adjust page text",
                   "Applies to safe prose in article and main regions.",
                 )}
+                <label className="toggle">
+                  <span>
+                    <strong>Preview typography only</strong>
+                    <small>
+                      Try font and spacing changes here before applying them to
+                      the page.
+                    </small>
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={typographyDraft !== null}
+                    onChange={(e) =>
+                      setTypographyDraft(e.target.checked ? {} : null)
+                    }
+                  />
+                </label>
+                {typographyDraft !== null && (
+                  <p>
+                    Typography preview only. The webpage keeps its current
+                    typography until you choose Apply typography preview.
+                    Leaving preview discards unapplied changes.
+                  </p>
+                )}
                 <label className="field">
                   Font family
                   <select
                     value={settings.fontFamily}
-                    onChange={(e) => change({ fontFamily: e.target.value })}
+                    onChange={(e) =>
+                      editTypography({ fontFamily: e.target.value })
+                    }
                   >
                     {["system-ui", "Arial", "Georgia", "Verdana"].map((f) => (
                       <option key={f}>{f}</option>
@@ -252,7 +328,7 @@ export function App() {
                 )}
                 <button
                   onClick={() =>
-                    change({
+                    editTypography({
                       fontScale: 100,
                       lineHeight: 1.5,
                       letterSpacing: 0,
@@ -263,6 +339,18 @@ export function App() {
                 >
                   Reset typography
                 </button>
+                {typographyDraft !== null && (
+                  <button
+                    className="primary"
+                    onClick={() => {
+                      change({ ...typographyDraft, reading: true });
+                      setTypographyDraft(null);
+                    }}
+                  >
+                    Apply typography preview
+                  </button>
+                )}
+                {colourControl}
               </section>
               <section className="card">
                 <h3>Reading preview</h3>
@@ -343,18 +431,7 @@ export function App() {
                   "Emphasise controls",
                   "Add outlines and underline links.",
                 )}
-                <label className="field">
-                  Reading colour preference
-                  <select
-                    value={settings.calm}
-                    onChange={(e) => change({ calm: e.target.value })}
-                  >
-                    <option value="default">Original colours</option>
-                    <option value="warm">Warm paper</option>
-                    <option value="dark">Midnight</option>
-                    <option value="contrast">High contrast</option>
-                  </select>
-                </label>
+                {colourControl}
                 <small>
                   Colour changes affect eligible prose only. Warnings, forms and
                   code are excluded. Images, video and canvas motion are
@@ -399,7 +476,9 @@ export function App() {
                     className="primary"
                     onClick={async () => {
                       try {
-                        await chrome.storage.local.set({ ableverse: settings });
+                        await chrome.storage.local.set({
+                          ableverse: effectiveSettings,
+                        });
                         tell("Preferences saved on this device.");
                       } catch {
                         tell("Storage is unavailable in preview.", true);

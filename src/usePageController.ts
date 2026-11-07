@@ -27,6 +27,7 @@ export function usePageController() {
   const [domain, setDomain] = useState("Current page");
   const [error, setError] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
+  const [pageEpoch, setPageEpoch] = useState(0);
   const [canApply, setCanApply] = useState(!globalThis.chrome?.tabs);
   const targetRef = useRef<chrome.tabs.Tab>();
   const revision = useRef(0);
@@ -46,6 +47,7 @@ export function usePageController() {
     const refresh = async (reason?: string) => {
       const generation = ++revision.current;
       if (!reason) {
+        setPageEpoch((value) => value + 1);
         setCanApply(false);
         setSettings({ ...defaults });
         setError(false);
@@ -257,6 +259,7 @@ export function usePageController() {
   }
   return {
     settings,
+    pageEpoch,
     setSettings,
     status,
     domain,

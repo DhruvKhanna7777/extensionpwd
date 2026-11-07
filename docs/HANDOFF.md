@@ -1,5 +1,17 @@
 # AbleVerse AI checkpoint â€” 2026-11-07
 
+## Implementation follow-up - 2026-11-07
+
+Read the private blueprint, including final A1 priorities and A3-A7/A16-A17 contracts. Implemented P0 refinements: optional local typography draft with explicit Apply, draft discard on tab/navigation/module change or Restore, Reading colour control, sticky Restore with keyboard scroll clearance, stronger input/select borders, custom-widget/form/focus-target protection, and safe h4-h6 scaling. No permissions or dependencies added. P1 remains deferred by A1 until native P0 gates pass.
+
+Current evidence: 48 Vitest + 3 package checks pass; production package verifies 11 files. In-app browser: expanded real-engine harness 19/19 PASS, five modules at 320/360/400px 15/15 fit without horizontally clipped controls. Preview size change observed; keyboard focus at lower speech controls leaves Restore at viewport top. These are preview/engine results. This workstation inventory exposes Edge and the in-app browser, no connected Chrome profile; installed Chrome, human listening and screen-reader gates remain open. The original workstation's results are historical evidence, not certification of this new build.
+
+Next contributor: review the implementation PR, reload its built dist in Chrome, test preview Apply/discard and protected widgets/headings, then complete the native cases in NEXT-CONTRIBUTOR.md. Do not begin AI/ASL/hover/stretch-chart work until required P0 gates pass.
+
+## Latest follow-up — 2026-11-07
+
+PR #4 is merged at `ecf757653b25fb97ca62ffc7327c4695b8b30f1f`; prior work is integrated into main. Fresh Windows checkout: Node 24.21.0 / npm 11.19.0, npm ci succeeded with zero reported vulnerabilities, 44 Vitest + 3 packaging checks passed, and production packaging verified 11 files. This follow-up changes documentation only; no new native acceptance is claimed. Follow [NEXT-CONTRIBUTOR.md](NEXT-CONTRIBUTOR.md) for ordered remaining cases and evidence requirements. Historical stopping notes below describe the previous session.
+
 Version 0.1.0 local core. User requested a verified stopping checkpoint, all completed work saved, and a contributor handoff. This is not a release-certified product. Integration target is main through PR #2, following the earlier PR #1 merge. Check GitHub for the final merge SHA rather than treating this document as a live branch-status query.
 
 ## Implemented

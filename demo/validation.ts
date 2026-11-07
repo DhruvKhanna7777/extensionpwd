@@ -4,7 +4,7 @@ const fixture = document.querySelector<HTMLDivElement>("#fixture")!;
 const status = document.querySelector<HTMLParagraphElement>("#status")!;
 const results = document.querySelector<HTMLOListElement>("#results")!;
 const engine = new PageEngine(document);
-const source = `<main><article><h1>Preserve heading hierarchy</h1><p id="prose">A readable paragraph with a <a href="#fixture">working link</a>.</p><p role="alert">Important warning stays intact.</p><pre><code>Protected code sample</code></pre><p contenteditable="true">Editable draft</p></article><form><label>Name <input name="name" value="Demo reader"></label><label>Password <input type="password" value="demo-only"></label><button type="submit">Submit locally</button><output id="form-result"></output></form><figure><svg data-av-chart="bar" data-av-unit="units" aria-label="Verified months" viewBox="0 0 400 200"><title>Verified months</title><path d="M20 20V170H380" fill="none" stroke="black"/><rect x="50" y="110" width="50" height="60" fill="red" style="fill:purple" data-av-label="March" data-av-value="30"/><rect x="150" y="60" width="50" height="110" fill="green" data-av-label="April" data-av-value="55"/><text x="50" y="190">March</text><text x="150" y="190">April</text></svg><figcaption>Ground truth: March 30, April 55 units.</figcaption></figure><canvas width="200" height="50" aria-label="Unsupported chart without source data"></canvas></main>`;
+const source = `<main><article><h1>Preserve heading hierarchy</h1><p id="prose">A readable paragraph with a <a href="#fixture">working link</a>.</p><h4 id="lower-heading" style="font-size:20px">Lower-level heading</h4><p role="button" tabindex="0" id="custom-control">Custom page control</p><p role="alert">Important warning stays intact.</p><pre><code>Protected code sample</code></pre><p contenteditable="true">Editable draft</p></article><form><label>Name <input name="name" value="Demo reader"></label><label>Password <input type="password" value="demo-only"></label><button type="submit">Submit locally</button><output id="form-result"></output></form><figure><svg data-av-chart="bar" data-av-unit="units" aria-label="Verified months" viewBox="0 0 400 200"><title>Verified months</title><path d="M20 20V170H380" fill="none" stroke="black"/><rect x="50" y="110" width="50" height="60" fill="red" style="fill:purple" data-av-label="March" data-av-value="30"/><rect x="150" y="60" width="50" height="110" fill="green" data-av-label="April" data-av-value="55"/><text x="50" y="190">March</text><text x="150" y="190">April</text></svg><figcaption>Ground truth: March 30, April 55 units.</figcaption></figure><canvas width="200" height="50" aria-label="Unsupported chart without source data"></canvas></main>`;
 function reset() {
   engine.restore();
   fixture.innerHTML = source;
@@ -54,6 +54,8 @@ document.querySelector("#run")!.addEventListener("click", () => {
   const prose = fixture.querySelector<HTMLParagraphElement>("#prose")!;
   const input = fixture.querySelector<HTMLInputElement>("input")!;
   const code = fixture.querySelector("code")!;
+  const custom = fixture.querySelector("#custom-control")!;
+  const beforeCustom = getComputedStyle(custom).fontSize;
   const beforeCode = getComputedStyle(code).fontSize;
   const beforeInput = getComputedStyle(input).fontSize;
   try {
@@ -69,6 +71,20 @@ document.querySelector("#run")!.addEventListener("click", () => {
       distractions: true,
     };
     const result = engine.apply(profile);
+    checks.push(
+      assert(
+        "Custom page control keeps its size and receives no prose marker",
+        getComputedStyle(custom).fontSize === beforeCustom &&
+          !custom.hasAttribute("data-ableverse-prose"),
+      ),
+    );
+    checks.push(
+      assert(
+        "Lower-level heading scales from 20px to 30px",
+        getComputedStyle(fixture.querySelector("#lower-heading")!).fontSize ===
+          "30px",
+      ),
+    );
     checks.push(
       assert(
         "Only the marked distraction is hidden; the form stays visible",

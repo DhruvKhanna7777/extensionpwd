@@ -1,7 +1,7 @@
 import { type Settings, validateSettings } from "./settings";
 import { enhanceCharts } from "./charts";
 const protectedSelector =
-  'input,textarea,select,button,code,pre,[contenteditable]:not([contenteditable="false"]),[role="alert"],[role="status"],[aria-hidden="true"],nav,menu,[data-ableverse-owned]';
+  'input,textarea,select,button,code,pre,form,[contenteditable]:not([contenteditable="false"]),[role="alert"],[role="status"],[role="button"],[role="textbox"],[role="combobox"],[role="slider"],[role="spinbutton"],[role="switch"],[role="checkbox"],[role="radio"],[role="tab"],[role="menuitem"],[role="treeitem"],[role="option"],[role="dialog"],[role="alertdialog"],[tabindex],[aria-hidden="true"],nav,menu,[data-ableverse-owned]';
 export class PageEngine {
   private undo: (() => void)[] = [];
   constructor(private doc: Document) {}
@@ -33,13 +33,13 @@ export class PageEngine {
     if (s.reading || s.calm !== "default") {
       const originalSizes = new Set<number>();
       for (const el of this.doc.querySelectorAll(
-        "article p,article h1,article h2,article h3,article li,main p,main h1,main h2,main h3,main li",
+        "article :is(p,h1,h2,h3,h4,h5,h6,li),main :is(p,h1,h2,h3,h4,h5,h6,li)",
       )) {
         // Leaf prose prevents relative em sizes compounding through nested lists.
         if (
           !el.closest(protectedSelector) &&
           !el.querySelector(protectedSelector) &&
-          !el.querySelector("p,h1,h2,h3,li")
+          !el.querySelector("p,h1,h2,h3,h4,h5,h6,li")
         ) {
           const computed = Number.parseFloat(
             this.doc.defaultView?.getComputedStyle(el).fontSize || "",

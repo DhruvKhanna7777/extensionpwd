@@ -40,7 +40,7 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Motion, status exclusions and restored animation | Actual browser computed animation names | PASS (engine harness) |
 | Prose palette contrast | Actual computed warm/dark/contrast RGB pairs >=4.5:1 | PASS (engine harness; full UI contrast pending) |
 | Rendered charts/forms/restore | Exact table data, patterns over inline fill, editable form submission, newer website changes | PASS (engine harness; native extension pending) |
-| Real voice/pause/stop/hide/navigation | Not run installed | PENDING |
+| Remaining voice combinations, audible Stop/Escape and hide/navigation | Paragraph and pause/resume user-confirmed; remaining cases not completed | PARTIAL |
 | Native keyboard-only and screen reader | Not run fully; preview width matrix is separate evidence | PENDING |
 | Installed article/chart/form layouts | Article earlier; chart and form now smoke checked; complete lifecycle acceptance still open | PARTIAL |
 | SPA and changed chart nodes | Needs installed coverage | PENDING |
@@ -48,10 +48,22 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 
 Release gates remain open. Record actual browser version/results/defects and evidence; do not infer manual PASS from unit tests.
 
-44 core/UI tests plus 3 package checks currently pass. After the earlier interrupted attempt, installation succeeded on the next turn in the existing cyan profile. Native popup/full-panel, activeTab, Reading and Restore smoke tests passed. A heading-size defect was reproduced, fixed, reloaded and rechecked. Further browser input stopped when URL verification failed during chart navigation; native chart/form/audio results remain pending.
+44 core/UI tests plus 3 package checks currently pass. After the earlier interrupted attempt, installation succeeded on the next turn in the existing cyan profile. Native popup/full-panel, activeTab, Reading and Restore smoke tests passed. A heading-size defect was reproduced, fixed, reloaded and rechecked. Further browser input stopped when URL verification failed during chart navigation; later chart/form and user-confirmed paragraph audio results are recorded in INSTALLED-ACCEPTANCE.md; remaining lifecycle gates are still open.
 
 Navigation and chart hardening: history-only URL changes cancel active speech within the 500ms active-session check; unrelated chart updates leave Reading enabled when Chroma is off; inline CSS fills no longer suppress chart patterns, and original inline styles are restored. All three have automated regression coverage; native checks remain pending.
 
 Current additional checks: all 15 module/width combinations at 320/360/400px fit without horizontal overflow or clipped controls (browser preview). Disabling the final mode or finishing speech-only playback releases active observation/polling; playback completion updates its status. Explicit marked distraction hiding protects native/custom controls and keyboard targets. Packaging verifies an allowlist, rejects missing/escaping paths, omits secret/unrelated leftovers and checks ZIP byte integrity. See BROWSER-EVIDENCE.md.
 
-Final review regressions: removing or changing an SVG chart contract removes stale companions; a deferred quiet state refresh cannot overwrite a newer Apply action. Both reproduced failures now pass. The current build still needs installed Chrome retesting.
+Final review regressions: removing or changing an SVG chart contract removes stale companions; a deferred quiet state refresh cannot overwrite a newer Apply action. Both reproduced failures now pass. Later native smoke coverage is recorded in INSTALLED-ACCEPTANCE.md; full acceptance remains open.
+
+## Fresh follow-up verification — 2026-11-07
+
+On Windows, Node 24.21.0 / npm 11.19.0: npm ci succeeded (0 vulnerabilities reported), npm test passed 44 Vitest + 3 package checks, npm run package passed typechecking/build and verified 11 files. Documentation-only follow-up; no new browser or audible acceptance. See NEXT-CONTRIBUTOR.md for remaining native cases.
+
+## Implementation follow-up - 2026-11-07
+
+- 48 Vitest tests + 3 packaging checks PASS; production build/11-file package PASS.
+- New regressions: preview makes no Apply until explicit action, preserves other modes, clears on tab change/Restore; custom widgets, focus targets, dialog/form prose protected; h4-h6 preserve relative sizes.
+- Expanded browser-engine harness 19/19 PASS (adds custom-control protection and h4 scaling).
+- Preview layout 15/15 module/width combinations at 320/360/400px: no horizontal overflow/clipped controls. Reading preview changed to 150%; sticky Restore remained at top (0px) with keyboard focus near speech controls after 1054px scroll.
+- No new installed Chrome, audible or screen-reader acceptance. Native tests must use the updated build.
