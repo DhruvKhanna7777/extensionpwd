@@ -1,11 +1,15 @@
 import { PageEngine } from "./engine";
 import { SpeechPlayer } from "./speech";
+import { HoverReader } from "./hover";
 import { defaults, validateSettings } from "./settings";
 // This file is bundled as an isolated-world IIFE. Repeated injection reuses this listener.
 const scope = globalThis as typeof globalThis & { __ableverse?: boolean };
 if (!scope.__ableverse) {
   scope.__ableverse = true;
-  const engine = new PageEngine(document);
+  const engine = new PageEngine(document, () => {
+    current.ruler = false;
+    changed();
+  });
   const changed = (reason = "state") => {
     if (
       !hasActiveProfile() &&
@@ -19,6 +23,19 @@ if (!scope.__ableverse) {
     pending?.catch(() => {});
   };
   const speech = new SpeechPlayer(document, changed);
+  let hoverError = "";
+  const hover = new HoverReader(
+    document,
+    (text) => {
+      hoverError = "";
+      speech.play(text, current);
+    },
+    () => speech.stop(),
+    (message) => {
+      hoverError = message;
+      changed();
+    },
+  );
   let route = location.href;
   let current = { ...defaults };
   let routeTimer: ReturnType<typeof setInterval> | undefined;
@@ -29,8 +46,13 @@ if (!scope.__ableverse) {
     current.emphasis ||
     current.distractions ||
     current.chroma ||
+    current.hoverSpeech ||
+    current.ruler ||
     current.calm !== "default";
-  const stop = () => speech.stop();
+  const stop = () => {
+    hover.cancel();
+    speech.stop();
+  };
   const observer = new MutationObserver((records) => {
     const sourceChartChanged =
       current.chroma &&
@@ -45,12 +67,21 @@ if (!scope.__ableverse) {
           target?.localName === "svg"
         )
           return true;
-        if (target?.closest('svg[data-av-chart="bar"]')) return true;
+        if (
+          target?.closest(
+            'svg[data-av-chart="bar"],svg[data-av-chart="line"],svg[data-av-chart="pie"]',
+          )
+        )
+          return true;
         return [...record.removedNodes].some(
           (node) =>
             node instanceof Element &&
-            (node.matches('svg[data-av-chart="bar"]') ||
-              node.querySelector('svg[data-av-chart="bar"]')),
+            (node.matches(
+              'svg[data-av-chart="bar"],svg[data-av-chart="line"],svg[data-av-chart="pie"]',
+            ) ||
+              node.querySelector(
+                'svg[data-av-chart="bar"],svg[data-av-chart="line"],svg[data-av-chart="pie"]',
+              )),
         );
       });
     // Do not keep calling a stale snapshot verified after a site updates its source.
@@ -87,6 +118,10 @@ if (!scope.__ableverse) {
         "transform",
         "style",
         "fill",
+        "points",
+        "d",
+        "data-av-series",
+        "data-av-slice",
       ],
     });
     window.addEventListener("pagehide", restore);
@@ -101,6 +136,8 @@ if (!scope.__ableverse) {
   };
   const restore = () => {
     unobserve();
+    hover.destroy();
+    hoverError = "";
     stop();
     engine.restore();
     current = { ...defaults };
@@ -128,7 +165,9 @@ if (!scope.__ableverse) {
           respond({
             ok: true,
             settings: current,
-            speech: speech.getState(),
+            speech: hoverError
+              ? { state: "error", error: hoverError }
+              : speech.getState(),
             voices: speech
               .listVoices()
               .map(({ voiceURI, name, lang, localService }) => ({
@@ -144,6 +183,8 @@ if (!scope.__ableverse) {
           observer.disconnect();
           current = validateSettings(msg.settings);
           const result = engine.apply(current);
+          hoverError = "";
+          hover.configure(current);
           observe();
           respond({ ok: true, ...result });
           break;
@@ -166,6 +207,8 @@ if (!scope.__ableverse) {
           });
           break;
         case "READ": {
+          hover.cancel();
+          hoverError = "";
           const text = selection();
           if (!text) {
             respond({
@@ -185,6 +228,7 @@ if (!scope.__ableverse) {
           respond({ ok: true });
           break;
         case "STOP":
+          hoverError = "";
           stop();
           respond({ ok: true });
           break;

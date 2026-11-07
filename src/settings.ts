@@ -5,6 +5,13 @@ export const defaults = {
   lineHeight: 1.5,
   letterSpacing: 0,
   wordSpacing: 0,
+  paragraphSpacing: 0,
+  readingWidth: 0,
+  textAlign: "original",
+  ruler: false,
+  hoverSpeech: false,
+  hoverDelay: 700,
+  hoverScope: "paragraph",
   motion: false,
   distractions: false,
   focus: false,
@@ -29,6 +36,8 @@ export function validateSettings(raw: unknown): Settings {
     "emphasis",
     "chroma",
     "distractions",
+    "ruler",
+    "hoverSpeech",
   ] as const)
     if (typeof r[k] === "boolean") s[k] = r[k];
   const ranges = {
@@ -38,12 +47,25 @@ export function validateSettings(raw: unknown): Settings {
     wordSpacing: [0, 0.25],
     rate: [0.7, 1.5],
     volume: [0, 1],
+    hoverDelay: [300, 1500],
   };
   for (const k of Object.keys(ranges) as (keyof typeof ranges)[]) {
     const v = r[k];
     if (typeof v === "number" && Number.isFinite(v))
       s[k] = Math.min(ranges[k][1], Math.max(ranges[k][0], v));
   }
+  for (const [key, min, max] of [
+    ["readingWidth", 50, 90],
+    ["paragraphSpacing", 0.5, 2],
+  ] as const) {
+    const v = r[key];
+    if (typeof v === "number" && Number.isFinite(v))
+      s[key] = v === 0 ? 0 : Math.min(max, Math.max(min, v));
+  }
+  if (["original", "start", "left"].includes(String(r.textAlign)))
+    s.textAlign = String(r.textAlign);
+  if (["word", "sentence", "paragraph"].includes(String(r.hoverScope)))
+    s.hoverScope = String(r.hoverScope);
   if (
     ["system-ui", "Arial", "Georgia", "Verdana"].includes(String(r.fontFamily))
   )

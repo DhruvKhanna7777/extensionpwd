@@ -1,8 +1,10 @@
+import { enhanceStructuredCharts } from "./structuredCharts";
 const ns = "http://www.w3.org/2000/svg";
 let sequence = 0;
 export function enhanceCharts(doc: Document, undo: (() => void)[]) {
-  let charts = 0;
-  const warnings: string[] = [];
+  const extended = enhanceStructuredCharts(doc, undo);
+  let charts = extended.charts;
+  const warnings: string[] = extended.warnings;
   for (const svg of doc.querySelectorAll<SVGSVGElement>(
     'svg[data-av-chart="bar"]',
   )) {
@@ -148,11 +150,15 @@ export function enhanceCharts(doc: Document, undo: (() => void)[]) {
     });
     charts++;
   }
-  if (doc.querySelector('canvas,svg:not([data-av-chart="bar"])'))
+  if (
+    doc.querySelector(
+      'canvas,svg:not([data-av-chart="bar"]):not([data-av-chart="line"]):not([data-av-chart="pie"])',
+    )
+  )
     warnings.push(
       "Other canvas or unrecognised SVG charts are unsupported and were left unchanged.",
     );
   if (!charts && !warnings.length)
-    warnings.push("No supported annotated SVG bar charts found.");
+    warnings.push("No supported annotated SVG charts found.");
   return { charts, warnings };
 }

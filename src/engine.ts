@@ -1,10 +1,14 @@
 import { type Settings, validateSettings } from "./settings";
 import { enhanceCharts } from "./charts";
+import { createRuler } from "./ruler";
 const protectedSelector =
   'input,textarea,select,button,code,pre,form,[contenteditable]:not([contenteditable="false"]),[role="alert"],[role="status"],[role="button"],[role="textbox"],[role="combobox"],[role="slider"],[role="spinbutton"],[role="switch"],[role="checkbox"],[role="radio"],[role="tab"],[role="menuitem"],[role="treeitem"],[role="option"],[role="dialog"],[role="alertdialog"],[tabindex],[aria-hidden="true"],nav,menu,[data-ableverse-owned]';
 export class PageEngine {
   private undo: (() => void)[] = [];
-  constructor(private doc: Document) {}
+  constructor(
+    private doc: Document,
+    private rulerDisabled: () => void = () => {},
+  ) {}
   private mark(el: Element, name: string, value = "") {
     const old = el.getAttribute(name);
     el.setAttribute(name, value);
@@ -55,6 +59,16 @@ export class PageEngine {
         rules.push(
           `${prose}{font-family:${s.fontFamily}!important;line-height:${s.lineHeight}!important;letter-spacing:${s.letterSpacing}em!important;word-spacing:${s.wordSpacing}em!important;overflow-wrap:anywhere!important;}`,
         );
+        if (s.readingWidth)
+          rules.push(
+            `${prose}{max-inline-size:${s.readingWidth}ch!important;}`,
+          );
+        if (s.paragraphSpacing)
+          rules.push(
+            `p${prose}{margin-block-end:${s.paragraphSpacing}em!important;}`,
+          );
+        if (s.textAlign !== "original")
+          rules.push(`${prose}{text-align:${s.textAlign}!important;}`);
         for (const size of originalSizes)
           rules.push(
             `[data-ableverse-prose="${size}"]{font-size:${(size * s.fontScale) / 100}px!important;}`,
@@ -95,6 +109,7 @@ export class PageEngine {
       this.doc.head.append(style);
       this.undo.push(() => style.remove());
     }
+    if (s.ruler) this.undo.push(createRuler(this.doc, this.rulerDisabled));
     return {
       hidden,
       ...(s.chroma

@@ -25,6 +25,7 @@ export function App() {
     change,
     restore,
     openPanel,
+    siteProfile,
   } = usePageController();
   const [typographyDraft, setTypographyDraft] =
     useState<Partial<Settings> | null>(null);
@@ -48,7 +49,14 @@ export function App() {
     else change(patch);
   };
   const editSlider = (key: keyof Settings, value: number) =>
-    ["fontScale", "lineHeight", "letterSpacing", "wordSpacing"].includes(key)
+    [
+      "fontScale",
+      "lineHeight",
+      "letterSpacing",
+      "wordSpacing",
+      "paragraphSpacing",
+      "readingWidth",
+    ].includes(key)
       ? editTypography({ [key]: value })
       : change({ [key]: value });
   const colourControl = (
@@ -68,7 +76,14 @@ export function App() {
   const isPopup = location.pathname.endsWith("popup.html");
   const toggle = (
     key:
-      "reading" | "motion" | "focus" | "emphasis" | "chroma" | "distractions",
+      | "reading"
+      | "motion"
+      | "focus"
+      | "emphasis"
+      | "chroma"
+      | "distractions"
+      | "ruler"
+      | "hoverSpeech",
     label: string,
     help: string,
   ) => (
@@ -93,7 +108,10 @@ export function App() {
       | "letterSpacing"
       | "wordSpacing"
       | "rate"
-      | "volume",
+      | "volume"
+      | "paragraphSpacing"
+      | "readingWidth"
+      | "hoverDelay",
     label: string,
     min: number,
     max: number,
@@ -211,7 +229,7 @@ export function App() {
                 {toggle(
                   "chroma",
                   "Colour-independent charts",
-                  "Label and pattern supported SVG bars.",
+                  "Label supported SVG bars, lines and pie charts.",
                 )}
               </section>
               {!isPopup && (
@@ -326,6 +344,33 @@ export function App() {
                   0.01,
                   "em",
                 )}
+                {slider(
+                  "paragraphSpacing",
+                  "Space after paragraphs",
+                  0,
+                  2,
+                  0.25,
+                  "em",
+                )}
+                {slider("readingWidth", "Reading width", 0, 90, 5, "ch")}
+                <small>
+                  Zero keeps the original spacing or width. Custom width is
+                  limited to 50–90 characters on eligible prose; paragraph
+                  spacing to 0.5–2em. Site grids stay in place.
+                </small>
+                <label className="field">
+                  Text alignment
+                  <select
+                    value={settings.textAlign}
+                    onChange={(e) =>
+                      editTypography({ textAlign: e.target.value })
+                    }
+                  >
+                    <option value="original">Original alignment</option>
+                    <option value="start">Natural reading direction</option>
+                    <option value="left">Left</option>
+                  </select>
+                </label>
                 <button
                   onClick={() =>
                     editTypography({
@@ -333,6 +378,9 @@ export function App() {
                       lineHeight: 1.5,
                       letterSpacing: 0,
                       wordSpacing: 0,
+                      paragraphSpacing: 0,
+                      readingWidth: 0,
+                      textAlign: "original",
                       fontFamily: "system-ui",
                     })
                   }
@@ -361,6 +409,16 @@ export function App() {
                     lineHeight: settings.lineHeight,
                     letterSpacing: `${settings.letterSpacing}em`,
                     wordSpacing: `${settings.wordSpacing}em`,
+                    marginBlockEnd: settings.paragraphSpacing
+                      ? `${settings.paragraphSpacing}em`
+                      : undefined,
+                    maxInlineSize: settings.readingWidth
+                      ? `${settings.readingWidth}ch`
+                      : undefined,
+                    textAlign:
+                      settings.textAlign === "original"
+                        ? undefined
+                        : (settings.textAlign as "start" | "left"),
                   }}
                 >
                   Small changes can make space for a better reading experience.
@@ -368,6 +426,38 @@ export function App() {
               </section>
               <section className="card">
                 <h3>Selected-text speech</h3>
+                {toggle(
+                  "hoverSpeech",
+                  "Read on hover",
+                  "Opt in to delayed speech on safe article prose. Moving away stops playback.",
+                )}
+                {settings.hoverSpeech && (
+                  <>
+                    {slider("hoverDelay", "Hover delay", 300, 1500, 100, "ms")}
+                    <label className="field">
+                      Hover speech scope
+                      <select
+                        value={settings.hoverScope}
+                        onChange={(e) => change({ hoverScope: e.target.value })}
+                      >
+                        <option value="paragraph">Paragraph</option>
+                        <option value="sentence">First sentence</option>
+                        <option value="word">Word under pointer</option>
+                      </select>
+                    </label>
+                    <small>
+                      Word mode falls back to the element text if point-to-text
+                      lookup is unavailable. Hover reads at most 500 characters
+                      once per entry. Read selection below is the keyboard
+                      alternative.
+                    </small>
+                  </>
+                )}
+                {toggle(
+                  "ruler",
+                  "Reading ruler",
+                  "A pointer-transparent guide. Move with the pointer or Alt + Up/Down; Esc turns it off.",
+                )}
                 <label className="field">
                   Speech voice
                   <select
@@ -447,16 +537,18 @@ export function App() {
               <section className="card">
                 {toggle(
                   "chroma",
-                  "Enhance supported bar charts",
-                  "Distinct textures, exact values and a companion table.",
+                  "Enhance supported charts",
+                  "Bar/pie patterns, line dashes and markers, exact value tables.",
                 )}
                 <p>
-                  Only annotated SVG bar charts with explicit labels, values and
-                  geometry are supported. Unknown charts remain intact.
+                  Annotated SVG bars, lines and pies require explicit labels,
+                  values and matching geometry. Summaries use those declared
+                  numbers. Unknown charts remain intact.
                 </p>
                 <div className="callout">
-                  Canvas, screenshots, line and pie chart reconstruction are not
-                  included in this core build.
+                  Canvas, screenshots and unannotated charts cannot be
+                  reconstructed. Pie shares are calculated from declared values
+                  and rounded; they are not inferred from slice sizes.
                 </div>
               </section>
             </>
@@ -510,6 +602,25 @@ export function App() {
                 </div>
               </section>
               <section className="card">
+                <h3>This site's profile</h3>
+                <p>
+                  Save a separate profile for this website's origin. Loading
+                  only updates the controls. Nothing activates on a visit,
+                  reload or tab switch.
+                </p>
+                <div className="actions">
+                  <button onClick={() => siteProfile("save")}>
+                    Save site profile
+                  </button>
+                  <button onClick={() => siteProfile("load")}>
+                    Load site profile
+                  </button>
+                  <button onClick={() => siteProfile("reset")}>
+                    Reset this site's profile
+                  </button>
+                </div>
+              </section>
+              <section className="card">
                 <h3>Privacy & honest limits</h3>
                 <p>
                   No account, analytics, page upload or AI request. Only
@@ -517,8 +628,8 @@ export function App() {
                   storage.
                 </p>
                 <p>
-                  AI simplification, hover speech, per-site profiles and ASL
-                  lookup are planned. No verified sign clips are bundled.
+                  AI simplification and ASL lookup are planned. No verified sign
+                  clips are bundled.
                 </p>
                 <p>
                   Internal browser pages, the Chrome Web Store, embedded PDFs

@@ -1,0 +1,150 @@
+import { defaults, validateSettings, type Settings } from "./settings";
+
+const protectedContent =
+  'input,textarea,select,button,a[href],form,code,pre,[contenteditable]:not([contenteditable="false"]),[aria-hidden="true"],[hidden],[role],[tabindex],nav,menu,audio,video,[data-ableverse-owned]';
+const blocks = "p,li,h1,h2,h3,h4,h5,h6,blockquote";
+
+export class HoverReader {
+  private settings: Settings = { ...defaults };
+  private target?: Element;
+  private oldMarker: string | null = null;
+  private timer?: ReturnType<typeof setTimeout>;
+  private playing = false;
+  private style?: HTMLStyleElement;
+  constructor(
+    private doc: Document,
+    private play: (text: string) => void,
+    private stop: () => void,
+    private error: (message: string) => void,
+  ) {}
+
+  private eligible(el: Element) {
+    if (
+      !el.isConnected ||
+      !el.closest("article,main") ||
+      el.closest(protectedContent) ||
+      el.querySelector(protectedContent)
+    )
+      return false;
+    const css = this.doc.defaultView!.getComputedStyle(el);
+    return (
+      css.display !== "none" &&
+      css.visibility !== "hidden" &&
+      !!el.textContent?.trim()
+    );
+  }
+  private unmark() {
+    if (this.target?.getAttribute("data-ableverse-hover") === "active") {
+      if (this.oldMarker === null)
+        this.target.removeAttribute("data-ableverse-hover");
+      else this.target.setAttribute("data-ableverse-hover", this.oldMarker);
+    }
+  }
+  // Cancel keeps the entry consumed: Stop/Escape cannot restart the same target.
+  cancel() {
+    if (this.timer !== undefined) clearTimeout(this.timer);
+    this.timer = undefined;
+    this.unmark();
+    if (this.playing) this.stop();
+    this.playing = false;
+  }
+  private text(el: Element, event: PointerEvent) {
+    const full = (el.textContent || "").replace(/\s+/gu, " ").trim();
+    if (this.settings.hoverScope === "word") {
+      const range = this.doc.caretRangeFromPoint?.(
+        event.clientX,
+        event.clientY,
+      );
+      if (
+        range?.startContainer.nodeType === 3 &&
+        el.contains(range.startContainer)
+      ) {
+        const text = range.startContainer.textContent || "";
+        const at = range.startOffset;
+        const before = text.slice(0, at).match(/[\p{L}\p{N}'’-]+$/u)?.[0] || "";
+        const after = text.slice(at).match(/^[\p{L}\p{N}'’-]+/u)?.[0] || "";
+        if (before || after) return (before + after).slice(0, 500);
+      }
+      // Browsers without point-to-text support use the documented element fallback.
+    }
+    if (this.settings.hoverScope === "sentence") {
+      const segments = new Intl.Segmenter(
+        this.doc.documentElement.lang || undefined,
+        { granularity: "sentence" },
+      ).segment(full);
+      return (
+        segments[Symbol.iterator]().next().value?.segment.trim() || full
+      ).slice(0, 500);
+    }
+    return full.slice(0, 500);
+  }
+  private over = (event: PointerEvent) => {
+    const element = event
+      .composedPath()
+      .find((node) => node instanceof Element) as Element | undefined;
+    const next = element?.closest(blocks) || undefined;
+    if (next === this.target) return;
+    this.cancel();
+    this.target = next;
+    if (!next || !this.eligible(next)) return;
+    this.oldMarker = next.getAttribute("data-ableverse-hover");
+    this.timer = setTimeout(() => {
+      this.timer = undefined;
+      if (this.doc.hidden || !this.eligible(next)) return;
+      const text = this.text(next, event);
+      if (!text) return;
+      next.setAttribute("data-ableverse-hover", "active");
+      try {
+        this.play(text);
+        this.playing = true;
+      } catch (error) {
+        this.unmark();
+        this.error(
+          error instanceof Error
+            ? error.message
+            : "Speech is unavailable. Choose another voice.",
+        );
+      }
+    }, this.settings.hoverDelay);
+  };
+  private out = (event: PointerEvent) => {
+    if (
+      this.target &&
+      event.relatedTarget instanceof Node &&
+      this.target.contains(event.relatedTarget)
+    )
+      return;
+    this.cancel();
+    this.target = undefined;
+  };
+  private key = (event: KeyboardEvent) => {
+    if (event.key === "Escape") this.cancel();
+  };
+  private visibility = () => {
+    if (this.doc.hidden) this.cancel();
+  };
+  configure(raw: Settings) {
+    this.destroy();
+    this.settings = validateSettings(raw);
+    if (!this.settings.hoverSpeech) return;
+    this.style = this.doc.createElement("style");
+    this.style.setAttribute("data-ableverse-owned", "");
+    this.style.textContent =
+      '[data-ableverse-hover="active"]{outline:2px solid #087b78!important;outline-offset:3px!important;}';
+    this.doc.head.append(this.style);
+    this.doc.addEventListener("pointerover", this.over);
+    this.doc.addEventListener("pointerout", this.out);
+    this.doc.addEventListener("keydown", this.key);
+    this.doc.addEventListener("visibilitychange", this.visibility);
+  }
+  destroy() {
+    this.cancel();
+    this.target = undefined;
+    this.style?.remove();
+    this.style = undefined;
+    this.doc.removeEventListener("pointerover", this.over);
+    this.doc.removeEventListener("pointerout", this.out);
+    this.doc.removeEventListener("keydown", this.key);
+    this.doc.removeEventListener("visibilitychange", this.visibility);
+  }
+}

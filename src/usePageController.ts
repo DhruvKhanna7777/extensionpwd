@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { defaults, validateSettings, type Settings } from "./settings";
+import { loadSiteProfile, saveSiteProfile, resetSiteProfile } from "./profiles";
 type Voice = {
   voiceURI: string;
   name: string;
@@ -257,6 +258,47 @@ export function usePageController() {
       tell("Full panel requires Chrome 116 or newer.", true);
     }
   }
+  async function siteProfile(action: "save" | "load" | "reset") {
+    const generation = ++revision.current;
+    const snapshot = { ...settings };
+    try {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      if (!supportedUrl(tab?.url))
+        throw new Error("Open a regular website to use site profiles.");
+      if (action === "save")
+        await saveSiteProfile(chrome.storage.local, tab.url!, snapshot);
+      if (action === "reset")
+        await resetSiteProfile(chrome.storage.local, tab.url!);
+      if (action === "load") {
+        const loaded = await loadSiteProfile(chrome.storage.local, tab.url!);
+        if (generation !== revision.current) return;
+        if (!loaded) {
+          tell("No saved profile for this site.");
+          return;
+        }
+        setSettings(loaded);
+      }
+      if (generation !== revision.current) return;
+      tell(
+        action === "save"
+          ? "Profile saved for this site only. It never activates automatically."
+          : action === "reset"
+            ? "Saved site profile removed. The current page is unchanged."
+            : "Site profile loaded into controls. Choose Apply saved / current to change this page.",
+      );
+    } catch (error) {
+      if (generation === revision.current)
+        tell(
+          error instanceof Error
+            ? error.message
+            : "Site profile storage is unavailable.",
+          true,
+        );
+    }
+  }
   return {
     settings,
     pageEpoch,
@@ -271,5 +313,6 @@ export function usePageController() {
     change,
     restore,
     openPanel,
+    siteProfile,
   };
 }

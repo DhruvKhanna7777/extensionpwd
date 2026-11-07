@@ -52,6 +52,37 @@ function request(type: string, settings = defaults): any {
   handler({ type, settings }, {}, (r) => (response = r));
   return response;
 }
+it("cancels pending hover on Restore and clears its active profile on a route change", async () => {
+  vi.useFakeTimers();
+  try {
+    request("APPLY", { ...defaults, hoverSpeech: true, ruler: true });
+    document
+      .querySelector("#text")!
+      .dispatchEvent(new MouseEvent("pointerover", { bubbles: true }));
+    request("RESTORE");
+    await vi.advanceTimersByTimeAsync(800);
+    expect(spoken).toEqual([]);
+    expect(document.querySelector("[data-ableverse-ruler]")).toBeNull();
+    request("APPLY", { ...defaults, hoverSpeech: true, ruler: true });
+    history.pushState({}, "", "/hover-route");
+    await vi.advanceTimersByTimeAsync(500);
+    expect(request("GET_STATE").settings.hoverSpeech).toBe(false);
+    expect(document.querySelector("[data-ableverse-ruler]")).toBeNull();
+  } finally {
+    request("RESTORE");
+    vi.useRealTimers();
+  }
+});
+it("invalidates line companions when declared metadata changes", async () => {
+  document.body.innerHTML =
+    '<svg data-av-chart="line"><metadata data-av-source>{"series":[{"label":"A","points":[{"label":"Jan","value":10}]}]}</metadata><polyline data-av-series="A" points="10,20"/></svg>';
+  expect(request("APPLY", { ...defaults, chroma: true }).charts).toBe(1);
+  document.querySelector("metadata")!.textContent = '{"series":[]}';
+  await Promise.resolve();
+  await Promise.resolve();
+  expect(document.querySelector("table")).toBeNull();
+  expect(request("GET_STATE").settings.chroma).toBe(false);
+});
 it("reports effective page settings and resets them on Restore", () => {
   request("APPLY", { ...defaults, reading: true, fontScale: 130 });
   expect(request("GET_STATE")?.settings.reading).toBe(true);
