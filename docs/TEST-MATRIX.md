@@ -1,5 +1,16 @@
 # Validation record — 2026-11-07
 
+## Current implementation checkpoint — 7 November 2026
+
+Upstream PR #8 is merged at `6d30201`. New runtime work is on `feat/reading-tools-and-chart-adapters` in `KrishChadha001/extensionpwd`, tested runtime `84035f8e78df1b5ad15c30865e759565583ee863`; documentation follows it. See [the current handoff](CONTRIBUTOR-HANDOFF.md), [feature status](FEATURE-STATUS.md) and [continuation prompt](CONTINUATION-PROMPT.md). Older checkpoints below are historical.
+
+103 Vitest + 4 packaging checks PASS; production typecheck/build and 19-file package PASS. SHA-256 `39b3c70e9ab384ab43bc929dd00973cb30db8ce43ed61ab16633946f7d801e8f`. Current engine harness 20/20 PASS; final five-module/320-360-400px preview fit matrix 15/15 PASS, plus expanded hover/AI-unavailable/sign-miss states at 320px without horizontal overflow. Preview is not installed evidence.
+
+Reading width/spacing/alignment/fonts/ruler, hover speech, profiles, line/pie adapters, chart options/summaries and keyboard actions are implemented and regression tested. Optional local AI client/adapter and guarded text replacement are implemented with fake-model tests; no real model was run. ASL loader/UI is implemented but approved clips are absent; no playable sign dictionary or hover card is claimed. Native Chrome remains BLOCKED by current-URL verification; new listening/screen-reader/zoom/contrast/permissions acceptance remains NOT RUN. Do not promote historical passes to this build.
+
+The latest user request authorizes committing this implementation and contributor documentation and opening a PR, not merging or publishing. Main must not be force-pushed. First next task is installed reflow on this build with recorded viewport/zoom, then the remaining cases in FEATURE-STATUS.md. Vite was started at 127.0.0.1:5173; the optional AI adapter/model was not started.
+
+
 ## Current continuation on merged PR #7
 
 Source/build: `6d227bc3f52e8387f44c0849f5850c5bc4b045b4`. Windows NT 10.0.26300.0, Node 24.16.0 / npm 11.13.0. `npm ci` passed with zero vulnerabilities reported; `npm run package` passed production typecheck/build and verified 11 ZIP files. SHA-256: `0238a53ea0bac1213fa9e28979ca395cc49f8d2ea20be867c3e5ef5c318dd9df`. Existing automated/browser PASS evidence remains historical; those suites were not rerun.

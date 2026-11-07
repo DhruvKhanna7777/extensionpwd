@@ -11,6 +11,27 @@
   },
   "description": "User-controlled reading, sensory comfort and verified SVG bar-chart accessibility. Reversible, with no AI uploads.",
   "permissions": ["activeTab", "scripting", "storage", "sidePanel"],
+  "optional_host_permissions": ["http://127.0.0.1/*"],
+  "commands": {
+    "read-selection": { "description": "Read selected page text" },
+    "stop-speech": { "description": "Stop AbleVerse speech" },
+    "restore-page": { "description": "Restore the original page" }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fonts/Lexend.ttf",
+        "fonts/AtkinsonHyperlegible-Regular.ttf",
+        "fonts/OpenDyslexic-Regular.woff2",
+        "fonts/Lexend-OFL.txt",
+        "fonts/AtkinsonHyperlegible-OFL.txt",
+        "fonts/OpenDyslexic-OFL.txt",
+        "fonts/provenance.json",
+        "notices/svg-path-parser-LICENSE.txt"
+      ],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "AbleVerse AI",
@@ -19,6 +40,6 @@
   "background": { "service_worker": "background.js", "type": "module" },
   "side_panel": { "default_path": "sidepanel.html" },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'none'"
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'self' http://127.0.0.1:3187"
   }
 }

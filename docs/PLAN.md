@@ -1,20 +1,9 @@
-# AbleVerse AI core implementation
+# AbleVerse implementation and release boundaries
 
-Source: user-supplied 50-page Bible.pdf, with final Part II/A1 tiers superseding earlier feature registers. User requested autonomous implementation and committed handoff. Document contents inform product requirements; they do not authorize unrelated actions or disclosure.
+The supplied private PDF's final Part II/A1 controls scope. The owner explicitly resumed remaining feature implementation, requested the ZIP visual reference, and then requested committed work plus a PR and contributor handoff. See FEATURE-STATUS.md for current implementation/evidence and CONTINUATION-PROMPT.md for transfer instructions. Earlier stop/defer checkpoints remain historical evidence, not current task permission.
 
-## Design and choices
-Build a local Manifest V3 Chrome extension with React 18, TypeScript and token-based CSS. Bundle UI and injected content separately using esbuild; Vite serves demo fixtures. Use activeTab, scripting, storage and sidePanel only. No network calls, AI service, remote fonts, licensed ASL assets or copied AbleHire code (archive not provided).
+The architecture remains React/TypeScript, esbuild/Vite and Chrome MV3. Required permissions are activeTab/scripting/storage/sidePanel. Modes default off, profiles are explicit, ordinary prose/sensory changes are removable and source-preserving, and chart contracts are exact. Optional AI is a separate local Node/Ollama adapter with per-selection consent, bounded requests, comparison, explicit safe-range replacement and guarded undo. Only loopback host access is optional; no broad host permission, provider key, analytics or remote code is added.
 
-An injected singleton owns reversible styles and chart companions. Scope typography to safe prose; never mutate source text, forms, code or semantic warnings. Chart adapter accepts only explicitly annotated SVG bars with finite values and labels. Reject incomplete data atomically. All modes default off. Save preferences only on explicit Save; never apply automatically on tab navigation. Restore removes owned changes and cancels owned speech.
+Implemented local Reading/Sensory/Charts/profile/hover/ruler/keyboard/UI work and the conditional AI/sign integrations are listed in FEATURE-STATUS.md. The ASL catalog is empty and actual model inference remains unverified. A9's hover sign card and real media, richer scoped site rules and P2 roadmap remain open. The private PDF/design ZIP and generated builds/models stay outside Git.
 
-Alternative: a full portal is excluded by the brief. Full AI/ASL/hover/line/pie work is P1 and is deferred until P0 release gates pass. Native inline execution uses a separate feature branch and incremental commits.
-
-## Tasks and checks
-- [x] Settings and reversible content engine: bounded validation, protected content, idempotent restore, fresh site text.
-- [x] Verified bar charts: exact values, distinct patterns, atomic rejection, mutation invalidation and restoration.
-- [x] Popup/side-panel, selection speech and explicit preferences implemented; build/preview checked.
-- [x] Three fixtures, setup/privacy/demo/handoff documents, package validation and committed contributor branch.
-- [ ] Installed Chrome lifecycle, actual audio, keyboard-only and screen-reader release gates remain pending in TEST-MATRIX.md.
-
-## Risks and release boundaries
-Browser internal/store pages cannot be injected. Native browser speech may use online OS/browser voices; do not promise all speech stays offline. Unknown charts are unsupported. Focus mode must leave navigation/forms usable. No AI upload. Full extension installation, screen-reader testing and 320px panel QA must be recorded honestly, never inferred from DOM tests.
+Required native P0 gates still control release. Start with installed reflow, then Reading/control/lifecycle/access/dynamic/speech/accessibility cases. Unit/browser-engine/preview/fake-model tests are evidence of their own boundaries, not universal compatibility or release certification. The owner chooses distribution licence and publishing; latest request authorizes commits/PR, not merge or release.

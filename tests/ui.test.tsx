@@ -14,6 +14,74 @@ import { defaults } from "../src/settings";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 type Message = { type: string; settings?: typeof defaults };
+it("keeps preview controls interactive while clearly avoiding page or speech actions", async () => {
+  vi.stubGlobal("chrome", undefined);
+  render(<App />);
+  await screen.findByText(/Interface preview/);
+  fireEvent.click(screen.getByRole("button", { name: "Reading" }));
+  fireEvent.click(screen.getByRole("checkbox", { name: /Read on hover/ }));
+  expect(
+    (
+      screen.getByRole("checkbox", {
+        name: /Read on hover/,
+      }) as HTMLInputElement
+    ).checked,
+  ).toBe(true);
+  expect(
+    screen.getByRole("spinbutton", { name: "Hover delay numeric value" }),
+  ).toBeTruthy();
+  expect(screen.getByRole("status").textContent).toMatch(/sample only/);
+});
+it("allows a complete numeric value to be typed without clamping intermediate digits", async () => {
+  const user = userEvent.setup();
+  render(<App />);
+  await screen.findByText(/Showing this page/);
+  await user.click(screen.getByRole("button", { name: "Reading" }));
+  const input = screen.getByRole("spinbutton", {
+    name: "Text size numeric value",
+  }) as HTMLInputElement;
+  await user.clear(input);
+  await user.type(input, "150");
+  await waitFor(() => expect(pageSettings.fontScale).toBe(150));
+  expect(input.value).toBe("150");
+});
+it("saves and loads a site profile without applying or persisting page text", async () => {
+  render(<App />);
+  await screen.findByText(/Showing this page/);
+  fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+  fireEvent.click(screen.getByRole("button", { name: "Save site profile" }));
+  await screen.findByText(/Profile saved for this site only/);
+  expect(saved).toEqual({ "ableverse:site:https://example.com": defaults });
+  fireEvent.click(screen.getByRole("button", { name: "Load site profile" }));
+  await screen.findByText(/Site profile loaded into controls/);
+  expect(applied).toHaveLength(0);
+});
+it("previews new typography controls before explicit Apply and exposes opt-in hover/ruler controls", async () => {
+  render(<App />);
+  await screen.findByText(/Showing this page/);
+  fireEvent.click(screen.getByRole("button", { name: "Reading" }));
+  fireEvent.click(
+    screen.getByRole("checkbox", { name: /Preview typography only/ }),
+  );
+  fireEvent.change(
+    screen.getByRole("spinbutton", { name: "Reading width numeric value" }),
+    { target: { value: "60" } },
+  );
+  fireEvent.change(
+    screen.getByRole("spinbutton", {
+      name: "Space after paragraphs numeric value",
+    }),
+    { target: { value: "1.5" } },
+  );
+  expect(applied).toHaveLength(0);
+  fireEvent.click(
+    screen.getByRole("button", { name: "Apply typography preview" }),
+  );
+  await waitFor(() => expect(pageSettings.readingWidth).toBe(60));
+  expect(pageSettings.paragraphSpacing).toBe(1.5);
+  expect(screen.getByRole("checkbox", { name: /Read on hover/ })).toBeTruthy();
+  expect(screen.getByRole("checkbox", { name: /Reading ruler/ })).toBeTruthy();
+});
 it("ignores a pending state refresh after a newer Apply action", async () => {
   render(<App />);
   await screen.findByText(/Showing this page/);
@@ -178,10 +246,13 @@ it("supports keyboard navigation, Space to enable and Enter to restore", async (
   expect(document.activeElement).toBe(
     screen.getByRole("button", { name: /Restore original/ }),
   );
-  for (let i = 0; i < 6; i++) await user.tab();
   const checkbox = screen.getByRole("checkbox", {
     name: /Reading Studio/,
   }) as HTMLInputElement;
+  // Presets precede the mode rows in the supplied design. Verify keyboard
+  // reachability without coupling the check to the exact number of controls.
+  for (let i = 0; i < 16 && document.activeElement !== checkbox; i++)
+    await user.tab();
   expect(document.activeElement).toBe(checkbox);
   await user.keyboard("[Space]");
   await waitFor(() => expect(applied).toEqual([7]));

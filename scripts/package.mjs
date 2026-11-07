@@ -21,6 +21,9 @@ export async function packageExtension(source, output) {
     manifest.side_panel?.default_path,
     ...Object.values(manifest.icons || {}),
     ...Object.values(manifest.action?.default_icon || {}),
+    ...(manifest.web_accessible_resources || []).flatMap(
+      (entry) => entry.resources || [],
+    ),
   ]);
   const entries = {};
   for (const path of [...paths].sort()) {

@@ -65,6 +65,23 @@ test("rejects a missing manifest entrypoint", async () =>
       /missing|ENOENT/i,
     );
   }));
+
+test("packages explicitly declared local fonts and their licence notices", async () =>
+  fixture(async ({ dir, source, manifest }) => {
+    await mkdir(join(source, "fonts"));
+    await writeFile(join(source, "fonts", "example.woff2"), "font");
+    await writeFile(join(source, "fonts", "OFL.txt"), "licence notice");
+    manifest.web_accessible_resources = [
+      {
+        resources: ["fonts/example.woff2", "fonts/OFL.txt"],
+        matches: ["http://*/*", "https://*/*"],
+      },
+    ];
+    await writeFile(join(source, "manifest.json"), JSON.stringify(manifest));
+    const result = await packageExtension(source, join(dir, "extension.zip"));
+    assert.ok(result.files.includes("fonts/example.woff2"));
+    assert.ok(result.files.includes("fonts/OFL.txt"));
+  }));
 test("rejects manifest paths escaping the source directory", async () =>
   fixture(async ({ dir, source, manifest }) => {
     await writeFile(join(dir, "private.html"), "not public");

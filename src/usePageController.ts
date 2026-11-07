@@ -1,10 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { defaults, validateSettings, type Settings } from "./settings";
+import { loadSiteProfile, saveSiteProfile, resetSiteProfile } from "./profiles";
 type Voice = {
   voiceURI: string;
   name: string;
   lang: string;
   localService: boolean;
+};
+export type SelectionCapture = {
+  text: string;
+  token: string;
+  canApply: boolean;
+  tabId: number;
+  url: string;
 };
 
 export function supportedUrl(raw?: string) {
@@ -46,6 +54,7 @@ export function usePageController() {
     let mounted = true;
     const refresh = async (reason?: string) => {
       const generation = ++revision.current;
+      if (reason === "restored") setPageEpoch((value) => value + 1);
       if (!reason) {
         setPageEpoch((value) => value + 1);
         setCanApply(false);
@@ -204,6 +213,7 @@ export function usePageController() {
                 READ: "Reading your selection. Use Stop or press Esc on the page.",
                 PAUSE: "Speech pause/resume requested.",
                 STOP: "Speech stopped.",
+                FOCUS_CHART_TABLE: "Verified chart table focused on the page.",
               } as Record<string, string>
             )[type] || "Done.",
           );
@@ -231,10 +241,23 @@ export function usePageController() {
   function change(patch: Partial<Settings>) {
     const next = validateSettings({ ...settings, ...patch });
     setSettings(next);
+    if (!globalThis.chrome?.tabs) {
+      tell(
+        "Interface preview. Controls update the sample only; install the extension to change webpages or use speech.",
+      );
+      return;
+    }
     run("APPLY", next);
   }
   function restore() {
+    setPageEpoch((value) => value + 1);
     setSettings({ ...defaults });
+    if (!globalThis.chrome?.tabs) {
+      tell(
+        "Interface preview. Sample controls restored; no webpage was changed.",
+      );
+      return;
+    }
     run("RESTORE", { ...defaults });
   }
   function openPanel() {
@@ -257,6 +280,104 @@ export function usePageController() {
       tell("Full panel requires Chrome 116 or newer.", true);
     }
   }
+  async function siteProfile(action: "save" | "load" | "reset") {
+    const generation = ++revision.current;
+    const snapshot = { ...settings };
+    try {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      if (!supportedUrl(tab?.url))
+        throw new Error("Open a regular website to use site profiles.");
+      if (action === "save")
+        await saveSiteProfile(chrome.storage.local, tab.url!, snapshot);
+      if (action === "reset")
+        await resetSiteProfile(chrome.storage.local, tab.url!);
+      if (action === "load") {
+        const loaded = await loadSiteProfile(chrome.storage.local, tab.url!);
+        if (generation !== revision.current) return;
+        if (!loaded) {
+          tell("No saved profile for this site.");
+          return;
+        }
+        setSettings(loaded);
+      }
+      if (generation !== revision.current) return;
+      tell(
+        action === "save"
+          ? "Profile saved for this site only. It never activates automatically."
+          : action === "reset"
+            ? "Saved site profile removed. The current page is unchanged."
+            : "Site profile loaded into controls. Choose Apply saved / current to change this page.",
+      );
+    } catch (error) {
+      if (generation === revision.current)
+        tell(
+          error instanceof Error
+            ? error.message
+            : "Site profile storage is unavailable.",
+          true,
+        );
+    }
+  }
+  async function captureSelection(): Promise<SelectionCapture> {
+    const generation = ++revision.current;
+    const query = chrome.tabs.query({ active: true, currentWindow: true });
+    await queue.current;
+    const [tab] = await query;
+    if (tab?.id === undefined || !supportedUrl(tab.url))
+      throw new Error("Select text on a regular webpage first.");
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ["content.js"],
+    });
+    const result = await chrome.tabs.sendMessage(tab.id, {
+      type: "GET_SELECTION",
+    });
+    if (generation !== revision.current)
+      throw new Error("The page changed. Capture your selection again.");
+    if (
+      !result?.ok ||
+      typeof result.text !== "string" ||
+      typeof result.token !== "string"
+    )
+      throw new Error(result?.error || "Could not capture the selection.");
+    return {
+      text: result.text,
+      token: result.token,
+      canApply: result.canApply === true,
+      tabId: tab.id,
+      url: tab.url!,
+    };
+  }
+  async function applySimplification(capture: SelectionCapture, text: string) {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    if (tab?.id !== capture.tabId || tab.url !== capture.url)
+      throw new Error(
+        "Return to the original page or capture a new selection.",
+      );
+    const result = await chrome.tabs.sendMessage(capture.tabId, {
+      type: "APPLY_SIMPLIFICATION",
+      token: capture.token,
+      text,
+    });
+    if (!result?.ok)
+      throw new Error(
+        result?.error || "The selected text could not be changed.",
+      );
+  }
+  function discardSelection(capture: SelectionCapture) {
+    void chrome.tabs
+      .sendMessage(capture.tabId, {
+        type: "DISCARD_SELECTION",
+        token: capture.token,
+      })
+      .catch(() => {});
+  }
   return {
     settings,
     pageEpoch,
@@ -271,5 +392,9 @@ export function usePageController() {
     change,
     restore,
     openPanel,
+    siteProfile,
+    captureSelection,
+    applySimplification,
+    discardSelection,
   };
 }

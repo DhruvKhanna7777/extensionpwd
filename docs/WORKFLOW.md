@@ -1,5 +1,7 @@
 # Contributor workflow
 
+> Current checkpoint: read [CONTRIBUTOR-HANDOFF.md](CONTRIBUTOR-HANDOFF.md), [FEATURE-STATUS.md](FEATURE-STATUS.md) and [CONTINUATION-PROMPT.md](CONTINUATION-PROMPT.md) first. PR #8 is merged; the implementation branch contains newer work. Historical counts, deferred-feature lists and role prompts below may predate it. Do not start from an older main checkout while the implementation PR is open.
+
 Start with START-HERE.md. This is a human project workflow, not a claim that release acceptance is automated.
 
 ## 1. Get a trustworthy starting point
@@ -18,7 +20,7 @@ npm run package
 npm audit --audit-level=high
 ```
 
-For an existing checkout, inspect status first and use fetch/review before switching or pulling. Do not discard local edits. Prerequisites are Node 22.12+ and Chrome 116+. Current commands produce 48 Vitest + 3 package checks and an 11-file ZIP; future legitimate changes can alter those counts. Investigate failures rather than editing expected counts to match them.
+For an existing checkout, inspect status first and use fetch/review before switching or pulling. Do not discard local edits. Prerequisites are Node 22.12+ and Chrome 116+. Current commands produce 103 Vitest + 4 package checks and a 19-file ZIP; future legitimate changes can alter those counts. Investigate failures rather than editing expected counts to match them.
 
 Build output: dist/. ZIP: artifacts/ableverse-ai-0.1.0.zip. Both are generated and ignored by Git. Packaging prints SHA-256 and verifies its explicit shipping allowlist and bytes. Extract ZIP before Load unpacked, or load dist directly.
 
@@ -109,4 +111,4 @@ Update the main entry docs if the current state changed. Stop when asked. Do not
 
 ## Later features
 
-P1 begins after core acceptance: hover speech, per-site preferences, line/pie chart adapters, explicit-consent AI simplification via a secure backend, and verified licensed sign-language content. Before implementation, settle provider/data consent/cost/licensing choices with the owner. No placeholder AI/ASL output, client keys, automatic uploads or unlicensed media.
+Remaining feature implementation is listed in FEATURE-STATUS.md. The owner authorized local P1 implementation on branches; required core acceptance still gates release. Real model/sign-media integration and native verification remain open. Before implementation, settle provider/data consent/cost/licensing choices with the owner. No placeholder AI/ASL output, client keys, automatic uploads or unlicensed media.

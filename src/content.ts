@@ -1,11 +1,17 @@
 import { PageEngine } from "./engine";
 import { SpeechPlayer } from "./speech";
+import { HoverReader } from "./hover";
+import { SelectionSession } from "./selectionSession";
 import { defaults, validateSettings } from "./settings";
 // This file is bundled as an isolated-world IIFE. Repeated injection reuses this listener.
 const scope = globalThis as typeof globalThis & { __ableverse?: boolean };
 if (!scope.__ableverse) {
   scope.__ableverse = true;
-  const engine = new PageEngine(document);
+  const selections = new SelectionSession(document);
+  const engine = new PageEngine(document, () => {
+    current.ruler = false;
+    changed();
+  });
   const changed = (reason = "state") => {
     if (
       !hasActiveProfile() &&
@@ -19,6 +25,19 @@ if (!scope.__ableverse) {
     pending?.catch(() => {});
   };
   const speech = new SpeechPlayer(document, changed);
+  let hoverError = "";
+  const hover = new HoverReader(
+    document,
+    (text) => {
+      hoverError = "";
+      speech.play(text, current);
+    },
+    () => speech.stop(),
+    (message) => {
+      hoverError = message;
+      changed();
+    },
+  );
   let route = location.href;
   let current = { ...defaults };
   let routeTimer: ReturnType<typeof setInterval> | undefined;
@@ -29,8 +48,14 @@ if (!scope.__ableverse) {
     current.emphasis ||
     current.distractions ||
     current.chroma ||
+    current.hoverSpeech ||
+    current.ruler ||
+    selections.active ||
     current.calm !== "default";
-  const stop = () => speech.stop();
+  const stop = () => {
+    hover.cancel();
+    speech.stop();
+  };
   const observer = new MutationObserver((records) => {
     const sourceChartChanged =
       current.chroma &&
@@ -45,12 +70,21 @@ if (!scope.__ableverse) {
           target?.localName === "svg"
         )
           return true;
-        if (target?.closest('svg[data-av-chart="bar"]')) return true;
+        if (
+          target?.closest(
+            'svg[data-av-chart="bar"],svg[data-av-chart="line"],svg[data-av-chart="pie"]',
+          )
+        )
+          return true;
         return [...record.removedNodes].some(
           (node) =>
             node instanceof Element &&
-            (node.matches('svg[data-av-chart="bar"]') ||
-              node.querySelector('svg[data-av-chart="bar"]')),
+            (node.matches(
+              'svg[data-av-chart="bar"],svg[data-av-chart="line"],svg[data-av-chart="pie"]',
+            ) ||
+              node.querySelector(
+                'svg[data-av-chart="bar"],svg[data-av-chart="line"],svg[data-av-chart="pie"]',
+              )),
         );
       });
     // Do not keep calling a stale snapshot verified after a site updates its source.
@@ -68,6 +102,11 @@ if (!scope.__ableverse) {
     if (routeTimer === undefined)
       routeTimer = setInterval(() => {
         if (location.href !== route) restore();
+        else if (
+          !hasActiveProfile() &&
+          !["speaking", "paused"].includes(speech.getState().state)
+        )
+          unobserve();
       }, 500);
     observer.observe(document, {
       childList: true,
@@ -79,6 +118,8 @@ if (!scope.__ableverse) {
         "data-av-label",
         "data-av-unit",
         "data-av-chart",
+        "data-av-source",
+        "class",
         "aria-label",
         "x",
         "y",
@@ -87,6 +128,10 @@ if (!scope.__ableverse) {
         "transform",
         "style",
         "fill",
+        "points",
+        "d",
+        "data-av-series",
+        "data-av-slice",
       ],
     });
     window.addEventListener("pagehide", restore);
@@ -101,6 +146,9 @@ if (!scope.__ableverse) {
   };
   const restore = () => {
     unobserve();
+    selections.restore();
+    hover.destroy();
+    hoverError = "";
     stop();
     engine.restore();
     current = { ...defaults };
@@ -124,11 +172,54 @@ if (!scope.__ableverse) {
     try {
       if (!msg || typeof msg.type !== "string") return;
       switch (msg.type) {
+        case "FOCUS_CHART_TABLE": {
+          const table = document.querySelector<HTMLTableElement>(
+            "table[data-ableverse-owned],[data-ableverse-owned] table",
+          );
+          if (!current.chroma || !table) {
+            respond({
+              ok: false,
+              error:
+                "Enable Charts on a supported chart before opening its verified table.",
+            });
+            break;
+          }
+          table.tabIndex = -1;
+          table.style.outline = "3px solid #3069cf";
+          table.addEventListener(
+            "blur",
+            () => table.style.removeProperty("outline"),
+            { once: true },
+          );
+          table.scrollIntoView?.({ block: "nearest" });
+          table.focus();
+          respond({ ok: true });
+          break;
+        }
+        case "GET_SELECTION": {
+          const capture = selections.capture();
+          observe();
+          respond({ ok: true, ...capture });
+          break;
+        }
+        case "DISCARD_SELECTION":
+          selections.discard(msg.token);
+          changed();
+          respond({ ok: true });
+          break;
+        case "APPLY_SIMPLIFICATION":
+          stop();
+          selections.apply(msg.token, msg.text);
+          observe();
+          respond({ ok: true });
+          break;
         case "GET_STATE":
           respond({
             ok: true,
             settings: current,
-            speech: speech.getState(),
+            speech: hoverError
+              ? { state: "error", error: hoverError }
+              : speech.getState(),
             voices: speech
               .listVoices()
               .map(({ voiceURI, name, lang, localService }) => ({
@@ -144,6 +235,8 @@ if (!scope.__ableverse) {
           observer.disconnect();
           current = validateSettings(msg.settings);
           const result = engine.apply(current);
+          hoverError = "";
+          hover.configure(current);
           observe();
           respond({ ok: true, ...result });
           break;
@@ -166,6 +259,8 @@ if (!scope.__ableverse) {
           });
           break;
         case "READ": {
+          hover.cancel();
+          hoverError = "";
           const text = selection();
           if (!text) {
             respond({
@@ -185,6 +280,7 @@ if (!scope.__ableverse) {
           respond({ ok: true });
           break;
         case "STOP":
+          hoverError = "";
           stop();
           respond({ ok: true });
           break;
