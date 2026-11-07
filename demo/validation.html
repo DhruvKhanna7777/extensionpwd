@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AbleVerse browser validation</title>
+    <style>
+      body {
+        font: 16px system-ui;
+        color: #142339;
+        background: #f7f9fc;
+        margin: 24px auto;
+        max-width: 1000px;
+        padding: 16px;
+      }
+      header {
+        background: white;
+        padding: 24px;
+        border: 1px solid #d9e4ef;
+        border-radius: 12px;
+      }
+      button {
+        font: inherit;
+        min-height: 44px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid #3069cf;
+        background: #3069cf;
+        color: white;
+        cursor: pointer;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible {
+        outline: 3px solid #087b78;
+        outline-offset: 3px;
+      }
+      #fixture {
+        margin-top: 24px;
+        background: white;
+        padding: 24px;
+        border: 1px solid #d9e4ef;
+      }
+      #fixture h1 {
+        font-size: 36px;
+      }
+      #fixture p {
+        font-size: 18px;
+      }
+      #fixture input,
+      #fixture button {
+        font-size: 14px;
+      }
+      #fixture code {
+        font-size: 15px;
+      }
+      #results li {
+        padding: 8px 0;
+      }
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
+      label {
+        display: block;
+        margin: 16px 0;
+      }
+      input {
+        padding: 8px;
+      }
+      table {
+        max-width: 100%;
+      }
+      .motion-sample {
+        animation: validation-pulse 2s linear infinite;
+      }
+      @keyframes validation-pulse {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0.7;
+        }
+      }
+      small {
+        display: block;
+        line-height: 1.7;
+      }
+      nav {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 16px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Browser validation harness</h1>
+      <p>
+        This page tests the real AbleVerse page engine in your browser. It is
+        <strong>not an installed-extension test</strong>; Chrome permissions,
+        popup transport and actual speech are separate checks.
+      </p>
+      <nav>
+        <a href="article.html">Article</a
+        ><a href="sensory.html">Sensory & forms</a
+        ><a href="charts.html">Charts</a>
+      </nav>
+      <button id="run">Run browser checks</button>
+      <button id="restore">Restore test fixture</button>
+      <p id="status" role="status">Ready. No test has run.</p>
+      <ol id="results" aria-label="Validation results"></ol>
+    </header>
+    <div id="fixture"></div>
+    <script type="module" src="./validation.ts"></script>
+  </body>
+</html>

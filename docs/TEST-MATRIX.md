@@ -32,6 +32,10 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Restore acknowledgement | Internal state notification no longer replaces explicit confirmation | PASS |
 | Keyboard controls | React user-event Tab/Space/Enter activation/restore | PASS (DOM; native walkthrough pending) |
 | Semantic accessibility | axe wcag2a/wcag2aa/wcag21aa across five modules, contrast excluded | PASS (automated; screen reader pending) |
+| Real browser page-engine suite | `/demo/validation.html`, 16/16 checks in in-app browser | PASS (engine, not installed extension) |
+| Motion, status exclusions and restored animation | Actual browser computed animation names | PASS (engine harness) |
+| Prose palette contrast | Actual computed warm/dark/contrast RGB pairs >=4.5:1 | PASS (engine harness; full UI contrast pending) |
+| Rendered charts/forms/restore | Exact table data, patterns over inline fill, editable form submission, newer website changes | PASS (engine harness; native extension pending) |
 | Real voice/pause/stop/hide/navigation | Not run installed | PENDING |
 | Keyboard-only, screen reader, 360/400px | Not run fully | PENDING |
 | Installed behavior on two layouts plus form | Fixtures supplied; runtime checks not run | PENDING |

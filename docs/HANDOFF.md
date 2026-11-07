@@ -54,3 +54,7 @@ Commit/push milestones and keep this file/test matrix current. Do not mark pendi
 ## Navigation/chart checkpoint
 
 History-only route checks run every 500ms while observing and are removed on Restore. Chart-source invalidation is conditional on Chroma, so Reading survives unrelated chart updates. Patterns override inline CSS fill while preserving/restoring the original style and newer unrelated site edits. Tests: 37 pass; production build and full audit pass. README now builds from main.
+
+## Browser-engine evidence
+
+Added `demo/validation.html` and `demo/validation.ts`, importing the actual page engine rather than faking extension behavior. In-app browser returned 16/16 PASS: heading hierarchy/scale, protected fields/code/alerts/editables, exact SVG rows, inline CSS pattern precedence, canvas fallback, repeat Apply, exact double restore, form edit/submit, newer site text/style preservation, reduced motion with status exclusion, original animation restored, focus/control outlines, and >=4.5:1 computed contrast for warm/dark/high-contrast prose. Browser outline checks allow one device pixel of rounding; observed 2.4px/1.6px for authored 3px/2px outlines. Demo TypeScript now participates in production typechecking. Installed Chrome permission/audio and screen-reader gates remain distinct and pending.
