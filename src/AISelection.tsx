@@ -21,6 +21,7 @@ export function AISelection({
     [connected, setConnected] = useState(false),
     [suggestion, setSuggestion] = useState(""),
     [busy, setBusy] = useState(false),
+    [applying, setApplying] = useState(false),
     [message, setMessage] = useState(""),
     [failed, setFailed] = useState(false),
     [applied, setApplied] = useState(false);
@@ -40,6 +41,7 @@ export function AISelection({
     setSuggestion("");
     setConsent(false);
     setBusy(false);
+    setApplying(false);
     setApplied(false);
     setMessage("");
     return () => {
@@ -52,10 +54,19 @@ export function AISelection({
   const captureText = async () => {
     const ticket = ++serial.current;
     request.current?.abort();
+    if (active.current) discardSelection(active.current);
+    active.current = null;
+    setCapture(null);
+    setConsent(false);
+    setSuggestion("");
+    setApplied(false);
     setBusy(true);
     try {
       const value = await captureSelection();
-      if (ticket !== serial.current) return;
+      if (ticket !== serial.current) {
+        discardSelection(value);
+        return;
+      }
       active.current = value;
       setCapture(value);
       setConsent(false);
@@ -200,13 +211,13 @@ export function AISelection({
           )}
         </>
       )}
-      {busy && (
+      {busy && !applying && (
         <button
           onClick={() => {
             serial.current++;
             request.current?.abort();
             setBusy(false);
-            tell("Cancelled. Original page text is unchanged.");
+            tell("Cancelled. No suggestion was applied by this operation.");
           }}
         >
           Cancel AI request
@@ -239,20 +250,31 @@ export function AISelection({
             <button
               disabled={!capture?.canApply || applied || busy}
               onClick={async () => {
-                if (!capture) return;
+                if (!capture || busy) return;
+                const ticket = ++serial.current;
+                setBusy(true);
+                setApplying(true);
+                tell("Applying the suggestion to the captured passage…");
                 try {
                   await applySimplification(capture, suggestion);
+                  if (ticket !== serial.current) return;
                   setApplied(true);
                   tell(
                     "Suggestion applied to the captured passage. Restore original page undoes it.",
                   );
                 } catch (error) {
+                  if (ticket !== serial.current) return;
                   tell(
                     error instanceof Error
                       ? error.message
                       : "Could not replace the selected text.",
                     true,
                   );
+                } finally {
+                  if (ticket === serial.current) {
+                    setBusy(false);
+                    setApplying(false);
+                  }
                 }
               }}
             >

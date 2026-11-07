@@ -1,5 +1,11 @@
 # Validation record — 2026-11-07
 
+## AI operation lifecycle hardening
+
+Three new regressions reproduced failures before the fix: failed recapture retained old text/consent/suggestion; cancelled late capture was not discarded on the page; Apply could dispatch twice and show stale completion after page changes. All now pass. Additional checks cover stale Apply errors, denied optional permission causing no service request, and actual loopback HTTP client disconnect aborting the simulated upstream model and allowing a subsequent request.
+
+Current full automated suite: 109 Vitest + 4 packaging checks PASS; production typecheck/build/package PASS with 19 verified files. ZIP SHA-256: 27302e9e43820adb5fd3f1799a387d0611fc37c64bd4cebdfb5c5e8dac004f05. HTTP transport runs locally with a fake model; real Ollama output/quality and installed optional permission flow remain separate and unverified. The last engine harness result is 35/35 at PR #11, covering unaffected page-engine code; it was not rerun for this AI-panel-only fix.
+
 ## Continuation after merged PR #10
 
 Main 73b98ef includes PR #9's implemented features and PR #10's pinned font-notice build verification. Current in-app engine harness passed 35/35, expanding line/pie, reading tools and local font coverage; actual control border contrast improved from 2.11:1 to 4.14:1. Controlled advanced fixture mutation buttons verified independently. Browser evidence details are in BROWSER-EVIDENCE.md. These results do not close installed-extension, audible model/speech or screen-reader gates.

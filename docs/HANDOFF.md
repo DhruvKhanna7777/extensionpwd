@@ -1,5 +1,11 @@
 # AbleVerse AI checkpoint — 2026-11-07
 
+## Latest: AI operation lifecycle
+
+Starting from merged PR #11 (020a1e3), reproduced and fixed failed-recapture stale consent/text, un-discarded late capture after cancellation, duplicate Apply and stale Apply success/failure messages. Apply is now busy/once-only and is not misleadingly offered a cancellation action after dispatch. New capture resets previous review/consent immediately and discards the prior page token.
+
+109 Vitest tests + 4 package checks and production typecheck/build/package passed. Additional actual loopback HTTP test verifies client disconnect aborts the fake model request and frees the adapter for the next request. No real model run, native Chrome acceptance or new listening claim. ZIP SHA-256: 27302e9e43820adb5fd3f1799a387d0611fc37c64bd4cebdfb5c5e8dac004f05. Latest page-engine browser evidence remains 35/35 from the previous continuation. See OPTIONAL-AI.md and TEST-MATRIX.md.
+
 ## Current continuation: reference review and advanced acceptance
 
 Based on merged main 73b98ef. Reviewed the owner-supplied `ableverse_production_frontend_codebase.md` from Krish and documented safe adaptation decisions in FRONTEND-REFERENCE.md; the private original is not uploaded. Existing live design already incorporates its principal visual language. Improved ordinary/button font-chip border definition; actual Stop border contrast changed from 2.11:1 to 4.14:1 against white.

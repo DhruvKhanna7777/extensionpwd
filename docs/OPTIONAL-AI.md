@@ -29,6 +29,8 @@ The adapter binds only to `127.0.0.1:3187`. It rejects unexpected Host and Origi
 
 Cancel, page/tab/module changes and Restore discard pending UI results. Original text/captures/suggestions are held in memory, not extension storage. The server receives only the selected text, not the page URL or whole DOM; it calls the fixed local Ollama API. The selected model's own data practices still matter.
 
+Starting a new capture immediately clears the previous text, consent and suggestion, including when the new capture fails. Captures that finish after cancellation/navigation are discarded on the original page. Apply dispatches once and ignores old success/error messages after a page change. An already-dispatched page replacement is not presented as cancellable; use Restore to undo owned output. Cancel applies to capture/connection/generation, not a replacement already sent to the page.
+
 ## Verify before claiming it works
 
 Client/UI/HTTP tests use a fake model. On a real configured installation, record model/version, runtime version, source commit, browser/OS, input, explicit consent, actual output, latency, cancellation, route changes, offline/malformed response and Restore/site-edit outcomes. Check the optional permission denial path. Never describe the mocked test output as real inference evidence.
