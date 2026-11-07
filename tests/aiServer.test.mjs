@@ -27,6 +27,53 @@ const headers = {
   "Content-Type": "application/json",
   Origin: "chrome-extension://" + "a".repeat(32),
 };
+
+it("cancels an upstream generation when the client disconnects and accepts the next request", async () => {
+  let started;
+  const ready = new Promise((resolve) => (started = resolve));
+  let cancelled;
+  const aborted = new Promise((resolve) => (cancelled = resolve));
+  let calls = 0;
+  const model = vi.fn(async (_url, options) => {
+    if (++calls > 1)
+      return new Response(
+        JSON.stringify({
+          response: JSON.stringify({ simplified: "Next result." }),
+        }),
+      );
+    started();
+    return await new Promise((_resolve, reject) => {
+      options.signal.addEventListener(
+        "abort",
+        () => {
+          cancelled();
+          reject(options.signal.reason);
+        },
+        { once: true },
+      );
+    });
+  });
+  const url = await server(model);
+  const controller = new AbortController();
+  const first = fetch(url + "/simplify", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ text: "Controlled cancellation example." }),
+    signal: controller.signal,
+  }).catch((error) => error);
+  await ready;
+  controller.abort();
+  await first;
+  await aborted;
+  const next = await fetch(url + "/simplify", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ text: "Next controlled example." }),
+  });
+  expect(next.status).toBe(200);
+  expect(await next.json()).toEqual({ simplified: "Next result." });
+  expect(model).toHaveBeenCalledTimes(2);
+});
 it("rejects website origins without touching the model", async () => {
   const model = vi.fn();
   const url = await server(model);
