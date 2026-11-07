@@ -226,6 +226,26 @@ document.querySelector("#run")!.addEventListener("click", () => {
       );
     }
     engine.restore();
+    const narrowHeading = document.createElement("h2");
+    narrowHeading.style.cssText = "width:240px;font-size:36px";
+    narrowHeading.textContent = "Small changes, meaningful choices";
+    fixture.querySelector("article")!.append(narrowHeading);
+    engine.apply({
+      ...defaults,
+      reading: true,
+      fontFamily: "Verdana",
+      fontScale: 150,
+      letterSpacing: 0.09,
+      wordSpacing: 0.21,
+    });
+    checks.push(
+      assert(
+        "Enlarged Verdana heading wraps within a 240px column",
+        narrowHeading.scrollWidth <= narrowHeading.clientWidth,
+      ),
+    );
+    engine.restore();
+    narrowHeading.remove();
     status.textContent = `${checks.filter(Boolean).length}/${checks.length} browser checks passed. Fixture restored; native extension/audio checks are separate.`;
   } catch (error) {
     engine.restore();

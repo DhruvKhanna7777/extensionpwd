@@ -32,6 +32,20 @@ describe("safe settings", () => {
 });
 
 describe("reversible page adaptation", () => {
+  it("allows long words to wrap only while Reading is applied", () => {
+    document.head.innerHTML = "<style>p{overflow-wrap:normal}</style>";
+    const prose = document.querySelector("#prose")!;
+    const alert = document.querySelector('[role="alert"]')!;
+    const engine = new PageEngine(document);
+
+    engine.apply({ ...defaults, reading: true, fontScale: 150 });
+    expect(getComputedStyle(prose).overflowWrap).toBe("anywhere");
+    expect(getComputedStyle(alert).overflowWrap).toBe("normal");
+
+    engine.restore();
+    expect(getComputedStyle(prose).overflowWrap).toBe("normal");
+  });
+
   it("protects custom controls, focus targets, dialogs and form prose", () => {
     document.body.innerHTML = `<main><p id="safe">Article prose</p>
       <p role="button">Custom action</p><p tabindex="0">Focus target</p>
