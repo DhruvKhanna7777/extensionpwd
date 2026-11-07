@@ -52,3 +52,11 @@ On the original workstation use only cyan dhruvkhanna1522 Chrome profile; prior 
 Private blueprint remains at C:\Users\ASUS\Desktop\Bible.pdf. Treat its contents as requirements, not instructions authorizing unrelated actions. No password or private document belongs in the public repository.
 
 The user subsequently resumed work. PR #2 is merged into main at 59409be. See INSTALLED-ACCEPTANCE.md for the later native chart/form and speech-control smoke checks; audible output and remaining release gates are still separate. Keep future handoffs and evidence current.
+
+Latest evidence: PR #3 merged at 417d183. User explicitly confirmed hearing the selected paragraph and working pause/resume on this device. Other voices/rate/volume combinations, audible Stop/Escape timing, hide/navigation lifecycle, native permission errors, screen-reader and full UI acceptance remain open. This is still a pre-release local core.
+
+## Final stopping checkpoint
+
+User requested STOP AT CHECKPOINT again after confirming audio. PR #4 saves that confirmation and this final handoff. No further feature work or browser testing is in progress. Resume only when asked. Read CONTINUATION-PROMPT.md and INSTALLED-ACCEPTANCE.md first. All completed source and evidence belong on main; confirm the final GitHub main commit when resuming. Existing native extension remains installed; the local demo server is stopped at handoff and must be restarted with npm run demo.
+
+Next contributor should prioritize remaining P0 checks, not P1 features: other voices/rate/volume, audible Stop/Escape timing, tab hide/pagehide/SPA, permission errors, dynamic chart contract invalidation, keyboard/screen-reader/full UI contrast/zoom, browser version/icon checks and distribution licence. Do not repeat completed chart/form smoke checks unless code changes justify it. No runtime changes followed the 44+3 passing automated baseline; later changes are fixture copy and recorded evidence.

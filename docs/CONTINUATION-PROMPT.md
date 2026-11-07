@@ -4,6 +4,10 @@ Continue AbleVerse AI from the saved 2026-11-07 checkpoint in https://github.com
 
 Later update: user resumed work; PR #2 merged at 59409be. Read docs/INSTALLED-ACCEPTANCE.md for new native chart labels/patterns/table/reopen/restore, sensory/form edit-submit-preservation, and speech selection/pause/resume/Stop control-state evidence. Audible output has not been independently recorded. Prioritize remaining acceptance gates accordingly rather than repeating already-recorded smoke tests.
 
+FINAL CHECKPOINT UPDATE (takes precedence over historical status below): user asked to STOP again and save everything. PR #3 merged at 417d183, and PR #4 records the user's explicit confirmation that the paragraph was audible and pause/resume worked. Native page Escape control-state cancellation also passed. No audio was recorded by the agent. Read current installed acceptance and handoff for exact scope. All current work is saved for integration in main through PR #4; inspect its final merge SHA. Work is stopped; resume only on a new user request. Demo server is stopped, extension remains installed. Restart npm run demo before native tests. Existing 44 Vitest + 3 packaging checks are the runtime baseline; subsequent edits are docs and a demo caption correction.
+
+Remaining priorities: other voices/rate/volume and audible Stop/Escape timing; tab hide/pagehide/SPA; native permission failures; dynamic chart contract invalidation; native keyboard/screen-reader/full UI contrast/zoom; browser version/icons; licence and release materials. P1 remains deferred. Never claim full release certification from these smoke checks.
+
 ## Goal and priority
 
 Build a user-controlled Chrome accessibility extension. The source blueprint is a private 50-page Bible.pdf; final Part II/A1 overrides earlier feature lists. It is not a job portal or medical product. Deliver a dependable P0 local core before P1. No AbleHire source archive was supplied. The AI product name does not mean an AI backend exists.

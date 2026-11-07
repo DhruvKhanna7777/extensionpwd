@@ -30,6 +30,10 @@ Corrected a fixture copy inconsistency: SVG metadata/table use units, but its st
 - The test did not record audio. Audible content, voice identity, audible pause timing and volume/rate quality remain unverified unless separately confirmed by the user. Tab hide, pagehide and SPA lifecycle remain pending in native Chrome.
 - Native form used only controlled demo values; no real password was entered or saved. Browser offered its normal password-save toolbar icon after the demo submission; it was not opened or acted on.
 
-## Remaining acceptance
+## User-confirmed audible playback: PASS (2026-11-07)
 
-Audible speech/pause/resume/Stop/Escape and hide/navigation lifecycle; native permission failures; dynamic chart contract invalidation; keyboard/screen-reader acceptance; full UI contrast/zoom; browser version and distribution licence. Automated/harness evidence remains separately recorded in TEST-MATRIX.md and BROWSER-EVIDENCE.md.
+The user explicitly confirmed hearing the selected demo paragraph and that pause/resume worked. This adds human listening evidence to the native control-state checks above. It does not certify every installed voice, audible rate/volume quality, Stop/Escape timing, or hide/navigation behavior.
+
+## Other release gates
+
+Other voice/rate/volume combinations, audible Stop/Escape timing and hide/navigation lifecycle; native permission failures; dynamic chart contract invalidation; keyboard/screen-reader acceptance; full UI contrast/zoom; browser version and distribution licence. Automated/harness evidence remains separately recorded in TEST-MATRIX.md and BROWSER-EVIDENCE.md.
