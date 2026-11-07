@@ -17,6 +17,19 @@ export class PageEngine {
     this.restore();
     const s = validateSettings(raw);
     const rules: string[] = [];
+    let hidden = 0;
+    if (s.distractions) {
+      const essential =
+        protectedSelector +
+        ',a[href],form,[role="dialog"],[role="alertdialog"],[role="button"],[role="textbox"],[role="combobox"],[role="menu"],[role="navigation"],[tabindex],audio[controls],video[controls]';
+      for (const el of this.doc.querySelectorAll("[data-av-distractor]"))
+        if (!el.closest(essential) && !el.querySelector(essential)) {
+          this.mark(el, "data-ableverse-hidden");
+          hidden++;
+        }
+      if (hidden)
+        rules.push("[data-ableverse-hidden]{display:none!important;}");
+    }
     if (s.reading || s.calm !== "default") {
       const originalSizes = new Set<number>();
       for (const el of this.doc.querySelectorAll(
@@ -82,9 +95,12 @@ export class PageEngine {
       this.doc.head.append(style);
       this.undo.push(() => style.remove());
     }
-    return s.chroma
-      ? enhanceCharts(this.doc, this.undo)
-      : { charts: 0, warnings: [] as string[] };
+    return {
+      hidden,
+      ...(s.chroma
+        ? enhanceCharts(this.doc, this.undo)
+        : { charts: 0, warnings: [] as string[] }),
+    };
   }
   restore() {
     for (const undo of this.undo.reverse()) undo();

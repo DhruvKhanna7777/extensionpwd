@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc --noEmit && node build.mjs",
-    "test": "vitest run",
+    "test": "vitest run && node --test scripts/package-checks.mjs",
+    "package": "npm run build && node scripts/package.mjs",
     "demo": "vite --host 127.0.0.1"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@types/react-dom": "^18.3.1",
     "axe-core": "^4.14.0",
     "esbuild": "^0.25.0",
+    "fflate": "^0.8.3",
     "jsdom": "^26.0.0",
     "prettier": "^3.9.10",
     "sharp": "^0.35.5",

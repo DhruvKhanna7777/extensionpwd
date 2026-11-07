@@ -7,6 +7,11 @@ if (!scope.__ableverse) {
   scope.__ableverse = true;
   const engine = new PageEngine(document);
   const changed = (reason = "state") => {
+    if (
+      !hasActiveProfile() &&
+      !["speaking", "paused"].includes(speech.getState().state)
+    )
+      unobserve();
     const pending = chrome.runtime.sendMessage?.({
       type: "PAGE_STATE_CHANGED",
       reason,
@@ -17,6 +22,14 @@ if (!scope.__ableverse) {
   let route = location.href;
   let current = { ...defaults };
   let routeTimer: ReturnType<typeof setInterval> | undefined;
+  const hasActiveProfile = () =>
+    current.reading ||
+    current.motion ||
+    current.focus ||
+    current.emphasis ||
+    current.distractions ||
+    current.chroma ||
+    current.calm !== "default";
   const stop = () => speech.stop();
   const observer = new MutationObserver((records) => {
     const sourceChartChanged =
@@ -26,6 +39,12 @@ if (!scope.__ableverse) {
           record.target instanceof Element
             ? record.target
             : record.target.parentElement;
+        if (
+          record.type === "attributes" &&
+          record.attributeName === "data-av-chart" &&
+          target?.localName === "svg"
+        )
+          return true;
         if (target?.closest('svg[data-av-chart="bar"]')) return true;
         return [...record.removedNodes].some(
           (node) =>
@@ -38,6 +57,13 @@ if (!scope.__ableverse) {
     if (location.href !== route || sourceChartChanged) restore();
   });
   const observe = () => {
+    if (
+      !hasActiveProfile() &&
+      !["speaking", "paused"].includes(speech.getState().state)
+    ) {
+      unobserve();
+      return;
+    }
     route = location.href;
     if (routeTimer === undefined)
       routeTimer = setInterval(() => {
@@ -65,12 +91,16 @@ if (!scope.__ableverse) {
     });
     window.addEventListener("pagehide", restore);
   };
-  const restore = () => {
+  const unobserve = () => {
     if (routeTimer !== undefined) {
       clearInterval(routeTimer);
       routeTimer = undefined;
     }
     observer.disconnect();
+    window.removeEventListener("pagehide", restore);
+  };
+  const restore = () => {
+    unobserve();
     stop();
     engine.restore();
     current = { ...defaults };

@@ -32,18 +32,22 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Restore acknowledgement | Internal state notification no longer replaces explicit confirmation | PASS |
 | Keyboard controls | React user-event Tab/Space/Enter activation/restore | PASS (DOM; native walkthrough pending) |
 | Semantic accessibility | axe wcag2a/wcag2aa/wcag21aa across five modules, contrast excluded | PASS (automated; screen reader pending) |
-| Real browser page-engine suite | `/demo/validation.html`, 16/16 checks in in-app browser | PASS (engine, not installed extension) |
+| Real browser page-engine suite | `/demo/validation.html`, 17/17 checks in in-app browser | PASS (engine, not installed extension) |
 | Motion, status exclusions and restored animation | Actual browser computed animation names | PASS (engine harness) |
 | Prose palette contrast | Actual computed warm/dark/contrast RGB pairs >=4.5:1 | PASS (engine harness; full UI contrast pending) |
 | Rendered charts/forms/restore | Exact table data, patterns over inline fill, editable form submission, newer website changes | PASS (engine harness; native extension pending) |
 | Real voice/pause/stop/hide/navigation | Not run installed | PENDING |
-| Keyboard-only, screen reader, 360/400px | Not run fully | PENDING |
+| Native keyboard-only and screen reader | Not run fully; preview width matrix is separate evidence | PENDING |
 | Installed behavior on two layouts plus form | Fixtures supplied; runtime checks not run | PENDING |
 | SPA and changed chart nodes | Needs installed coverage | PENDING |
 | AI/ASL/hover/line/pie | Deferred P1 | NOT IN CORE |
 
 Release gates remain open. Record actual browser version/results/defects and evidence; do not infer manual PASS from unit tests.
 
-37 automated tests currently pass. After the earlier interrupted attempt, installation succeeded on the next turn in the existing cyan profile. Native popup/full-panel, activeTab, Reading and Restore smoke tests passed. A heading-size defect was reproduced, fixed, reloaded and rechecked. Further browser input stopped when URL verification failed during chart navigation; native chart/form/audio results remain pending.
+44 core/UI tests plus 3 package checks currently pass. After the earlier interrupted attempt, installation succeeded on the next turn in the existing cyan profile. Native popup/full-panel, activeTab, Reading and Restore smoke tests passed. A heading-size defect was reproduced, fixed, reloaded and rechecked. Further browser input stopped when URL verification failed during chart navigation; native chart/form/audio results remain pending.
 
 Navigation and chart hardening: history-only URL changes cancel active speech within the 500ms active-session check; unrelated chart updates leave Reading enabled when Chroma is off; inline CSS fills no longer suppress chart patterns, and original inline styles are restored. All three have automated regression coverage; native checks remain pending.
+
+Current additional checks: all 15 module/width combinations at 320/360/400px fit without horizontal overflow or clipped controls (browser preview). Disabling the final mode or finishing speech-only playback releases active observation/polling; playback completion updates its status. Explicit marked distraction hiding protects native/custom controls and keyboard targets. Packaging verifies an allowlist, rejects missing/escaping paths, omits secret/unrelated leftovers and checks ZIP byte integrity. See BROWSER-EVIDENCE.md.
+
+Final review regressions: removing or changing an SVG chart contract removes stale companions; a deferred quiet state refresh cannot overwrite a newer Apply action. Both reproduced failures now pass. The current build still needs installed Chrome retesting.

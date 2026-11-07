@@ -32,6 +32,30 @@ describe("safe settings", () => {
 });
 
 describe("reversible page adaptation", () => {
+  it("does not hide marked custom widgets or keyboard targets", () => {
+    document.body.innerHTML =
+      '<main><div data-av-distractor role="button" tabindex="0">Custom action</div><div data-av-distractor><div tabindex="0">Keyboard target</div></div></main>';
+    expect(
+      new PageEngine(document).apply({ ...defaults, distractions: true })
+        .hidden,
+    ).toBe(0);
+  });
+  it("hides only marked noninteractive distractions and restores them", () => {
+    document.body.innerHTML =
+      '<main><div data-av-distractor id="banner">Decorative demo banner</div><div data-av-distractor><a href="#">Navigation</a></div><div data-av-distractor role="alert">Warning</div><div data-av-distractor><form><input value="keep"/></form></div><p>Unmarked prose</p></main>';
+    const before = document.body.innerHTML;
+    const engine = new PageEngine(document);
+    const result = engine.apply({ ...defaults, distractions: true });
+    expect(result.hidden).toBe(1);
+    expect(
+      document.querySelector("#banner")?.hasAttribute("data-ableverse-hidden"),
+    ).toBe(true);
+    expect(document.querySelectorAll("[data-ableverse-hidden]")).toHaveLength(
+      1,
+    );
+    engine.restore();
+    expect(document.body.innerHTML).toBe(before);
+  });
   it("preserves original heading hierarchy and scales each rendered size", () => {
     document.head.innerHTML =
       "<style>h1{font-size:36px}p{font-size:18px}</style>";

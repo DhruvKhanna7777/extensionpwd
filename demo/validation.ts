@@ -10,7 +10,7 @@ function reset() {
   fixture.innerHTML = source;
   fixture.insertAdjacentHTML(
     "beforeend",
-    '<div class="motion-sample" id="motion-sample">Animated fixture</div><div class="motion-sample" role="status" id="progress-sample">Essential progress indicator</div>',
+    '<div class="motion-sample" id="motion-sample">Animated fixture</div><div class="motion-sample" role="status" id="progress-sample">Essential progress indicator</div><div data-av-distractor id="marked-banner">Decorative marked banner</div>',
   );
   fixture.querySelector("form")!.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -66,8 +66,18 @@ document.querySelector("#run")!.addEventListener("click", () => {
       emphasis: true,
       calm: "warm",
       chroma: true,
+      distractions: true,
     };
     const result = engine.apply(profile);
+    checks.push(
+      assert(
+        "Only the marked distraction is hidden; the form stays visible",
+        result.hidden === 1 &&
+          getComputedStyle(fixture.querySelector("#marked-banner")!).display ===
+            "none" &&
+          getComputedStyle(fixture.querySelector("form")!).display !== "none",
+      ),
+    );
     checks.push(
       assert(
         "Reduced motion stops fixture animation but preserves status animation",

@@ -14,6 +14,48 @@ import { defaults } from "../src/settings";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 type Message = { type: string; settings?: typeof defaults };
+it("ignores a pending state refresh after a newer Apply action", async () => {
+  render(<App />);
+  await screen.findByText("Showing this page’s current preferences.");
+  const original = chrome.tabs.sendMessage;
+  let complete!: (v: unknown) => void;
+  (chrome.tabs as any).sendMessage = (id: number, message: Message) =>
+    message.type === "GET_STATE"
+      ? new Promise((r) => (complete = r))
+      : original(id, message);
+  await act(async () => {
+    for (const listener of stateListeners)
+      listener({ type: "PAGE_STATE_CHANGED" }, { tab: { id: 7 } });
+  });
+  fireEvent.click(screen.getByRole("checkbox", { name: /Reading Studio/ }));
+  await waitFor(() => expect(applied).toEqual([7]));
+  await act(async () => complete({ ok: true, settings: defaults }));
+  expect(
+    (
+      screen.getByRole("checkbox", {
+        name: /Reading Studio/,
+      }) as HTMLInputElement
+    ).checked,
+  ).toBe(true);
+});
+it("clears the reading announcement when playback finishes", async () => {
+  const original = chrome.tabs.sendMessage;
+  let speech = { state: "speaking" };
+  (chrome.tabs as any).sendMessage = async (id: number, message: Message) =>
+    message.type === "GET_STATE"
+      ? { ok: true, settings: defaults, speech }
+      : original(id, message);
+  render(<App />);
+  await screen.findByText(
+    "Reading your selection. Use Stop or press Esc on the page.",
+  );
+  speech = { state: "idle" };
+  await act(async () => {
+    for (const listener of stateListeners)
+      listener({ type: "PAGE_STATE_CHANGED" }, { tab: { id: 7 } });
+  });
+  expect(screen.getByRole("status").textContent).toMatch(/stopped|finished/i);
+});
 it("keeps the Restore confirmation when the page state notification arrives", async () => {
   render(<App />);
   await screen.findByText("Showing this page’s current preferences.");

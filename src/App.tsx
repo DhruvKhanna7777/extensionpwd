@@ -27,7 +27,8 @@ export function App() {
   } = usePageController();
   const isPopup = location.pathname.endsWith("popup.html");
   const toggle = (
-    key: "reading" | "motion" | "focus" | "emphasis" | "chroma",
+    key:
+      "reading" | "motion" | "focus" | "emphasis" | "chroma" | "distractions",
     label: string,
     help: string,
   ) => (
@@ -322,6 +323,11 @@ export function App() {
               <div className="eyebrow">SENSESHIFT</div>
               <h2>Less noise. More focus.</h2>
               <section className="card">
+                {toggle(
+                  "distractions",
+                  "Hide marked distractions",
+                  "Only marked noninteractive items on supported pages. Forms, links and alerts stay visible.",
+                )}
                 {toggle(
                   "motion",
                   "Reduce motion",

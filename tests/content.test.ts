@@ -109,6 +109,14 @@ it("invalidates verified companions when source chart data change", async () => 
     "77",
   );
 });
+it("removes verified companions when a source loses its chart contract", async () => {
+  document.body.innerHTML =
+    '<svg data-av-chart="bar"><rect x="0" y="20" width="30" height="40" data-av-label="A" data-av-value="20"/></svg>';
+  request("APPLY", { ...defaults, chroma: true });
+  document.querySelector("svg")!.removeAttribute("data-av-chart");
+  await Promise.resolve();
+  expect(document.querySelector("table")).toBeNull();
+});
 it("stops speech on history-only navigation without waiting for a DOM mutation", async () => {
   vi.useFakeTimers();
   try {
@@ -132,4 +140,16 @@ it("keeps Reading enabled when unrelated chart data change with Chroma off", asy
   document.querySelector("rect")!.setAttribute("data-av-value", "20");
   await Promise.resolve();
   expect(request("GET_STATE").settings.reading).toBe(true);
+});
+it("removes route polling when the final mode is disabled", () => {
+  vi.useFakeTimers();
+  try {
+    request("APPLY", { ...defaults, reading: true });
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    request("APPLY", defaults);
+    expect(vi.getTimerCount()).toBe(0);
+  } finally {
+    request("RESTORE");
+    vi.useRealTimers();
+  }
 });
