@@ -24,4 +24,4 @@ Read README.md, docs/HANDOFF.md, docs/TEST-MATRIX.md and docs/CONTINUATION-PROMP
 
 - If native browser testing is needed on the original workstation, use only the existing cyan dhruvkhanna1522 Chrome profile. The user previously approved loading/testing the local extension there. Do not open another Chrome profile.
 - Use supported browser controls. If current-URL verification fails, stop that browser interaction; do not bypass verification.
-- The latest request is to stop at a verified checkpoint and provide a complete handoff. Do not resume autonomous feature work until asked.
+- The user resumed work after the saved checkpoint. Continue authorized implementation/acceptance work and keep saving useful checkpoints; the newest user instruction controls when to stop.

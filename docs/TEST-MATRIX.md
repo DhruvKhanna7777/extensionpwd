@@ -29,6 +29,9 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Narrow Reading/Charts/Settings | DOM scrollWidth <= 320 at 320px; Sensory inspected | PASS (preview only) |
 | Fresh unpacked Chrome load, popup, side panel/activeTab | Installed in cyan profile; localhost article; popup -> panel | PASS (smoke) |
 | Installed Reading and Restore | Native Chrome visual inspection; heading-size defect fixed, reloaded and rechecked | PASS (smoke) |
+| Current installed chart, popup reopen and Restore | Four exact patterned bars and table rows; reopened On; original fills/table removal after Restore | PASS (native smoke) |
+| Current installed sensory/form | Marked hiding/focus; form edit and local submit; Restore preserves edits/result | PASS (native smoke) |
+| Current installed selected-text speech controls | Selection survives focus; Reading/paused/resumed/stopped state observed; no audio recording | PASS (transport/state only) |
 | Restore acknowledgement | Internal state notification no longer replaces explicit confirmation | PASS |
 | Keyboard controls | React user-event Tab/Space/Enter activation/restore | PASS (DOM; native walkthrough pending) |
 | Semantic accessibility | axe wcag2a/wcag2aa/wcag21aa across five modules, contrast excluded | PASS (automated; screen reader pending) |
@@ -38,7 +41,7 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Rendered charts/forms/restore | Exact table data, patterns over inline fill, editable form submission, newer website changes | PASS (engine harness; native extension pending) |
 | Real voice/pause/stop/hide/navigation | Not run installed | PENDING |
 | Native keyboard-only and screen reader | Not run fully; preview width matrix is separate evidence | PENDING |
-| Installed behavior on two layouts plus form | Fixtures supplied; runtime checks not run | PENDING |
+| Installed article/chart/form layouts | Article earlier; chart and form now smoke checked; complete lifecycle acceptance still open | PARTIAL |
 | SPA and changed chart nodes | Needs installed coverage | PENDING |
 | AI/ASL/hover/line/pie | Deferred P1 | NOT IN CORE |
 
