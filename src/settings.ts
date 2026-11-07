@@ -67,7 +67,15 @@ export function validateSettings(raw: unknown): Settings {
   if (["word", "sentence", "paragraph"].includes(String(r.hoverScope)))
     s.hoverScope = String(r.hoverScope);
   if (
-    ["system-ui", "Arial", "Georgia", "Verdana"].includes(String(r.fontFamily))
+    [
+      "system-ui",
+      "Arial",
+      "Georgia",
+      "Verdana",
+      "Lexend",
+      "Atkinson Hyperlegible",
+      "OpenDyslexic",
+    ].includes(String(r.fontFamily))
   )
     s.fontFamily = String(r.fontFamily);
   if (["default", "warm", "dark", "contrast"].includes(String(r.calm)))

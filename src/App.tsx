@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { validateSettings, type Settings } from "./settings";
 import { usePageController } from "./usePageController";
+import { BrandLogo, Icon } from "./Icons";
 import "./ui.css";
 const sections = [
   "Overview",
@@ -11,6 +12,10 @@ const sections = [
 ] as const;
 export function App() {
   const [section, setSection] = useState<string>("Overview");
+  const mainRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (mainRef.current) mainRef.current.scrollTop = 0;
+  }, [section]);
   const {
     settings: effectiveSettings,
     pageEpoch,
@@ -88,7 +93,20 @@ export function App() {
     help: string,
   ) => (
     <label className="toggle">
-      <span>
+      {["reading", "motion", "chroma"].includes(key) && (
+        <span className={`mode-icon ${key}`}>
+          <Icon
+            name={
+              key === "reading"
+                ? "reading"
+                : key === "motion"
+                  ? "sensory"
+                  : "charts"
+            }
+          />
+        </span>
+      )}
+      <span className="toggle-copy">
         <strong>{label}</strong>
         <small>{help}</small>
       </span>
@@ -98,7 +116,9 @@ export function App() {
         checked={settings[key]}
         onChange={(e) => change({ [key]: e.target.checked })}
       />
-      <span className="state">{settings[key] ? "On" : "Off"}</span>
+      <span className="state" aria-hidden="true">
+        {settings[key] ? "On" : "Off"}
+      </span>
     </label>
   );
   const slider = (
@@ -154,33 +174,31 @@ export function App() {
     <div className={isPopup ? "shell popup" : "shell"}>
       <header>
         <div className="brand">
-          <span className="logo" aria-hidden="true">
-            a<span>v</span>
-          </span>
+          <BrandLogo />
           <div>
             <h1>
               AbleVerse <span>AI</span>
             </h1>
-            <p>Your web. Your way.</p>
+            <p>Personal accessibility controls</p>
           </div>
-          <span className="badge">LOCAL CORE</span>
+          <button
+            className="restore"
+            aria-label="Restore original page"
+            title="Restore original page"
+            disabled={!canApply}
+            onClick={() => {
+              setTypographyDraft(null);
+              restore();
+            }}
+          >
+            <Icon name="restore" />
+            <span>Restore</span>
+          </button>
         </div>
         <div className="site">
-          <span aria-hidden="true">◉</span> {domain}
+          <span className="site-dot" aria-hidden="true" /> {domain}
         </div>
       </header>
-      <div className="restore-bar">
-        <button
-          className="restore"
-          disabled={!canApply}
-          onClick={() => {
-            setTypographyDraft(null);
-            restore();
-          }}
-        >
-          ↶ Restore original page
-        </button>
-      </div>
       <div
         className={error ? "notice error" : "notice"}
         role="status"
@@ -205,17 +223,49 @@ export function App() {
           ))}
         </nav>
       )}
-      <main>
+      <main ref={mainRef}>
         <fieldset className="page-controls" disabled={!canApply}>
           {(isPopup || section === "Overview") && (
             <>
-              <div className="eyebrow">A LITTLE MORE COMFORT</div>
-              <h2>Make room for what matters.</h2>
+              {!isPopup && <h2>Make yourself comfortable.</h2>}
               <p className="intro">
                 Personal controls for clearer reading, calmer pages and charts
                 beyond colour.
               </p>
-              <section className="card">
+              <section className="preset-section">
+                <h3>Comfort preset</h3>
+                <div className="presets">
+                  {[
+                    [
+                      "Comfortable reading",
+                      {
+                        reading: true,
+                        fontScale: 120,
+                        lineHeight: 1.8,
+                        letterSpacing: 0.04,
+                        wordSpacing: 0.08,
+                      },
+                    ],
+                    [
+                      "Low stimulation",
+                      { motion: true, focus: true, calm: "warm" },
+                    ],
+                    ["Colour independent", { chroma: true, emphasis: true }],
+                  ].map(([label, patch]) => (
+                    <button
+                      key={String(label)}
+                      onClick={() => change(patch as Partial<Settings>)}
+                    >
+                      {String(label)}
+                    </button>
+                  ))}
+                </div>
+                <small>
+                  Presets are editable starting points. Choose what feels
+                  useful.
+                </small>
+              </section>
+              <section className="mode-list">
                 {toggle(
                   "reading",
                   "Reading Studio",
@@ -232,42 +282,8 @@ export function App() {
                   "Label supported SVG bars, lines and pie charts.",
                 )}
               </section>
-              {!isPopup && (
-                <section className="card">
-                  <h3>Start with a preset</h3>
-                  <div className="presets">
-                    {[
-                      [
-                        "Comfortable reading",
-                        {
-                          reading: true,
-                          fontScale: 120,
-                          lineHeight: 1.8,
-                          letterSpacing: 0.04,
-                          wordSpacing: 0.08,
-                        },
-                      ],
-                      [
-                        "Low stimulation",
-                        { motion: true, focus: true, calm: "warm" },
-                      ],
-                      ["Colour independent", { chroma: true, emphasis: true }],
-                    ].map(([label, patch]) => (
-                      <button
-                        key={String(label)}
-                        onClick={() => change(patch as Partial<Settings>)}
-                      >
-                        {String(label)} <span aria-hidden="true">↗</span>
-                      </button>
-                    ))}
-                  </div>
-                  <small>
-                    Presets are editable starting points. Choose what feels
-                    useful.
-                  </small>
-                </section>
-              )}
-              <section className="card">
+
+              <section className="card selection-card">
                 <h3>Listen to a selection</h3>
                 <p>Select text on the page, then choose Read aloud.</p>
                 <div className="actions">
@@ -282,8 +298,35 @@ export function App() {
           )}
           {!isPopup && section === "Reading" && (
             <>
-              <div className="eyebrow">READING STUDIO</div>
-              <h2>A comfortable pace.</h2>
+              <h2>Reading Studio</h2>
+              <p className="intro">Find a style that feels comfortable.</p>
+              <section className="reading-sample">
+                <div className="sample-label">
+                  <h3>Reading preview</h3>
+                  <span>Live sample</span>
+                </div>
+                <p
+                  style={{
+                    fontFamily: settings.fontFamily,
+                    fontSize: `${settings.fontScale}%`,
+                    lineHeight: settings.lineHeight,
+                    letterSpacing: `${settings.letterSpacing}em`,
+                    wordSpacing: `${settings.wordSpacing}em`,
+                    marginBlockEnd: settings.paragraphSpacing
+                      ? `${settings.paragraphSpacing}em`
+                      : undefined,
+                    maxInlineSize: settings.readingWidth
+                      ? `${settings.readingWidth}ch`
+                      : undefined,
+                    textAlign:
+                      settings.textAlign === "original"
+                        ? undefined
+                        : (settings.textAlign as "start" | "left"),
+                  }}
+                >
+                  Small changes can make space for a better reading experience.
+                </p>
+              </section>
               <section className="card">
                 {toggle(
                   "reading",
@@ -313,15 +356,42 @@ export function App() {
                     Leaving preview discards unapplied changes.
                   </p>
                 )}
+                <fieldset className="font-options">
+                  <legend>Typeface family</legend>
+                  <div className="segmented-grid">
+                    {[
+                      ["system-ui", "System Sans"],
+                      ["Lexend", "Lexend"],
+                      ["Atkinson Hyperlegible", "Atkinson Hyper"],
+                      ["OpenDyslexic", "OpenDyslexic"],
+                    ].map(([value, label]) => (
+                      <button
+                        key={value}
+                        aria-pressed={settings.fontFamily === value}
+                        onClick={() => editTypography({ fontFamily: value })}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
                 <label className="field">
-                  Font family
+                  All font families
                   <select
                     value={settings.fontFamily}
                     onChange={(e) =>
                       editTypography({ fontFamily: e.target.value })
                     }
                   >
-                    {["system-ui", "Arial", "Georgia", "Verdana"].map((f) => (
+                    {[
+                      "system-ui",
+                      "Arial",
+                      "Georgia",
+                      "Verdana",
+                      "Lexend",
+                      "Atkinson Hyperlegible",
+                      "OpenDyslexic",
+                    ].map((f) => (
                       <option key={f}>{f}</option>
                     ))}
                   </select>
@@ -400,30 +470,7 @@ export function App() {
                 )}
                 {colourControl}
               </section>
-              <section className="card">
-                <h3>Reading preview</h3>
-                <p
-                  style={{
-                    fontFamily: settings.fontFamily,
-                    fontSize: `${settings.fontScale}%`,
-                    lineHeight: settings.lineHeight,
-                    letterSpacing: `${settings.letterSpacing}em`,
-                    wordSpacing: `${settings.wordSpacing}em`,
-                    marginBlockEnd: settings.paragraphSpacing
-                      ? `${settings.paragraphSpacing}em`
-                      : undefined,
-                    maxInlineSize: settings.readingWidth
-                      ? `${settings.readingWidth}ch`
-                      : undefined,
-                    textAlign:
-                      settings.textAlign === "original"
-                        ? undefined
-                        : (settings.textAlign as "start" | "left"),
-                  }}
-                >
-                  Small changes can make space for a better reading experience.
-                </p>
-              </section>
+
               <section className="card">
                 <h3>Selected-text speech</h3>
                 {toggle(
@@ -498,8 +545,8 @@ export function App() {
           )}
           {!isPopup && section === "Sensory" && (
             <>
-              <div className="eyebrow">SENSESHIFT</div>
-              <h2>Less noise. More focus.</h2>
+              <h2>SenseShift</h2>
+              <p className="intro">Less noise. More focus.</p>
               <section className="card">
                 {toggle(
                   "distractions",
@@ -532,8 +579,8 @@ export function App() {
           )}
           {!isPopup && section === "Charts" && (
             <>
-              <div className="eyebrow">CHROMASENSE</div>
-              <h2>Meaning beyond colour.</h2>
+              <h2>ChromaSense</h2>
+              <p className="intro">Meaning beyond colour.</p>
               <section className="card">
                 {toggle(
                   "chroma",
@@ -555,8 +602,8 @@ export function App() {
           )}
           {!isPopup && section === "Settings" && (
             <>
-              <div className="eyebrow">YOUR PREFERENCES</div>
-              <h2>You stay in control.</h2>
+              <h2>Your preferences</h2>
+              <p className="intro">You stay in control.</p>
               <section className="card">
                 <h3>Save locally</h3>
                 <p>
@@ -645,8 +692,25 @@ export function App() {
       <footer>
         {isPopup && (
           <button className="primary full" onClick={openPanel}>
-            Open full panel ↗
+            Open full panel <Icon name="arrow" />
           </button>
+        )}
+        {!isPopup && section === "Reading" && (
+          <div className="panel-actions">
+            <button disabled={!canApply} onClick={() => siteProfile("save")}>
+              Save site profile
+            </button>
+            <button
+              className="primary"
+              disabled={!canApply}
+              onClick={() => {
+                change({ ...typographyDraft, reading: true });
+                setTypographyDraft(null);
+              }}
+            >
+              Apply to page
+            </button>
+          </div>
         )}
         <p>Opt-in changes. Original content. One-click undo.</p>
       </footer>

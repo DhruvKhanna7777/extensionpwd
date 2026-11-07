@@ -85,3 +85,15 @@ it("checks eligibility again after dwell so a new editable child is never spoken
   vi.advanceTimersByTime(700);
   expect(play).not.toHaveBeenCalled();
 });
+it("never speaks CSS-hidden descendants or a block inside a hidden ancestor", () => {
+  reader.configure({ ...defaults, hoverSpeech: true });
+  document.querySelector("#a")!.innerHTML =
+    'Visible <span style="display:none">PRIVATE HIDDEN TEXT</span>';
+  over("#a");
+  vi.advanceTimersByTime(700);
+  expect(play).not.toHaveBeenCalled();
+  document.querySelector("main")!.style.display = "none";
+  over("#b");
+  vi.advanceTimersByTime(700);
+  expect(play).not.toHaveBeenCalled();
+});

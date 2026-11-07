@@ -110,6 +110,8 @@ if (!scope.__ableverse) {
         "data-av-label",
         "data-av-unit",
         "data-av-chart",
+        "data-av-source",
+        "class",
         "aria-label",
         "x",
         "y",

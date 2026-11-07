@@ -75,6 +75,8 @@ it("provides pie category/percentage labels and a table using declared values", 
   expect(slice.style.fill).toBe("purple");
 });
 it.each([
+  () => pie().replace('d="M50 50L50 10A40 40 0 0 1 90 50Z"', 'd="garbage"'),
+  () => pie().replace('d="M50 50L50 10A40 40 0 0 1 90 50Z"', 'd="M1 2L3"'),
   () => pie("20", "30"),
   () => pie("-2", "102"),
   () => pie("0", "0", "units"),

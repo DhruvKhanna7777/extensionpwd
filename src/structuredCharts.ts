@@ -1,3 +1,4 @@
+import { parseSVG } from "svg-path-parser";
 const ns = "http://www.w3.org/2000/svg";
 let sequence = 0;
 type Row = { label: string; raw: string; value: number };
@@ -204,6 +205,28 @@ export function enhanceStructuredCharts(doc: Document, undo: (() => void)[]) {
             !matches[0].getAttribute("d")?.trim()
           )
             throw new Error("Missing, grouped or transformed slice.");
+          const geometry = matches[0].getAttribute("d")!;
+          if (geometry.length > 16000)
+            throw new Error("Slice path is too large.");
+          const commands = parseSVG(geometry);
+          if (
+            commands.length < 3 ||
+            commands.length > 2000 ||
+            commands.at(-1)?.code.toUpperCase() !== "Z" ||
+            !commands.some(
+              (command) => !["M", "Z"].includes(command.code.toUpperCase()),
+            ) ||
+            commands.some((command) =>
+              Object.values(command).some(
+                (value) => typeof value === "number" && !Number.isFinite(value),
+              ),
+            ) ||
+            commands.some(
+              (command) =>
+                "rx" in command && (command.rx < 0 || command.ry < 0),
+            )
+          )
+            throw new Error("Slice path must contain finite, closed geometry.");
           return matches[0];
         });
       }

@@ -1,6 +1,7 @@
 import { type Settings, validateSettings } from "./settings";
 import { enhanceCharts } from "./charts";
 import { createRuler } from "./ruler";
+import { pageFontFace } from "./fonts";
 const protectedSelector =
   'input,textarea,select,button,code,pre,form,[contenteditable]:not([contenteditable="false"]),[role="alert"],[role="status"],[role="button"],[role="textbox"],[role="combobox"],[role="slider"],[role="spinbutton"],[role="switch"],[role="checkbox"],[role="radio"],[role="tab"],[role="menuitem"],[role="treeitem"],[role="option"],[role="dialog"],[role="alertdialog"],[tabindex],[aria-hidden="true"],nav,menu,[data-ableverse-owned]';
 export class PageEngine {
@@ -56,6 +57,7 @@ export class PageEngine {
       }
       const prose = "[data-ableverse-prose]";
       if (s.reading) {
+        rules.push(pageFontFace(s.fontFamily));
         rules.push(
           `${prose}{font-family:${s.fontFamily}!important;line-height:${s.lineHeight}!important;letter-spacing:${s.letterSpacing}em!important;word-spacing:${s.wordSpacing}em!important;overflow-wrap:anywhere!important;}`,
         );

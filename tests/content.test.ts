@@ -83,6 +83,16 @@ it("invalidates line companions when declared metadata changes", async () => {
   expect(document.querySelector("table")).toBeNull();
   expect(request("GET_STATE").settings.chroma).toBe(false);
 });
+it("invalidates chart companions when the explicit source contract is removed", async () => {
+  document.body.innerHTML =
+    '<svg data-av-chart="pie"><metadata data-av-source>{"slices":[{"label":"A","value":1}]}</metadata><path data-av-slice="A" d="M0 0L1 1Z"/></svg>';
+  expect(request("APPLY", { ...defaults, chroma: true }).charts).toBe(1);
+  document.querySelector("metadata")!.removeAttribute("data-av-source");
+  await Promise.resolve();
+  await Promise.resolve();
+  expect(document.querySelector("table")).toBeNull();
+  expect(request("GET_STATE").settings.chroma).toBe(false);
+});
 it("reports effective page settings and resets them on Restore", () => {
   request("APPLY", { ...defaults, reading: true, fontScale: 130 });
   expect(request("GET_STATE")?.settings.reading).toBe(true);

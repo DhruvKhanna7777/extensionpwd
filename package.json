@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "svg-path-parser": "1.1.0"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.3",
@@ -19,6 +20,7 @@
     "@types/chrome": "^0.0.287",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/svg-path-parser": "1.1.6",
     "axe-core": "^4.14.0",
     "esbuild": "^0.25.0",
     "fflate": "^0.8.3",

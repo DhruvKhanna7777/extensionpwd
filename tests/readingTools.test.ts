@@ -8,6 +8,22 @@ beforeEach(() => {
   document.body.innerHTML =
     '<main><article><h1>Title</h1><p id="safe">Readable prose.</p><form><p id="form">Instructions</p></form><p role="button" id="control">Action</p></article></main>';
 });
+it("accepts the bundled reference fonts and uses local packaged font URLs only", () => {
+  for (const fontFamily of [
+    "Lexend",
+    "Atkinson Hyperlegible",
+    "OpenDyslexic",
+  ]) {
+    expect(validateSettings({ fontFamily }).fontFamily).toBe(fontFamily);
+    const engine = new PageEngine(document);
+    engine.apply({ ...defaults, reading: true, fontFamily });
+    const css =
+      document.querySelector("style[data-ableverse-owned]")?.textContent || "";
+    expect(css).toContain("@font-face");
+    expect(css).not.toMatch(/https?:/);
+    engine.restore();
+  }
+});
 
 it("bounds optional reading controls and rejects injected CSS", () => {
   const s = validateSettings({
@@ -74,5 +90,33 @@ it("provides a pointer-transparent ruler with keyboard movement, Escape and list
   expect(disabled).toHaveBeenCalledTimes(1);
   document.dispatchEvent(new MouseEvent("pointermove", { clientY: 400 }));
   expect(ruler.style.top).toBe("150px");
+  engine.restore();
+});
+it("leaves custom-control shortcuts and already-handled keyboard events to the site", () => {
+  const engine = new PageEngine(document);
+  engine.apply({ ...defaults, ruler: true });
+  const widget = document.createElement("div");
+  widget.setAttribute("role", "combobox");
+  widget.tabIndex = 0;
+  document.body.append(widget);
+  const event = new KeyboardEvent("keydown", {
+    key: "ArrowDown",
+    altKey: true,
+    bubbles: true,
+    cancelable: true,
+  });
+  widget.dispatchEvent(event);
+  expect(event.defaultPrevented).toBe(false);
+  const ruler = document.querySelector<HTMLElement>("[data-ableverse-ruler]")!;
+  const before = ruler.style.top;
+  const handled = new KeyboardEvent("keydown", {
+    key: "ArrowDown",
+    altKey: true,
+    bubbles: true,
+    cancelable: true,
+  });
+  handled.preventDefault();
+  document.dispatchEvent(handled);
+  expect(ruler.style.top).toBe(before);
   engine.restore();
 });

@@ -27,6 +27,7 @@ export function createRuler(doc: Document, disabled: () => void) {
     disabled();
   };
   const key = (e: KeyboardEvent) => {
+    if (e.defaultPrevented) return;
     if (e.key === "Escape") stop();
     else if (
       e.altKey &&
@@ -36,7 +37,7 @@ export function createRuler(doc: Document, disabled: () => void) {
       !(
         e.target instanceof Element &&
         e.target.closest(
-          'input,textarea,select,[contenteditable]:not([contenteditable="false"])',
+          'input,textarea,select,button,a[href],[role],[tabindex],[contenteditable]:not([contenteditable="false"])',
         )
       )
     ) {

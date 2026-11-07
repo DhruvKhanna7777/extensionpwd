@@ -215,10 +215,13 @@ it("supports keyboard navigation, Space to enable and Enter to restore", async (
   expect(document.activeElement).toBe(
     screen.getByRole("button", { name: /Restore original/ }),
   );
-  for (let i = 0; i < 6; i++) await user.tab();
   const checkbox = screen.getByRole("checkbox", {
     name: /Reading Studio/,
   }) as HTMLInputElement;
+  // Presets precede the mode rows in the supplied design. Verify keyboard
+  // reachability without coupling the check to the exact number of controls.
+  for (let i = 0; i < 16 && document.activeElement !== checkbox; i++)
+    await user.tab();
   expect(document.activeElement).toBe(checkbox);
   await user.keyboard("[Space]");
   await waitFor(() => expect(applied).toEqual([7]));

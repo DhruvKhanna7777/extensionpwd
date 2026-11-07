@@ -26,12 +26,23 @@ export class HoverReader {
       el.querySelector(protectedContent)
     )
       return false;
-    const css = this.doc.defaultView!.getComputedStyle(el);
-    return (
-      css.display !== "none" &&
-      css.visibility !== "hidden" &&
-      !!el.textContent?.trim()
-    );
+    const hidden = (node: Element) => {
+      const css = this.doc.defaultView!.getComputedStyle(node);
+      return (
+        css.display === "none" ||
+        ["hidden", "collapse"].includes(css.visibility) ||
+        css.contentVisibility === "hidden"
+      );
+    };
+    for (
+      let ancestor: Element | null = el;
+      ancestor;
+      ancestor = ancestor.parentElement
+    )
+      if (hidden(ancestor)) return false;
+    // Conservative: do not include hidden descendant text in an otherwise visible block.
+    if ([...el.querySelectorAll("*")].some(hidden)) return false;
+    return !!el.textContent?.trim();
   }
   private unmark() {
     if (this.target?.getAttribute("data-ableverse-hover") === "active") {
