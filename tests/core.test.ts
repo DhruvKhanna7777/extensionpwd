@@ -196,6 +196,23 @@ function chart(value = "30") {
   return `<svg data-av-chart="bar" data-av-unit="units" aria-label="Monthly results" viewBox="0 0 300 160"><rect data-av-label="March" data-av-value="${value}" x="30" y="80" width="40" height="60" fill="red"/><rect data-av-label="April" data-av-value="55" x="100" y="30" width="40" height="110" fill="green"/></svg>`;
 }
 describe("verified bar charts", () => {
+  it("lets labels and patterns be disabled independently while keeping exact data accessible", () => {
+    document.body.innerHTML = chart();
+    const engine = new PageEngine(document);
+    engine.apply({
+      ...defaults,
+      chroma: true,
+      chartLabels: false,
+      chartPatterns: false,
+    });
+    expect(document.querySelector("pattern")).toBeNull();
+    expect(document.querySelector("g[data-ableverse-owned] text")).toBeNull();
+    expect(
+      document.querySelector("rect[data-av-value]")?.getAttribute("fill"),
+    ).toBe("red");
+    expect(document.querySelectorAll("tbody tr").length).toBe(2);
+    expect(document.body.textContent).toContain("April is highest at 55 units");
+  });
   it("applies patterns over an inline fill and restores that original style", () => {
     document.body.innerHTML =
       '<svg data-av-chart="bar"><rect x="0" y="20" width="40" height="60" style="fill:purple" data-av-label="A" data-av-value="30"/></svg>';

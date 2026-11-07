@@ -2,6 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { validateSettings, type Settings } from "./settings";
 import { usePageController } from "./usePageController";
 import { BrandLogo, Icon } from "./Icons";
+import { AISelection } from "./AISelection";
+import { SignLookup } from "./SignLookup";
+import { NumberField } from "./NumberField";
 import "./ui.css";
 const sections = [
   "Overview",
@@ -31,6 +34,9 @@ export function App() {
     restore,
     openPanel,
     siteProfile,
+    captureSelection,
+    applySimplification,
+    discardSelection,
   } = usePageController();
   const [typographyDraft, setTypographyDraft] =
     useState<Partial<Settings> | null>(null);
@@ -88,7 +94,10 @@ export function App() {
       | "chroma"
       | "distractions"
       | "ruler"
-      | "hoverSpeech",
+      | "hoverSpeech"
+      | "chartLabels"
+      | "chartPatterns"
+      | "chartMarkers",
     label: string,
     help: string,
   ) => (
@@ -156,16 +165,21 @@ export function App() {
           value={settings[key]}
           onChange={(e) => editSlider(key, Number(e.target.value))}
         />
-        <input
+        <NumberField
           aria-label={`${label} numeric value`}
-          type="number"
+          label={`${label} numeric value`}
           min={min}
           max={max}
           step={step}
           value={settings[key]}
-          onChange={(e) => {
-            if (e.target.value !== "") editSlider(key, Number(e.target.value));
-          }}
+          nonzeroMinimum={
+            key === "readingWidth"
+              ? 50
+              : key === "paragraphSpacing"
+                ? 0.5
+                : undefined
+          }
+          onCommit={(value) => editSlider(key, value)}
         />
       </div>
     </div>
@@ -541,6 +555,13 @@ export function App() {
                   online speech services.
                 </small>
               </section>
+              <AISelection
+                pageEpoch={pageEpoch}
+                captureSelection={captureSelection}
+                applySimplification={applySimplification}
+                discardSelection={discardSelection}
+              />
+              <SignLookup pageEpoch={pageEpoch} />
             </>
           )}
           {!isPopup && section === "Sensory" && (
@@ -587,6 +608,27 @@ export function App() {
                   "Enhance supported charts",
                   "Bar/pie patterns, line dashes and markers, exact value tables.",
                 )}
+                {toggle(
+                  "chartLabels",
+                  "Direct data labels",
+                  "Exact source values beside bars and line points; category/share labels for pies.",
+                )}
+                {toggle(
+                  "chartPatterns",
+                  "Patterns and line dashes",
+                  "Add hatching to bars/pies and differentiated dashes to supported line series.",
+                )}
+                {toggle(
+                  "chartMarkers",
+                  "Geometric line markers",
+                  "Circle, square and triangle markers on supported line series.",
+                )}
+                <button
+                  disabled={!settings.chroma}
+                  onClick={() => run("FOCUS_CHART_TABLE")}
+                >
+                  Open verified data table
+                </button>
                 <p>
                   Annotated SVG bars, lines and pies require explicit labels,
                   values and matching geometry. Summaries use those declared
@@ -670,13 +712,19 @@ export function App() {
               <section className="card">
                 <h3>Privacy & honest limits</h3>
                 <p>
-                  No account, analytics, page upload or AI request. Only
-                  preferences are saved. Page text stays out of extension
-                  storage.
+                  Assign Read selection, Stop speech and Restore shortcuts in
+                  Chrome's extension shortcut settings. No shortcut runs until
+                  you assign and invoke it.
                 </p>
                 <p>
-                  AI simplification and ASL lookup are planned. No verified sign
-                  clips are bundled.
+                  No account or analytics. Only preferences are saved; page text
+                  stays out of extension storage. Optional AI sends only a
+                  captured selection to your configured local model adapter
+                  after consent. Browser/device speech may use online services.
+                </p>
+                <p>
+                  AI needs your own running model service. No verified sign
+                  clips are bundled yet.
                 </p>
                 <p>
                   Internal browser pages, the Chrome Web Store, embedded PDFs

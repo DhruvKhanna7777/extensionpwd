@@ -100,6 +100,14 @@ it("reports effective page settings and resets them on Restore", () => {
   expect(request("GET_STATE")?.settings).toEqual(defaults);
   expect(document.querySelector("[data-ableverse-prose]")).toBeNull();
 });
+it("focuses an owned verified table only after explicit request and explains missing charts", () => {
+  expect(request("FOCUS_CHART_TABLE").ok).toBe(false);
+  document.body.innerHTML =
+    '<svg data-av-chart="bar"><rect data-av-label="A" data-av-value="2" x="0" y="0" width="10" height="20"/></svg>';
+  request("APPLY", { ...defaults, chroma: true });
+  expect(request("FOCUS_CHART_TABLE").ok).toBe(true);
+  expect(document.activeElement?.tagName).toBe("TABLE");
+});
 it("speaks only explicitly selected prose and preserves source content", () => {
   const p = document.querySelector("#text")!;
   const range = document.createRange();

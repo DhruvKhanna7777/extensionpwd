@@ -1,8 +1,16 @@
 import { enhanceStructuredCharts } from "./structuredCharts";
+import { defaults, type Settings } from "./settings";
 const ns = "http://www.w3.org/2000/svg";
 let sequence = 0;
-export function enhanceCharts(doc: Document, undo: (() => void)[]) {
-  const extended = enhanceStructuredCharts(doc, undo);
+export function enhanceCharts(
+  doc: Document,
+  undo: (() => void)[],
+  options: Pick<
+    Settings,
+    "chartLabels" | "chartPatterns" | "chartMarkers"
+  > = defaults,
+) {
+  const extended = enhanceStructuredCharts(doc, undo, options);
   let charts = extended.charts;
   const warnings: string[] = extended.warnings;
   for (const svg of doc.querySelectorAll<SVGSVGElement>(
@@ -72,64 +80,70 @@ export function enhanceCharts(doc: Document, undo: (() => void)[]) {
     }
     const body = table.createTBody();
     rows.forEach((r, i) => {
-      const id = `ableverse-pattern-${++sequence}`;
-      const pattern = doc.createElementNS(ns, "pattern");
-      pattern.id = id;
-      pattern.setAttribute("width", "8");
-      pattern.setAttribute("height", "8");
-      pattern.setAttribute("patternUnits", "userSpaceOnUse");
-      const bg = doc.createElementNS(ns, "rect");
-      bg.setAttribute("width", "8");
-      bg.setAttribute("height", "8");
-      bg.setAttribute(
-        "fill",
-        ["#dce9fb", "#e0f4ed", "#fff0cb", "#f0e4fa"][i % 4],
-      );
-      pattern.append(bg);
-      const path = doc.createElementNS(ns, "path");
-      path.setAttribute(
-        "d",
-        i % 2 ? "M0 0L8 8M-2 6L2 10M6 -2L10 2" : "M0 8L8 0M-2 2L2 -2M6 10L10 6",
-      );
-      path.setAttribute("stroke", "#142339");
-      path.setAttribute("stroke-width", String(1 + (i % 3)));
-      pattern.append(path);
-      defs.append(pattern);
-      const old = r.bar.getAttribute("fill");
-      const fill = `url(#${id})`;
-      r.bar.setAttribute("fill", fill);
-      const originalStyle = r.bar.getAttribute("style");
-      const originalFill = r.bar.style.getPropertyValue("fill");
-      const originalPriority = r.bar.style.getPropertyPriority("fill");
-      r.bar.style.setProperty("fill", fill, "important");
-      const appliedStyle = r.bar.getAttribute("style");
-      undo.push(() => {
-        if (r.bar.getAttribute("style") === appliedStyle) {
-          if (originalStyle === null) r.bar.removeAttribute("style");
-          else r.bar.setAttribute("style", originalStyle);
-        } else if (r.bar.style.getPropertyValue("fill") === fill) {
-          if (originalFill)
-            r.bar.style.setProperty("fill", originalFill, originalPriority);
-          else r.bar.style.removeProperty("fill");
-        }
-      });
-      undo.push(() => {
-        if (r.bar.getAttribute("fill") === fill)
-          old === null
-            ? r.bar.removeAttribute("fill")
-            : r.bar.setAttribute("fill", old);
-      });
-      const label = doc.createElementNS(ns, "text");
-      label.setAttribute("x", String(r.x + r.width / 2));
-      label.setAttribute("y", String(Math.max(14, r.y - 8)));
-      label.setAttribute("text-anchor", "middle");
-      label.setAttribute("fill", "#142339");
-      label.setAttribute("stroke", "white");
-      label.setAttribute("stroke-width", "3");
-      label.setAttribute("paint-order", "stroke");
-      label.setAttribute("font-size", "13");
-      label.textContent = `${r.label}: ${r.raw}`;
-      owned.append(label);
+      if (options.chartPatterns) {
+        const id = `ableverse-pattern-${++sequence}`;
+        const pattern = doc.createElementNS(ns, "pattern");
+        pattern.id = id;
+        pattern.setAttribute("width", "8");
+        pattern.setAttribute("height", "8");
+        pattern.setAttribute("patternUnits", "userSpaceOnUse");
+        const bg = doc.createElementNS(ns, "rect");
+        bg.setAttribute("width", "8");
+        bg.setAttribute("height", "8");
+        bg.setAttribute(
+          "fill",
+          ["#dce9fb", "#e0f4ed", "#fff0cb", "#f0e4fa"][i % 4],
+        );
+        pattern.append(bg);
+        const path = doc.createElementNS(ns, "path");
+        path.setAttribute(
+          "d",
+          i % 2
+            ? "M0 0L8 8M-2 6L2 10M6 -2L10 2"
+            : "M0 8L8 0M-2 2L2 -2M6 10L10 6",
+        );
+        path.setAttribute("stroke", "#142339");
+        path.setAttribute("stroke-width", String(1 + (i % 3)));
+        pattern.append(path);
+        defs.append(pattern);
+        const old = r.bar.getAttribute("fill");
+        const fill = `url(#${id})`;
+        r.bar.setAttribute("fill", fill);
+        const originalStyle = r.bar.getAttribute("style");
+        const originalFill = r.bar.style.getPropertyValue("fill");
+        const originalPriority = r.bar.style.getPropertyPriority("fill");
+        r.bar.style.setProperty("fill", fill, "important");
+        const appliedStyle = r.bar.getAttribute("style");
+        undo.push(() => {
+          if (r.bar.getAttribute("style") === appliedStyle) {
+            if (originalStyle === null) r.bar.removeAttribute("style");
+            else r.bar.setAttribute("style", originalStyle);
+          } else if (r.bar.style.getPropertyValue("fill") === fill) {
+            if (originalFill)
+              r.bar.style.setProperty("fill", originalFill, originalPriority);
+            else r.bar.style.removeProperty("fill");
+          }
+        });
+        undo.push(() => {
+          if (r.bar.getAttribute("fill") === fill)
+            old === null
+              ? r.bar.removeAttribute("fill")
+              : r.bar.setAttribute("fill", old);
+        });
+      }
+      if (options.chartLabels) {
+        const label = doc.createElementNS(ns, "text");
+        label.setAttribute("x", String(r.x + r.width / 2));
+        label.setAttribute("y", String(Math.max(14, r.y - 8)));
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("fill", "#142339");
+        label.setAttribute("stroke", "white");
+        label.setAttribute("stroke-width", "3");
+        label.setAttribute("paint-order", "stroke");
+        label.setAttribute("font-size", "13");
+        label.textContent = `${r.label}: ${r.raw}`;
+        owned.append(label);
+      }
       const row = body.insertRow();
       const title = doc.createElement("th");
       title.scope = "row";
@@ -144,9 +158,17 @@ export function enhanceCharts(doc: Document, undo: (() => void)[]) {
         "border:1px solid #9aacbc;padding:8px;text-align:left;overflow-wrap:anywhere;";
     svg.append(owned);
     svg.after(table);
+    const summary = doc.createElement("p");
+    summary.setAttribute("data-ableverse-owned", "");
+    const highest = rows.reduce((a, b) => (a.value >= b.value ? a : b)),
+      lowest = rows.reduce((a, b) => (a.value <= b.value ? a : b));
+    const unit = svg.getAttribute("data-av-unit") || "units (not specified)";
+    summary.textContent = `${highest.label} is highest at ${highest.raw} ${unit}; ${lowest.label} is lowest at ${lowest.raw} ${unit}. Based on declared source values.`;
+    table.after(summary);
     undo.push(() => {
       owned.remove();
       table.remove();
+      summary.remove();
     });
     charts++;
   }

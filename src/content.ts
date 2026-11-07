@@ -1,11 +1,13 @@
 import { PageEngine } from "./engine";
 import { SpeechPlayer } from "./speech";
 import { HoverReader } from "./hover";
+import { SelectionSession } from "./selectionSession";
 import { defaults, validateSettings } from "./settings";
 // This file is bundled as an isolated-world IIFE. Repeated injection reuses this listener.
 const scope = globalThis as typeof globalThis & { __ableverse?: boolean };
 if (!scope.__ableverse) {
   scope.__ableverse = true;
+  const selections = new SelectionSession(document);
   const engine = new PageEngine(document, () => {
     current.ruler = false;
     changed();
@@ -48,6 +50,7 @@ if (!scope.__ableverse) {
     current.chroma ||
     current.hoverSpeech ||
     current.ruler ||
+    selections.active ||
     current.calm !== "default";
   const stop = () => {
     hover.cancel();
@@ -99,6 +102,11 @@ if (!scope.__ableverse) {
     if (routeTimer === undefined)
       routeTimer = setInterval(() => {
         if (location.href !== route) restore();
+        else if (
+          !hasActiveProfile() &&
+          !["speaking", "paused"].includes(speech.getState().state)
+        )
+          unobserve();
       }, 500);
     observer.observe(document, {
       childList: true,
@@ -138,6 +146,7 @@ if (!scope.__ableverse) {
   };
   const restore = () => {
     unobserve();
+    selections.restore();
     hover.destroy();
     hoverError = "";
     stop();
@@ -163,6 +172,47 @@ if (!scope.__ableverse) {
     try {
       if (!msg || typeof msg.type !== "string") return;
       switch (msg.type) {
+        case "FOCUS_CHART_TABLE": {
+          const table = document.querySelector<HTMLTableElement>(
+            "table[data-ableverse-owned],[data-ableverse-owned] table",
+          );
+          if (!current.chroma || !table) {
+            respond({
+              ok: false,
+              error:
+                "Enable Charts on a supported chart before opening its verified table.",
+            });
+            break;
+          }
+          table.tabIndex = -1;
+          table.style.outline = "3px solid #3069cf";
+          table.addEventListener(
+            "blur",
+            () => table.style.removeProperty("outline"),
+            { once: true },
+          );
+          table.scrollIntoView?.({ block: "nearest" });
+          table.focus();
+          respond({ ok: true });
+          break;
+        }
+        case "GET_SELECTION": {
+          const capture = selections.capture();
+          observe();
+          respond({ ok: true, ...capture });
+          break;
+        }
+        case "DISCARD_SELECTION":
+          selections.discard(msg.token);
+          changed();
+          respond({ ok: true });
+          break;
+        case "APPLY_SIMPLIFICATION":
+          stop();
+          selections.apply(msg.token, msg.text);
+          observe();
+          respond({ ok: true });
+          break;
         case "GET_STATE":
           respond({
             ok: true,

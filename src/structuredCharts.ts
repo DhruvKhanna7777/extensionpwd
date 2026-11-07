@@ -1,4 +1,5 @@
 import { parseSVG } from "svg-path-parser";
+import { defaults, type Settings } from "./settings";
 const ns = "http://www.w3.org/2000/svg";
 let sequence = 0;
 type Row = { label: string; raw: string; value: number };
@@ -108,7 +109,14 @@ function pattern(doc: Document, group: Element, index: number) {
   return `url(#${id})`;
 }
 
-export function enhanceStructuredCharts(doc: Document, undo: (() => void)[]) {
+export function enhanceStructuredCharts(
+  doc: Document,
+  undo: (() => void)[],
+  options: Pick<
+    Settings,
+    "chartLabels" | "chartPatterns" | "chartMarkers"
+  > = defaults,
+) {
   let charts = 0;
   const warnings: string[] = [];
   for (const svg of doc.querySelectorAll<SVGSVGElement>(
@@ -271,37 +279,54 @@ export function enhanceStructuredCharts(doc: Document, undo: (() => void)[]) {
       });
       if (type === "line")
         series.forEach((s, index) => {
-          ownedStyle(s.element, "stroke-dasharray", dash[index], undo);
-          ownedStyle(s.element, "stroke", "#142339", undo);
-          ownedStyle(s.element, "stroke-width", "2.5px", undo);
+          if (options.chartPatterns) {
+            ownedStyle(s.element, "stroke-dasharray", dash[index], undo);
+            ownedStyle(s.element, "stroke", "#142339", undo);
+            ownedStyle(s.element, "stroke-width", "2.5px", undo);
+          }
           s.points.forEach((p, i) => {
             const x = s.coordinates[2 * i],
               y = s.coordinates[2 * i + 1];
-            const mark =
-              index % 3 === 0
-                ? svgElement(doc, "circle", {
-                    cx: String(x),
-                    cy: String(y),
-                    r: "4",
-                  })
-                : index % 3 === 1
-                  ? svgElement(doc, "rect", {
-                      x: String(x - 4),
-                      y: String(y - 4),
-                      width: "8",
-                      height: "8",
+            if (options.chartMarkers) {
+              const mark =
+                index % 3 === 0
+                  ? svgElement(doc, "circle", {
+                      cx: String(x),
+                      cy: String(y),
+                      r: "4",
                     })
-                  : svgElement(doc, "path", {
-                      d: `M${x} ${y - 5}L${x + 5} ${y + 4}L${x - 5} ${y + 4}Z`,
-                    });
-            mark.setAttribute("fill", "white");
-            mark.setAttribute("stroke", "#142339");
-            mark.setAttribute("stroke-width", "2");
-            group.append(mark);
+                  : index % 3 === 1
+                    ? svgElement(doc, "rect", {
+                        x: String(x - 4),
+                        y: String(y - 4),
+                        width: "8",
+                        height: "8",
+                      })
+                    : svgElement(doc, "path", {
+                        d: `M${x} ${y - 5}L${x + 5} ${y + 4}L${x - 5} ${y + 4}Z`,
+                      });
+              mark.setAttribute("fill", "white");
+              mark.setAttribute("stroke", "#142339");
+              mark.setAttribute("stroke-width", "2");
+              group.append(mark);
+            }
+            if (options.chartLabels) {
+              const label = svgElement(doc, "text", {
+                x: String(x + 6),
+                y: String(Math.max(14, y - 8)),
+                fill: "#142339",
+                stroke: "white",
+                "stroke-width": "3",
+                "paint-order": "stroke",
+                "font-size": "12",
+              });
+              label.textContent = `${s.label} ${p.label}: ${p.raw}`;
+              group.append(label);
+            }
             row([s.label, p.label, p.raw, unit]);
           });
           const li = doc.createElement("li");
-          li.textContent = `${s.label}: ${index === 0 ? "solid" : `dash ${dash[index]}`} line, ${marker[index]} markers`;
+          li.textContent = `${s.label}: ${options.chartPatterns ? (index === 0 ? "solid line" : `dash ${dash[index]} line`) : "original line style"}; ${options.chartMarkers ? `${marker[index]} markers` : "no added markers"}`;
           legend.append(li);
           const first = s.points[0],
             last = s.points[s.points.length - 1];
@@ -313,12 +338,14 @@ export function enhanceStructuredCharts(doc: Document, undo: (() => void)[]) {
         const defs = svgElement(doc, "defs", {});
         group.append(defs);
         slices.forEach((r, index) => {
-          ownedStyle(
-            sliceElements[index],
-            "fill",
-            pattern(doc, defs, index),
-            undo,
-          );
+          if (options.chartPatterns) {
+            ownedStyle(
+              sliceElements[index],
+              "fill",
+              pattern(doc, defs, index),
+              undo,
+            );
+          }
           const share = `${Number(((r.value / total) * 100).toFixed(2))}%`;
           row([r.label, r.raw, unit, share]);
           const li = doc.createElement("li");
@@ -333,7 +360,8 @@ export function enhanceStructuredCharts(doc: Document, undo: (() => void)[]) {
       for (const cell of table.querySelectorAll<HTMLElement>("th,td"))
         cell.style.cssText =
           "border:1px solid #6a7f94;padding:8px;text-align:start;overflow-wrap:anywhere;";
-      companion.append(legend, summary, table);
+      if (type === "line" || options.chartLabels) companion.append(legend);
+      companion.append(summary, table);
       svg.append(group);
       svg.after(companion);
       charts++;

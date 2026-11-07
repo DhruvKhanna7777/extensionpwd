@@ -36,6 +36,20 @@ beforeEach(() => {
   document.head.innerHTML = "";
   document.body.innerHTML = "";
 });
+it("keeps line markers optional and retains an exact table when visual encodings are disabled", () => {
+  document.body.innerHTML = line();
+  const engine = new PageEngine(document);
+  engine.apply({
+    ...defaults,
+    chroma: true,
+    chartMarkers: false,
+    chartPatterns: false,
+    chartLabels: false,
+  });
+  expect(document.querySelector("[data-ableverse-owned] circle")).toBeNull();
+  expect(document.querySelector("polyline")?.getAttribute("style")).toBeNull();
+  expect(document.querySelectorAll("tbody tr").length).toBe(4);
+});
 it("adds differentiated line dashes/markers, exact series data and restores original markup", () => {
   document.body.innerHTML = line();
   const before = document.body.innerHTML;

@@ -115,7 +115,7 @@ export class PageEngine {
     return {
       hidden,
       ...(s.chroma
-        ? enhanceCharts(this.doc, this.undo)
+        ? enhanceCharts(this.doc, this.undo, s)
         : { charts: 0, warnings: [] as string[] }),
     };
   }

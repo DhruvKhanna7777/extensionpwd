@@ -7,6 +7,8 @@ const blocks = "p,li,h1,h2,h3,h4,h5,h6,blockquote";
 export class HoverReader {
   private settings: Settings = { ...defaults };
   private target?: Element;
+  private entryKey = "";
+  private wordNode?: Node;
   private oldMarker: string | null = null;
   private timer?: ReturnType<typeof setTimeout>;
   private playing = false;
@@ -59,24 +61,31 @@ export class HoverReader {
     if (this.playing) this.stop();
     this.playing = false;
   }
+  private wordAt(el: Element, event: PointerEvent) {
+    if (!this.doc.caretRangeFromPoint) return undefined;
+    const range = this.doc.caretRangeFromPoint?.(event.clientX, event.clientY);
+    if (
+      range?.startContainer.nodeType === 3 &&
+      el.contains(range.startContainer)
+    ) {
+      const text = range.startContainer.textContent || "";
+      const at = range.startOffset;
+      const before = text.slice(0, at).match(/[\p{L}\p{N}'’-]+$/u)?.[0] || "";
+      const after = text.slice(at).match(/^[\p{L}\p{N}'’-]+/u)?.[0] || "";
+      if (before || after)
+        return {
+          text: (before + after).slice(0, 500),
+          start: at - before.length,
+          node: range.startContainer,
+        };
+    }
+    return { text: "", start: -1, node: el };
+  }
   private text(el: Element, event: PointerEvent) {
     const full = (el.textContent || "").replace(/\s+/gu, " ").trim();
     if (this.settings.hoverScope === "word") {
-      const range = this.doc.caretRangeFromPoint?.(
-        event.clientX,
-        event.clientY,
-      );
-      if (
-        range?.startContainer.nodeType === 3 &&
-        el.contains(range.startContainer)
-      ) {
-        const text = range.startContainer.textContent || "";
-        const at = range.startOffset;
-        const before = text.slice(0, at).match(/[\p{L}\p{N}'’-]+$/u)?.[0] || "";
-        const after = text.slice(at).match(/^[\p{L}\p{N}'’-]+/u)?.[0] || "";
-        if (before || after) return (before + after).slice(0, 500);
-      }
-      // Browsers without point-to-text support use the documented element fallback.
+      const entry = this.wordAt(el, event);
+      if (entry) return entry.text;
     }
     if (this.settings.hoverScope === "sentence") {
       const segments = new Intl.Segmenter(
@@ -94,16 +103,29 @@ export class HoverReader {
       .composedPath()
       .find((node) => node instanceof Element) as Element | undefined;
     const next = element?.closest(blocks) || undefined;
-    if (next === this.target) return;
+    const word =
+      next && this.settings.hoverScope === "word"
+        ? this.wordAt(next, event)
+        : undefined;
+    const key = word ? `${word.start}:${word.text}` : "block";
+    if (
+      next === this.target &&
+      key === this.entryKey &&
+      word?.node === this.wordNode
+    )
+      return;
     this.cancel();
     this.target = next;
+    this.entryKey = key;
+    this.wordNode = word?.node;
     if (!next || !this.eligible(next)) return;
+    if (word && !word.text) return;
     this.oldMarker = next.getAttribute("data-ableverse-hover");
     this.timer = setTimeout(() => {
       this.timer = undefined;
       if (this.doc.hidden || !this.eligible(next)) return;
       const text = this.text(next, event);
-      if (!text) return;
+      if (!text || (word && word.text !== text)) return;
       next.setAttribute("data-ableverse-hover", "active");
       try {
         this.play(text);
@@ -127,6 +149,8 @@ export class HoverReader {
       return;
     this.cancel();
     this.target = undefined;
+    this.wordNode = undefined;
+    this.entryKey = "";
   };
   private key = (event: KeyboardEvent) => {
     if (event.key === "Escape") this.cancel();
@@ -144,6 +168,8 @@ export class HoverReader {
       '[data-ableverse-hover="active"]{outline:2px solid #087b78!important;outline-offset:3px!important;}';
     this.doc.head.append(this.style);
     this.doc.addEventListener("pointerover", this.over);
+    if (this.settings.hoverScope === "word")
+      this.doc.addEventListener("pointermove", this.over);
     this.doc.addEventListener("pointerout", this.out);
     this.doc.addEventListener("keydown", this.key);
     this.doc.addEventListener("visibilitychange", this.visibility);
@@ -151,9 +177,12 @@ export class HoverReader {
   destroy() {
     this.cancel();
     this.target = undefined;
+    this.wordNode = undefined;
+    this.entryKey = "";
     this.style?.remove();
     this.style = undefined;
     this.doc.removeEventListener("pointerover", this.over);
+    this.doc.removeEventListener("pointermove", this.over);
     this.doc.removeEventListener("pointerout", this.out);
     this.doc.removeEventListener("keydown", this.key);
     this.doc.removeEventListener("visibilitychange", this.visibility);

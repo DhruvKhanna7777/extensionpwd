@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "ai:server": "node server/ai.mjs",
     "build": "tsc --noEmit && node build.mjs",
     "test": "vitest run && node --test scripts/package-checks.mjs",
     "package": "npm run build && node scripts/package.mjs",

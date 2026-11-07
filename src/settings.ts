@@ -18,6 +18,9 @@ export const defaults = {
   emphasis: false,
   calm: "default",
   chroma: false,
+  chartLabels: true,
+  chartPatterns: true,
+  chartMarkers: true,
   rate: 1,
   volume: 1,
   voiceURI: "",
@@ -38,6 +41,9 @@ export function validateSettings(raw: unknown): Settings {
     "distractions",
     "ruler",
     "hoverSpeech",
+    "chartLabels",
+    "chartPatterns",
+    "chartMarkers",
   ] as const)
     if (typeof r[k] === "boolean") s[k] = r[k];
   const ranges = {

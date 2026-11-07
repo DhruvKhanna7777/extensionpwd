@@ -16,6 +16,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   reader.destroy();
+  Reflect.deleteProperty(document,"caretRangeFromPoint");
   vi.useRealTimers();
 });
 const over = (id: string) =>
@@ -96,4 +97,27 @@ it("never speaks CSS-hidden descendants or a block inside a hidden ancestor", ()
   over("#b");
   vi.advanceTimersByTime(700);
   expect(play).not.toHaveBeenCalled();
+});
+it("restarts word dwell when the pointer moves between words inside the same paragraph", () => {
+  const text = document.querySelector("#a")!.firstChild!;
+  Object.defineProperty(document, "caretRangeFromPoint", {
+    configurable: true,
+    value: (x: number) => {
+      const range = document.createRange();
+      range.setStart(text, x < 50 ? 1 : 8);
+      return range;
+    },
+  });
+  reader.configure({ ...defaults, hoverSpeech: true, hoverScope: "word" });
+  over("#a");
+  vi.advanceTimersByTime(400);
+  document
+    .querySelector("#a")!
+    .dispatchEvent(
+      new MouseEvent("pointermove", { bubbles: true, clientX: 100 }),
+    );
+  vi.advanceTimersByTime(699);
+  expect(play).not.toHaveBeenCalled();
+  vi.advanceTimersByTime(1);
+  expect(play).toHaveBeenCalledExactlyOnceWith("sentence");
 });
