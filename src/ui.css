@@ -44,7 +44,7 @@ button {
   justify-content: center;
   gap: 7px;
   cursor: pointer;
-  border: 1px solid #a5b4c5;
+  border: 1px solid #6a7f94;
   background: white;
   color: #142339;
   border-radius: 10px;
@@ -475,7 +475,7 @@ small {
 }
 .segmented-grid button {
   font-size: 11px;
-  border-color: #a5b4c5;
+  border-color: #6a7f94;
 }
 .segmented-grid button[aria-pressed="true"] {
   background: #3069cf;

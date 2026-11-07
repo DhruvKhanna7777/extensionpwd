@@ -45,7 +45,7 @@ After rebuilding, reload the extension and demo tab. Browser-internal/store page
 
 `npm run package` rebuilds and creates `artifacts/ableverse-ai-0.1.0.zip`. It packages an explicit build-file allowlist, checks manifest paths stay inside dist, verifies ZIP contents byte for byte, and prints a SHA-256 checksum. Unrelated leftovers and `.env` files are excluded. Extract the ZIP before using Load unpacked. Keep the allowlist current when adding legitimate new shipped assets.
 
-`npm test` runs 103 Vitest tests and 4 packaging checks. `/demo/validation.html` provides 20 real-browser page-engine checks; it does not impersonate an installed extension or prove actual voice playback.
+`npm test` runs 103 Vitest tests and 4 packaging checks. `/demo/validation.html` provides 35 real-browser page-engine checks; it does not impersonate an installed extension or prove actual voice playback. `/demo/advanced.html` provides controlled line/pie charts and visible source/contract/prose/history mutations for installed acceptance. See [demo steps](DEMO.md).
 
 `npm run demo` also serves an interface-only preview at `/`. That preview cannot modify tabs or use extension APIs. See [demo script](DEMO.md).
 

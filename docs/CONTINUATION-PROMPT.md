@@ -1,5 +1,7 @@
 # Copy-paste continuation prompt
 
+Current integration update: PR #9 and #10 are merged; main baseline is 73b98ef. Start from fetched upstream main, not the older implementation fork instructions below. The latest continuation extends `/demo/validation.html` to 35 real engine checks and supplies `/demo/advanced.html` with visible source/contract/prose/history mutation controls. All 35 passed in the in-app browser. Stop-button border contrast improved from 2.11:1 to 4.14:1. Read DEMO.md, BROWSER-EVIDENCE.md and FRONTEND-REFERENCE.md for scope; native acceptance is still separate. This update supersedes old open-PR/baseline statements below.
+
 Give the text below to the next coding assistant or contributor. Supply the original private PDF/design ZIP separately only if the recipient is authorized.
 
 ---

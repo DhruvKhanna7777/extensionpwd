@@ -1,5 +1,13 @@
 # AbleVerse AI checkpoint — 2026-11-07
 
+## Current continuation: reference review and advanced acceptance
+
+Based on merged main 73b98ef. Reviewed the owner-supplied `ableverse_production_frontend_codebase.md` from Krish and documented safe adaptation decisions in FRONTEND-REFERENCE.md; the private original is not uploaded. Existing live design already incorporates its principal visual language. Improved ordinary/button font-chip border definition; actual Stop border contrast changed from 2.11:1 to 4.14:1 against white.
+
+Added reusable controlled line/pie/invalid-percentage fixture data, `/demo/advanced.html` mutation controls and 15 additional real browser-engine checks. Current harness passed 35/35 in-app. Dynamic fixture buttons were separately verified: line A Feb becomes 27, pie contract removal, inserted prose and history-only route. These checks do not certify native message/permission transport or audible cancellation.
+
+All 103 Vitest tests and 4 packaging checks passed; production typecheck/build/package passed with 19 verified files. Current ZIP SHA-256: 91651c5e43c59e9f19a754b81d44c6f7cf1d6050a4de7e0c329e2bceed1103ca. Vite is running on localhost:5173 for acceptance. No Ollama executable was found on PATH and no model service was reachable at 127.0.0.1:11434; actual model inference remains unavailable on this workstation. No model downloaded or AI service enabled. Installed Chrome, listening/screen-reader and sign-media rights gates remain open.
+
 ## PR #9 integration verification
 
 PR #9 by KrishChadha001 merged at 2af581c. Integrating reviewer ran a fresh npm ci, all 103 Vitest tests and 4 package checks, production package (19 files) and full dependency audit successfully. Native acceptance and actual model inference were not rerun; real sign clips remain unavailable. The existing local-AI client and adapter are optional and require explicit selection consent/configuration.
