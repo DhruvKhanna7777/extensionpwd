@@ -1,100 +1,105 @@
-# AbleVerse AI contributor handoff
+# Complete contributor handoff — 7 November 2026
 
-Checkpoint: **7 November 2026**. This document is for a new developer, tester or coding assistant. Read it with [feature status](FEATURE-STATUS.md) and [the copy-paste continuation prompt](CONTINUATION-PROMPT.md).
-
-Latest integration: PR #9 is merged at 2af581c and PR #10 at 73b98ef; fetch upstream main rather than starting from the older fork commands below. The continuation adds 35-check engine coverage and `/demo/advanced.html` for installed line/pie/mutation acceptance. See DEMO.md and BROWSER-EVIDENCE.md. Krish's additional Markdown frontend reference was reviewed; adaptation decisions are in FRONTEND-REFERENCE.md. Older branch-specific provenance/checks below remain historical.
-
-## Get the correct work
+## Checkpoint and source
 
 - Upstream: https://github.com/DhruvKhanna7777/extensionpwd
-- Latest verified upstream main: `6d30201cbaeb67f3952dbabb47b49a89f08b4b6e`, which merged PR #8. PR #7's reflow fix is already included. Do not reopen or merge those changes again.
-- Implementation fork: https://github.com/KrishChadha001/extensionpwd
-- Implementation branch: `feat/reading-tools-and-chart-adapters`.
-- Tested runtime commit: `84035f8e78df1b5ad15c30865e759565583ee863`. Documentation commits may follow it. Inspect the PR's latest head before work.
-- Implementation PR: https://github.com/DhruvKhanna7777/extensionpwd/pull/9
+- Start from current upstream **main**. All feature/fix PRs through #12 are merged. Runtime baseline: **f86e2f117a9fc1a41d0f12a3c87bbf029422b4ec**. This subsequent documentation checkpoint does not change runtime behavior. Inspect latest remote refs/PRs/status when resuming.
+- User explicitly requested STOP at a saved checkpoint and a complete baton pass. Feature work is stopped. Resume when asked; do not interpret historical GO instructions as current authorization to run indefinitely.
+- Version 0.1.0 development build; not a public release certification. No distribution licence has been chosen.
 
-If the implementation PR is still open, start from its branch, not upstream main, which may lack the new features. If it has merged, start from updated upstream main. Fetch and inspect status/history/open PRs; do not discard local work or duplicate someone else's contribution.
+## Product and reference decisions
+
+AbleVerse AI is a user-controlled Chrome accessibility extension, not a portal or medical product. The owner supplied Bible.pdf, a Stitch design ZIP and `ableverse_production_frontend_codebase.md` from Krish. Final Part II/A1 of the PDF governs priorities. The UI references contain useful design/tokens/assets and sample state; their production/AAA labels do not prove working behavior. Original private documents are excluded from Git. FRONTEND-REFERENCE.md records the latest adaptation decisions. No AbleHire archive was supplied; the implementation is fresh.
+
+## Total implemented work
+
+| Area | Actual implementation | Boundary |
+|---|---|---|
+| Chrome shell | Manifest V3 popup and full panel; Overview, Reading, Sensory, Charts, Settings; current-tab control, queues, revision guards, explanations and Restore | Required activeTab/scripting/storage/sidePanel; Chrome 116+; no automatic activation |
+| Reading | Bounded font/size/line/letter/word spacing; h1–h6 hierarchy; paragraph spacing, width, alignment and palettes; presets, numeric typing, local draft preview/explicit Apply/discard; persistent Restore | Eligible prose only; preserve protected controls and newer site edits; enlarged words wrap |
+| Fonts/design | Bundled Lexend, Atkinson Hyperlegible and OpenDyslexic with notices and pinned provenance; design-inspired real-state UI, reduced-motion styles; clearer control borders | No runtime remote fonts; build verifies six font/notice hashes; specific Stop border improved 2.11:1 to 4.14:1, not global AAA certification |
+| Speech/ruler | Explicit selected-text voice/rate/volume/pause/resume/Stop/Escape; opt-in bounded dwell hover paragraph/first-sentence/word speech; pointer-transparent ruler with focus/keyboard behavior | Hidden/protected content excluded; lifecycle/callback ownership guards; real listening acceptance still incomplete |
+| Sensory | Reduce CSS motion with essential status exclusions; article outline, control emphasis, calm palettes, safe marked distraction hiding | No heuristic hiding or blanket video/GIF/canvas stopping |
+| Preferences/commands | Explicit global and per-origin save/load/reset; assignable Read selection/Stop/Restore commands tied to initial tab | Load updates controls only; no automatic page/site activation |
+| Charts | Explicit metadata SVG bars/direct polyline series/direct pie paths; exact accessible tables, labels, patterns/dashes/markers, grounded summaries and table focus; invalidation and owned Restore | Narrow documented contracts; malformed/grouped/transformed/unknown/canvas inputs fail safely; no pixel/colour inference |
+| Optional AI | Explicit safe selection capture, per-selection consent, fixed loopback client/Node-Ollama adapter; comparison/copy, cancellation, safe-range explicit Apply and guarded undo | Real model absent/unverified; no key/model/hosted service bundled; optional permission only on explicit connection; no automatic uploads |
+| AI lifecycle fixes | Failed recapture clears old text/consent/output; late cancelled capture discarded; Apply once-only; stale completion/errors suppressed after page changes | After dispatch, page Apply is not falsely offered as cancellable; use Restore for owned output |
+| Sign lookup | Validated catalog schema, exact word/phrase/sense lookup, local video/source/licence UI, keyboard/fallback/lifecycle handling | **Approved catalog EMPTY**; no actual playable dictionary, sign-hover card, guessed signs or sentence translation |
+| Test/build tools | 109 automated tests, 4 packaging checks, 35-check real-browser engine harness, controlled article/form/bar/advanced fixtures; typecheck/esbuild and exact ZIP allowlist/byte checks | Evidence types remain separate from installed/audio/model/screen-reader acceptance |
+
+## Integrated contributor history
+
+- PRs #1–#4: initial core, navigation/chart/cleanup safeguards, installed smoke evidence and user-confirmed paragraph/pause-resume.
+- PR #5, Arihant2007: typography draft preview, Reading colours, persistent Restore, custom-control/form protection and h4–h6.
+- PR #7, jinishajain: reversible long-word reflow and further native/listening evidence with limitations.
+- PR #8, KrishChadha001: reproducible package/blocker/remaining-case documentation.
+- PR #9, KrishChadha001: expanded reading/ruler/hover/profiles/charts/fonts/UI/commands/optional AI/sign infrastructure.
+- PR #6 and #10–#12: handoff pack, Windows font provenance preservation/AI disclosure, 35-check browser harness/dynamic fixture/contrast, and AI capture/Apply lifecycle fixes.
+
+Preserve contributor authorship. No duplicate merges or competing rewrite of already-integrated work is needed.
+
+## Verification actually available
+
+Latest runtime was checked on original Windows workstation, Node **22.19.0**, npm **10.9.3**. `npm test` passed **109 Vitest tests across 15 files + 4 Node package checks**. `npm run package` passed production TypeScript/build and verified **19 shipping files**. Last dependency audit during PR #9 integration found zero vulnerabilities; no dependencies changed afterward. Do not describe that audit as a new live check without rerunning it.
+
+ZIP: `artifacts/ableverse-ai-0.1.0.zip`. SHA-256:
+
+```text
+27302e9e43820adb5fd3f1799a387d0611fc37c64bd4cebdfb5c5e8dac004f05
+```
+
+All six source and shipped font/notice hashes matched pinned provenance after PR #10. Packaging verifies exact bytes and rejects missing/escaping paths and unrelated leftovers. Generated dist/artifacts are ignored by Git; build your own after cloning.
+
+The in-app browser harness passed **35/35** on PR #11, covering protected content, typography hierarchy/reflow, motion, charts, repeated Apply/exact Restore/site-edit preservation, width/spacing/alignment, ruler/Escape and all three actual local font loads. PR #12 changed only AI panel behavior, not that page engine. The four advanced fixture mutation controls were separately exercised. Prior contributor UI-preview evidence covers 15 module/width combinations at 320/360/400px; complete zoom/state/contrast acceptance is still open.
+
+AI operation regressions were observed failing before fixes. Actual loopback HTTP cancellation testing used a **fake upstream model**, proving disconnect propagation and next-request recovery, not real inference quality. Permission/device/model boundaries are faked where documented.
+
+Historical installed Chrome results include installation, popup/panel/activeTab, Reading, chart/table/Restore/reopening, form edit/submit preservation and selected speech control states. Listener reports include paragraph/pause-resume, particular voice/rate/volume runs and navigation cancellation. Read INSTALLED-ACCEPTANCE.md for exact commits/conditions/timing limits. Do not transfer these passes wholesale to current code.
+
+## Setup for the next contributor
+
+Use Node 22.12+ and desktop Chrome 116+:
 
 ```sh
-git clone --branch feat/reading-tools-and-chart-adapters --single-branch https://github.com/KrishChadha001/extensionpwd.git
+git clone https://github.com/DhruvKhanna7777/extensionpwd.git
 cd extensionpwd
-git remote add upstream https://github.com/DhruvKhanna7777/extensionpwd.git
-git fetch upstream
-git status
+git switch main
+git pull --ff-only
+git switch -c acceptance/next-checks
 npm ci
 npm test
 npm run package
 npm run demo -- --port 5173 --strictPort
 ```
 
-Use Node 22.12+ and desktop Chrome 116+. Current authoring environment was Windows NT 10.0.26300.0, Node 24.16.0, npm 11.13.0. A GitHub password is not needed to clone the public repository. Use your own account/fork for contributions.
+On an existing checkout inspect/preserve local changes before switching/pulling. Load/reload generated dist from chrome://extensions in an authorized testing profile; refresh fixtures and click toolbar icon to grant current-tab access. Vite `/` is a sample-only interface. `/demo/validation.html` is an engine harness, not an installed extension. `/demo/advanced.html` provides controlled line/pie metadata/contract/prose/history mutation buttons. DEMO.md gives exact steps.
 
-## Product and reference documents
+Optional AI setup is separate: OPTIONAL-AI.md describes the local adapter, actual extension ID, Ollama/model selection and consent flow. No Ollama executable was found on PATH and no service was reachable at 127.0.0.1:11434 at the last workstation check. No model was downloaded or service enabled. Settle model licence/data/cost/download choices with the owner before installation or use; mock output is not a substitute.
 
-AbleVerse is a user-controlled accessibility **Chrome extension**, not a job portal, medical product or ordinary website. Popup and side panel control eligible content in the explicitly authorized current tab. The Vite page at `/` is only an interface preview. It can update its own sample controls but cannot modify browser tabs or provide real extension speech/permission behavior.
+## Remaining work, ordered
 
-The owner supplied a 50-page **Bible.pdf** and **stitch_ableverse_ai_accessibility_extension.zip**. The PDF's final Part II/A1 ledger supersedes earlier broad feature lists. The ZIP contains a Markdown frontend specification, sample components/state and vector assets; it is a visual reference, not a complete installable extension. Preserve real behavior when adapting its design. Both private originals stay outside public Git; request them privately if needed. Their old workstation paths are not portable.
+1. **Current installed reflow and Reading:** 150% Verdana, 0.09em letter/0.21em word spacing, panel open, recorded viewport/zoom; no induced horizontal scrolling and exact Restore. Test draft Apply/discard across navigation/modules/tabs, other-mode preservation, headings/protected forms/custom controls, fonts/width/spacing/alignment/ruler/profiles/shortcuts.
+2. **Native access/tab ownership:** internal/store pages, actual supported grant revocation, and a tab switch proven to occur while Apply is pending. Keep earlier ordinary/rapid-switch observations separate from deterministic mocked queue checks.
+3. **Dynamic pages/charts:** line/pie/bar exact data/visual controls/table focus, metadata/contract/geometry invalidation, Reading retained on unrelated chart edits with Charts off, newer text/fill preservation, explicit Apply for new prose. Use `/demo/advanced.html` instead of inventing uncontrolled page changes.
+4. **Actual speech:** identify voices; test rate/volume endpoints separately; hover dwell/word behavior; measure audible Stop/Escape/tab-hide/pagehide/normal/history-only cancellation latency in fresh runs. UI status alone is insufficient.
+5. **Accessibility:** all modules/popup/panel keyboard-only and named/versioned screen reader; focus/names/values/status/error announcements/table headers; 100/200/400% zoom, narrow widths, palettes/contrast/states/icons. Specific computed border/engine contrast checks are not full certification.
+6. **Real AI:** owner-reviewed model setup; actual inference, meaning/facts/numbers/negation/warning preservation, latency, offline/malformed service, optional permission denial, per-selection consent, cancellation, recapture, safe/stale Apply and Restore/site-edit behavior. Real model output and native optional permission flow remain unverified.
+7. **Real ASL:** obtain video redistribution rights plus linguistic/source review; populate/package a small approved local dictionary with notices; test real hits/misses/senses/video errors/keyboard/provenance. Then implement A9's anchored/pinnable word-hover card and arbitration with speech. No approved data is currently supplied.
+8. **Release:** owner selects distribution licence; after required gates pass, prepare truthful store/privacy/screenshots/package evidence and seek publishing approval. No public-release sign-off yet.
+9. **Later roadmap:** richer site rules/preset management; P2 OCR/deep PDF, multilingual reading, personalised ML, universal canvas/image reconstruction, cross-browser support and grammar-aware sign translation. These are unimplemented, not hidden completed features.
 
-The committed FEATURE-STATUS.md maps the main requirements, implemented behavior and remaining gaps. A7 covers Reading, A8 hover speech, A9 ethical verified sign lookup, A10 Sensory, A11-A12 charts, A13-A14 architecture/state, A16-A19 acceptance/evidence and A20-A22 demo/release/sign-off. The original PDF is still the detailed reference; do not infer that this summary replaces it or grants unrelated permissions.
+For each case record PASS/FAIL/BLOCKED/NOT RUN, source commit, date/tester, environment/voice/model/screen reader, steps, expected/actual, evidence and limitations. Reproduce defects, add meaningful regressions, fix causes and retest the affected real behavior. Follow NEXT-CONTRIBUTOR.md and WORKFLOW.md. Do not use estimated completion percentages as release criteria.
 
-## What was built in this contribution
+## Architecture and decisions to preserve
 
-- Optional reading width, paragraph spacing and natural/left alignment, with safe defaults, clamping, preview/Apply and exact owned restoration.
-- Local licensed Lexend, Atkinson Hyperlegible and OpenDyslexic fonts with pinned provenance and bundled notices.
-- A pointer-transparent reading ruler with pointer/focus/keyboard movement, Escape and protected-control handling.
-- Opt-in hover speech with bounded dwell/scope/text, word-to-word dwell inside a paragraph, hidden/protected-content exclusion and cancellation/duplicate suppression.
-- Explicit origin-scoped site profiles with save/load/reset; no automatic activation. Existing global preferences remain supported.
-- Metadata-based SVG line/pie adapters, exact accessible tables, dashes/markers/patterns, independently configurable visual encodings and grounded chart summaries; explicit focus/open-table action. Malformed paths use an existing MIT parser and fail safely.
-- Assignable Chrome keyboard commands for Read selection, Stop and Restore, retaining their initial tab target.
-- Optional consent-based local AI integration: safe selection capture, fixed loopback adapter, comparison, cancellation, copy, explicit safe-range Apply, stale-selection checks and undo preserving later site edits. Actual model setup/inference is not completed on this workstation.
-- ASL dictionary validation and keyboard lookup/video UI with sense selection, attribution and honest missing-video behavior. The approved catalog is empty; there is no shipped playable dictionary or ASL hover card.
-- ZIP-inspired UI tied to actual state, persistent actions, sample preview, local fonts, interactive preview controls and a fix for typing complete numeric values.
+UI: App.tsx/ui.css/NumberField.tsx; current-tab queue/revisions/selection/profiles: usePageController.ts; settings: settings.ts; injection/cleanup: content.ts. Page ownership: engine.ts/ruler.ts; speech/hover: speech.ts/hover.ts; bars/structured charts: charts.ts/structuredCharts.ts. AI: AISelection.tsx/ai.ts/selectionSession.ts and server/ai.mjs. Signs: signs.ts/SignLookup.tsx (empty approved catalog). Commands: background.ts/commands.ts. Fonts/notices: fonts.ts/assets; build/package: build.mjs/scripts/package.mjs.
 
-Existing Reading/Sensory/bar/speech/source-protection behavior remains covered by regressions. No sign video, AI model, paid service, account, distribution licence or public release was selected.
+Defaults off, explicit changes/save/load, never auto-activate. Restore removes owned changes and preserves newer website edits. Ordinary modes do not rewrite source text; AI replacement requires explicit consent/review/Apply to a safe range. Protect essential controls/warnings/editables. No heuristic hiding, invented chart values, client provider keys, automatic uploads, analytics or remote code. Loopback host access is optional and fixed by CSP. Browser/OS voices and chosen models may use online services; do not promise offline processing without checking configuration.
 
-## What was actually verified
+## Workstation and stopping state
 
-`npm test` passed **103 Vitest tests and 4 packaging checks**. Production typecheck/build/package passed and verified **19 shipping files**. Current ZIP SHA-256:
+Original checkout: C:\Users\ASUS\Documents\Codex\2026-11-07\ar\work\extensionpwd. Outputs: C:\Users\ASUS\Documents\Codex\2026-11-07\ar\outputs. Private references are not in Git. These paths, Chrome profiles and models do not transfer.
 
-```text
-39b3c70e9ab384ab43bc929dd00973cb30db8ce43ed61ab16633946f7d801e8f
-```
+Only existing cyan dhruvkhanna1522 Chrome profile is authorized for native testing on the original workstation. Earlier extension ID ddibeighmdafgbbnigmkojdkneemdghe points at dist; verify actual installation/source before relying on it. Native browser URL verification repeatedly blocked control; the latest attempt also lacked a connected Chrome browser surface. Do not bypass safeguards. Another contributor uses their own authorized profile.
 
-Generated ZIP: `artifacts/ableverse-ai-0.1.0.zip`; unpacked build: `dist/`. Neither belongs in Git. Packaging includes explicit font assets/notices and omits unrelated files. Runtime files were unchanged when rebased onto main after PR #8 merged.
-
-Final browser preview passed the 15-case five-module/320-360-400px fit matrix, including later AI/sign/chart-option UI. Expanded hover, local-AI-unavailable and sign-miss states fit at 320px. The current real engine harness passed 20/20. Local OpenDyslexic loading was observed. Unit/HTTP model tests use fakes; speech tests fake the device boundary. Independent reviews found and drove regressions for hidden hover text, invalid pie geometry, ruler/custom-control shortcuts and partial-inline AI restoration.
-
-**Not verified in this contribution:** installed Chrome transport/permissions on this new build, audible hover/voice quality or cancellation timing, real Ollama inference, real sign-video playback/linguistic review, complete screen-reader/zoom/contrast acceptance. Supported Computer Use stopped because it could not confidently verify the native Chrome URL. Do not bypass that safeguard or convert preview/mocked evidence into native PASS. Earlier native evidence belongs to the commits recorded in INSTALLED-ACCEPTANCE.md.
-
-## Begin here: installed reflow, then the remaining gates
-
-1. Read AGENTS.md, this handoff, FEATURE-STATUS.md, WORKFLOW.md, INSTALLED-ACCEPTANCE.md and TEST-MATRIX.md. Check current refs and PR status.
-2. Build the branch. In your authorized Chrome testing profile, open `chrome://extensions`, use Developer mode/Load unpacked for `dist`, or reload only an installation known to point at this build. Refresh fixtures after rebuilding. The original owner's cyan-profile restriction applies on that original workstation; another contributor uses their own authorized profile. Never assume a profile or installed extension ID transfers with Git.
-3. Open `http://127.0.0.1:5173/demo/article.html`, click the extension toolbar icon, open the full panel. Record exact source commit, OS, Chrome version, viewport width and browser zoom.
-4. Retest 150% Verdana with 0.09em letter and 0.21em word spacing, panel open: heading wraps, enlarged prose adds no horizontal scrolling, Restore returns baseline. This is the first unclosed native case.
-5. Continue Reading/navigation draft discard, other-mode preservation, heading/form/custom-control safety; new width/ruler/hover/profile behavior; restricted pages/revocation and confirmed pending-action tab switch; dynamic chart/text/fill and explicit reapply cases.
-6. Use fresh listener runs to measure Stop/Escape/tab-hide/navigation/history-only cancellation latency. Test remaining voice/rate/volume endpoints separately. Record actual voice identity and audible outcomes.
-7. Walk all modules/popup/panel by keyboard and a named/versioned screen reader. Check names, states, values, focus, status/errors and table headers; 100/200/400% zoom, narrow widths, all palettes, contrast and installed icons.
-
-For every case record PASS, FAIL, BLOCKED or NOT RUN, source commit, date/tester, environment, exact steps, expected/actual result, evidence and limitations. Update all three evidence/handoff documents. Reproduce/fix failures with meaningful regressions, then retest the affected native path.
-
-## Optional integrations and remaining implementation
-
-- Follow OPTIONAL-AI.md to install/configure a chosen Ollama model and run the adapter. Test real consent, output quality, cancellation, malformed/offline service, safe Apply and Restore. No API key is bundled or required for the local adapter. Avoid promising offline inference without checking the model/runtime configuration.
-- Follow THIRD-PARTY.md to obtain and review a small licensed ASL dictionary. Code licences and credit alone do not establish video rights. Add real bundled clips/notices and exact package entries. Verify actual hits/misses/multiple senses/playback; then build the A9 word-hover card, pinning/anchoring and speech arbitration. Do not fabricate signs or mark synthetic tests as real media evidence.
-- Finish the scoped P1 gaps listed in FEATURE-STATUS.md. P2 OCR/deep PDF, multilingual/ML, universal canvas, cross-browser and grammar-aware sign translation remain roadmap. Discuss substantial new scope instead of claiming universal support.
-- Owner chooses the app's distribution licence. Prepare honest release/store/privacy/screenshot materials only after required gates pass. Publishing and paid services need separate authorization.
-
-## Architecture and safe contribution rules
-
-Settings validation is in `src/settings.ts`; injected ownership/lifecycle in `src/content.ts`; reversible prose/sensory/ruler in `engine.ts`/`ruler.ts`; hover and speech in `hover.ts`/`speech.ts`; bars/structured charts in `charts.ts`/`structuredCharts.ts`; tab queues/profiles in `usePageController.ts`/`profiles.ts`; commands in `commands.ts`/`background.ts`; AI in `AISelection.tsx`, `ai.ts`, `selectionSession.ts` and `server/ai.mjs`; sign catalog/UI in `signs.ts`/`SignLookup.tsx`; React surface in `App.tsx`/`ui.css`. Build/packaging are explicit in `build.mjs`, manifest and `scripts/package.mjs`.
-
-All active modes default off. User actions own changes. Protect forms/code/editables/warnings/custom widgets; preserve newer website text/fills. Charts require exact metadata, never pixel guesses. No analytics, remote code, hidden uploads, client provider keys or unlicensed media. Optional local AI is separate from the core and requires explicit consent. Keep private PDF/ZIP, credentials, `.env`, model downloads, generated `dist`, ZIPs and `node_modules` outside Git.
-
-Use focused branches and PRs; preserve others' work. Never force-push main, choose the owner's licence or publish implicitly. The latest user request authorizes committing this work and opening a PR; it does not authorize merging the implementation PR. Contributor/reviewer should verify repository rules and current permissions.
-
-## Transfer checklist
-
-Share this guide, CONTINUATION-PROMPT.md, FEATURE-STATUS.md, the repository/PR links, and optionally the verified extension/source ZIPs. Share the original PDF and design ZIP privately and separately if the recipient is authorized; they are excluded from the public repo and generated source archive. No Chrome profile, passwords, tokens or local model installation should be transferred.
-
-Local state at handoff: Vite was started on `127.0.0.1:5173`; verify it is still running or restart it. The optional AI adapter/model was not started. Rebuild/reload on the recipient's machine; do not reuse the previous machine's extension ID or paths.
+Demo server stopped for this checkpoint. Optional adapter/model not started. Existing extension was not uninstalled or its permissions changed. No account password, token, private source document, model binary, generated dist/ZIP or unlicensed clip belongs in Git. Use own GitHub account/fork; no owner's password is needed. Save focused commits/PRs and update this handoff and evidence; verify owner authorization before merge, licence choice or publication. Never force-push main.

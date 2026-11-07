@@ -1,6 +1,6 @@
 # Next contributor: ordered work
 
-Read [the current handoff](CONTRIBUTOR-HANDOFF.md), [feature status](FEATURE-STATUS.md) and [continuation prompt](CONTINUATION-PROMPT.md) first. Fetch latest main/open PRs and use the implementation branch if it remains unmerged. Preserve existing source and evidence.
+Read [the current handoff](CONTRIBUTOR-HANDOFF.md), [feature status](FEATURE-STATUS.md) and [continuation prompt](CONTINUATION-PROMPT.md) first. Implementation PRs #1–#12 are merged; runtime baseline f86e2f1. Fetch latest upstream main/open PRs and preserve existing source/evidence. Do not return to an obsolete implementation fork. Work is stopped at the owner's checkpoint until the next continuation request.
 
 1. Rebuild/load the current extension in an authorized profile. Verify the page URL using supported controls; stop that browser interaction if URL verification fails.
 2. Retest installed reflow: article, full panel, 150% Verdana, 0.09em letter/0.21em word spacing; heading wraps, no prose-induced horizontal scrolling, exact Restore. Record viewport and zoom.

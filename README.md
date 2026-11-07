@@ -1,5 +1,7 @@
 # AbleVerse AI
 
+**Baton-pass checkpoint:** all implementation PRs through #12 are merged; runtime baseline `f86e2f1`. Start with [the current handoff](docs/CONTRIBUTOR-HANDOFF.md), [complete continuation prompt](docs/CONTINUATION-PROMPT.md) and [task prompts](docs/PROMPTS.md). The owner requested a saved stopping checkpoint; release acceptance remains open.
+
 A user-controlled Chrome accessibility extension: clearer reading, sensory comfort and colour-independent understanding of **supported, annotated SVG bar, line and pie charts**. This is an accessibility layer, not a job portal or medical product.
 
 Taking over the project? Start with the [handoff pack](docs/START-HERE.md), [step-by-step workflow](docs/WORKFLOW.md), and [copyable task prompts](docs/PROMPTS.md). The [master continuation prompt](docs/CONTINUATION-PROMPT.md) gives a coding assistant the full context.
