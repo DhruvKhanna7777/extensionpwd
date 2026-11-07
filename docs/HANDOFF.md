@@ -1,5 +1,13 @@
 # AbleVerse AI checkpoint — 2026-11-07
 
+## PR #9 integration verification
+
+PR #9 by KrishChadha001 merged at 2af581c. Integrating reviewer ran a fresh npm ci, all 103 Vitest tests and 4 package checks, production package (19 files) and full dependency audit successfully. Native acceptance and actual model inference were not rerun; real sign clips remain unavailable. The existing local-AI client and adapter are optional and require explicit selection consent/configuration.
+
+Post-merge asset check found Windows checkout conversion changed the bytes of the three upstream licence text files; font binaries and committed upstream originals matched all pinned hashes. Added LF checkout rules and build-time verification of all six font/notice hashes, preserving upstream text. Updated manifest description to disclose the optional consent-based local AI rather than claiming no AI uploads. Current build/package evidence is recorded by the integration follow-up PR; no new installed/audio/model quality sign-off is implied.
+
+Follow-up production typecheck/build/package passed with 19 verified files. All six source and shipped font/notice SHA-256 values match pinned provenance. Package SHA-256: 0144a8090c6aa632d48582079d54d8f6abcd8549f40d3a19a194a2df011b6472. All 103+4 tests and audit had passed immediately before this build/description-only correction; runtime feature code was unchanged afterward.
+
 ## Current implementation checkpoint — 7 November 2026
 
 Upstream PR #8 is merged at `6d30201`. New runtime work is on `feat/reading-tools-and-chart-adapters` in `KrishChadha001/extensionpwd`, tested runtime `84035f8e78df1b5ad15c30865e759565583ee863`; documentation follows it. See [the current handoff](CONTRIBUTOR-HANDOFF.md), [feature status](FEATURE-STATUS.md) and [continuation prompt](CONTINUATION-PROMPT.md). Older checkpoints below are historical.

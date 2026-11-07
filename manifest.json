@@ -9,7 +9,7 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "description": "User-controlled reading, sensory comfort and verified SVG bar-chart accessibility. Reversible, with no AI uploads.",
+  "description": "User-controlled reading, speech, sensory and supported chart tools. Optional selected-text local AI requires explicit consent.",
   "permissions": ["activeTab", "scripting", "storage", "sidePanel"],
   "optional_host_permissions": ["http://127.0.0.1/*"],
   "commands": {

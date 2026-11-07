@@ -7,6 +7,18 @@ import {
   readdir,
 } from "node:fs/promises";
 import sharp from "sharp";
+import { createHash } from "node:crypto";
+
+const fontSources = JSON.parse(
+  await readFile("assets/fonts/provenance.json", "utf8"),
+);
+for (const { file, sha256 } of fontSources) {
+  const bytes = await readFile(`assets/fonts/${file}`);
+  if (createHash("sha256").update(bytes).digest("hex") !== sha256)
+    throw new Error(
+      `Bundled font source does not match pinned provenance: ${file}`,
+    );
+}
 await mkdir("dist", { recursive: true });
 await mkdir("dist/icons", { recursive: true });
 await mkdir("dist/fonts", { recursive: true });
