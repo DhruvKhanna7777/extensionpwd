@@ -1,5 +1,9 @@
 # AbleVerse AI checkpoint â€” 2026-11-07
 
+## Latest follow-up — 2026-11-07
+
+PR #4 is merged at `ecf757653b25fb97ca62ffc7327c4695b8b30f1f`; prior work is integrated into main. Fresh Windows checkout: Node 24.21.0 / npm 11.19.0, npm ci succeeded with zero reported vulnerabilities, 44 Vitest + 3 packaging checks passed, and production packaging verified 11 files. This follow-up changes documentation only; no new native acceptance is claimed. Follow [NEXT-CONTRIBUTOR.md](NEXT-CONTRIBUTOR.md) for ordered remaining cases and evidence requirements. Historical stopping notes below describe the previous session.
+
 Version 0.1.0 local core. User requested a verified stopping checkpoint, all completed work saved, and a contributor handoff. This is not a release-certified product. Integration target is main through PR #2, following the earlier PR #1 merge. Check GitHub for the final merge SHA rather than treating this document as a live branch-status query.
 
 ## Implemented

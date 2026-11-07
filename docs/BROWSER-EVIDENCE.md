@@ -38,4 +38,4 @@ Reading was visually inspected at 320px and Settings at 400px. Vertical scrollin
 
 ## Remaining native gates
 
-Installed Chrome has earlier installation/popup/panel/Reading/Restore smoke evidence. Current native chart/form/audio, screen-reader walkthrough, actual voice lifecycle, and updated installed build still need verification. No browser-engine or preview result is substituted for those gates.
+Installed Chrome has earlier installation/popup/panel/Reading/Restore smoke evidence. Later native chart/form smoke checks and user-confirmed paragraph audio/pause/resume are recorded in INSTALLED-ACCEPTANCE.md. Other voice combinations, audible cancellation, native lifecycle, screen-reader walkthrough and full UI acceptance remain open. No browser-engine or preview result is substituted for those gates.
