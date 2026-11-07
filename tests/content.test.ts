@@ -109,3 +109,27 @@ it("invalidates verified companions when source chart data change", async () => 
     "77",
   );
 });
+it("stops speech on history-only navigation without waiting for a DOM mutation", async () => {
+  vi.useFakeTimers();
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(document.querySelector("#text")!);
+    getSelection()!.removeAllRanges();
+    getSelection()!.addRange(range);
+    request("READ");
+    history.pushState({}, "", "/history-only");
+    await vi.advanceTimersByTimeAsync(600);
+    expect(cancelled).toBe(1);
+  } finally {
+    request("RESTORE");
+    vi.useRealTimers();
+  }
+});
+it("keeps Reading enabled when unrelated chart data change with Chroma off", async () => {
+  document.body.innerHTML +=
+    '<svg data-av-chart="bar"><rect data-av-value="10"/></svg>';
+  request("APPLY", { ...defaults, reading: true });
+  document.querySelector("rect")!.setAttribute("data-av-value", "20");
+  await Promise.resolve();
+  expect(request("GET_STATE").settings.reading).toBe(true);
+});

@@ -23,7 +23,7 @@ Prerequisites: Node.js 22.12+ LTS, npm, Chrome 116+ desktop.
 ```sh
 git clone https://github.com/DhruvKhanna7777/extensionpwd.git
 cd extensionpwd
-git switch feat/ableverse-core
+git switch main
 npm ci
 npm test
 npm run build

@@ -96,6 +96,21 @@ export function enhanceCharts(doc: Document, undo: (() => void)[]) {
       const old = r.bar.getAttribute("fill");
       const fill = `url(#${id})`;
       r.bar.setAttribute("fill", fill);
+      const originalStyle = r.bar.getAttribute("style");
+      const originalFill = r.bar.style.getPropertyValue("fill");
+      const originalPriority = r.bar.style.getPropertyPriority("fill");
+      r.bar.style.setProperty("fill", fill, "important");
+      const appliedStyle = r.bar.getAttribute("style");
+      undo.push(() => {
+        if (r.bar.getAttribute("style") === appliedStyle) {
+          if (originalStyle === null) r.bar.removeAttribute("style");
+          else r.bar.setAttribute("style", originalStyle);
+        } else if (r.bar.style.getPropertyValue("fill") === fill) {
+          if (originalFill)
+            r.bar.style.setProperty("fill", originalFill, originalPriority);
+          else r.bar.style.removeProperty("fill");
+        }
+      });
       undo.push(() => {
         if (r.bar.getAttribute("fill") === fill)
           old === null

@@ -16,26 +16,33 @@ if (!scope.__ableverse) {
   const speech = new SpeechPlayer(document, changed);
   let route = location.href;
   let current = { ...defaults };
+  let routeTimer: ReturnType<typeof setInterval> | undefined;
   const stop = () => speech.stop();
   const observer = new MutationObserver((records) => {
-    const sourceChartChanged = records.some((record) => {
-      const target =
-        record.target instanceof Element
-          ? record.target
-          : record.target.parentElement;
-      if (target?.closest('svg[data-av-chart="bar"]')) return true;
-      return [...record.removedNodes].some(
-        (node) =>
-          node instanceof Element &&
-          (node.matches('svg[data-av-chart="bar"]') ||
-            node.querySelector('svg[data-av-chart="bar"]')),
-      );
-    });
+    const sourceChartChanged =
+      current.chroma &&
+      records.some((record) => {
+        const target =
+          record.target instanceof Element
+            ? record.target
+            : record.target.parentElement;
+        if (target?.closest('svg[data-av-chart="bar"]')) return true;
+        return [...record.removedNodes].some(
+          (node) =>
+            node instanceof Element &&
+            (node.matches('svg[data-av-chart="bar"]') ||
+              node.querySelector('svg[data-av-chart="bar"]')),
+        );
+      });
     // Do not keep calling a stale snapshot verified after a site updates its source.
     if (location.href !== route || sourceChartChanged) restore();
   });
   const observe = () => {
     route = location.href;
+    if (routeTimer === undefined)
+      routeTimer = setInterval(() => {
+        if (location.href !== route) restore();
+      }, 500);
     observer.observe(document, {
       childList: true,
       subtree: true,
@@ -59,6 +66,10 @@ if (!scope.__ableverse) {
     window.addEventListener("pagehide", restore);
   };
   const restore = () => {
+    if (routeTimer !== undefined) {
+      clearInterval(routeTimer);
+      routeTimer = undefined;
+    }
     observer.disconnect();
     stop();
     engine.restore();

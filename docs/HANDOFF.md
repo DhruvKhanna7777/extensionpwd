@@ -1,12 +1,12 @@
 # AbleVerse AI handoff
 
-Branch: `feat/ableverse-core`. First implementation from the 50-page product blueprint; final Part II/A1 controls priorities. PDF stays local and is not redistributed to this public repo. Product requirements are summarized in PLAN.md.
+Integration branch: `main` (PR #1 merged at dd90713). First implementation from the 50-page product blueprint; final Part II/A1 controls priorities. PDF stays local and is not redistributed to this public repo. Product requirements are summarized in PLAN.md.
 
 ## Completed
 
 MV3 build and React popup/five-section panel; typography/presets/preview/reset; selected-text speech; sensory CSS; verified SVG bar labels/patterns/table; reversible owned-change registry; effective per-page state; explicit save/load; three fixtures; docs and locked dependencies.
 
-34 automated tests across settings, engine, charts, speech lifecycle and React UI. TypeScript/bundles pass. Full dependency audit: zero vulnerabilities (Node 22.12+). Initial UI preview visually inspected at 320px; new voice controls still require updated visual QA. See TEST-MATRIX.md for verification scope.
+37 automated tests across settings, engine, charts, speech lifecycle and React UI. TypeScript/bundles pass. Full dependency audit: zero vulnerabilities (Node 22.12+). Initial UI preview visually inspected at 320px; new voice controls still require updated visual QA. See TEST-MATRIX.md for verification scope.
 
 ## Third checkpoint: installed Chrome smoke test
 
@@ -36,7 +36,7 @@ Final review fixes: speech-only SPA navigation now cancels playback; transformed
 2. Continue DEMO.md with the installed extension. Installation, activeTab, popup, full-panel opening, Reading and Restore have passed smoke checks. Remaining: source chart/form fixture, reopening state, selection retention and voices.
 3. Verify real pause/resume, Stop/Escape, tab hide, pagehide and SPA. Speech tests fake the device API, not actual audio.
 4. Complete keyboard-only/screen-reader and widths 320/360/400 checks; fix failures before release sign-off.
-5. Exercise site DOM updates. New prose needs the next explicit Apply; no automatic reapplication. SPA cleanup observes DOM mutation; a history-only route with no mutation is not detected immediately.
+5. Exercise site DOM updates. New prose needs the next explicit Apply; no automatic reapplication. Active sessions also check URL changes every 500ms, including history-only navigation. Restore removes the check; real browser timer throttling still needs verification.
 6. Verify generated icon family, choose distribution licence and capture reproducible installation evidence.
 7. P1 only after P0 gates: hover speech, per-site settings, line/pie, consent-gated AI and verified licensed ASL dictionary. Never put keys or unlicensed assets in client/repo.
 
@@ -46,7 +46,11 @@ Final review fixes: speech-only SPA navigation now cancels playback; transformed
 - Focus outlines rather than hiding/dimming unknown regions, keeping forms/warnings usable.
 - No AI/ASL backend or fake output. AI name follows blueprint; build labelled LOCAL CORE.
 - No source PDF redistribution or credentials copied into files.
-- Main remains unchanged; implementation on contributor branch for review.
+- Initial implementation merged into main through PR #1; later changes use focused contributor branches.
 - Runtime message receiver stays installed as a singleton for explicit future actions; Restore cleans active observer, styles, markers and speech.
 
 Commit/push milestones and keep this file/test matrix current. Do not mark pending checks as passed.
+
+## Navigation/chart checkpoint
+
+History-only route checks run every 500ms while observing and are removed on Restore. Chart-source invalidation is conditional on Chroma, so Reading survives unrelated chart updates. Patterns override inline CSS fill while preserving/restoring the original style and newer unrelated site edits. Tests: 37 pass; production build and full audit pass. README now builds from main.
