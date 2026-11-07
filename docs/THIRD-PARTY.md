@@ -11,6 +11,8 @@
 
 Font files are unmodified. `assets/fonts/provenance.json` records pinned source revisions, download URLs and SHA-256 values. The font notices, provenance and parser notice are included in the production allowlist. These licences do not choose a distribution licence for AbleVerse's own code; that remains an owner decision.
 
+Font licence files are checked out with LF line endings to preserve their pinned upstream bytes on Windows. The build verifies all six font/notice hashes before copying them; a mismatch fails packaging instead of shipping inconsistent provenance. Upstream licence whitespace is retained intentionally.
+
 The supplied Stitch ZIP is a UI reference containing a Markdown frontend specification, sample state and SVG components. Its visual language was adapted onto real application state; its static charts, active counts, simulated notifications and unimplemented switches were not treated as verified behavior. The private reference PDF and ZIP are not committed to Git.
 
 ## AI reuse researched
