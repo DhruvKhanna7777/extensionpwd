@@ -2,7 +2,7 @@
 
 A user-controlled Chrome accessibility extension: clearer reading, sensory comfort and colour-independent understanding of **supported, annotated SVG bar charts**. This is an accessibility layer, not a job portal or medical product.
 
-Start here: [next contributor checklist](docs/NEXT-CONTRIBUTOR.md) for the verified integration state and remaining acceptance steps.
+Taking over the project? Start with the [handoff pack](docs/START-HERE.md), [step-by-step workflow](docs/WORKFLOW.md), and [copyable task prompts](docs/PROMPTS.md). The [master continuation prompt](docs/CONTINUATION-PROMPT.md) gives a coding assistant the full context.
 
 ## Current checkpoint
 

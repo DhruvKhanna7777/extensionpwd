@@ -48,7 +48,7 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 
 Release gates remain open. Record actual browser version/results/defects and evidence; do not infer manual PASS from unit tests.
 
-44 core/UI tests plus 3 package checks currently pass. After the earlier interrupted attempt, installation succeeded on the next turn in the existing cyan profile. Native popup/full-panel, activeTab, Reading and Restore smoke tests passed. A heading-size defect was reproduced, fixed, reloaded and rechecked. Further browser input stopped when URL verification failed during chart navigation; later chart/form and user-confirmed paragraph audio results are recorded in INSTALLED-ACCEPTANCE.md; remaining lifecycle gates are still open.
+At the earlier checkpoint, 44 core/UI tests plus 3 package checks passed. The latest 48-test baseline is recorded below. After the earlier interrupted attempt, installation succeeded on the next turn in the existing cyan profile. Native popup/full-panel, activeTab, Reading and Restore smoke tests passed. A heading-size defect was reproduced, fixed, reloaded and rechecked. Further browser input stopped when URL verification failed during chart navigation; later chart/form and user-confirmed paragraph audio results are recorded in INSTALLED-ACCEPTANCE.md; remaining lifecycle gates are still open.
 
 Navigation and chart hardening: history-only URL changes cancel active speech within the 500ms active-session check; unrelated chart updates leave Reading enabled when Chroma is off; inline CSS fills no longer suppress chart patterns, and original inline styles are restored. All three have automated regression coverage; native checks remain pending.
 
@@ -56,7 +56,7 @@ Current additional checks: all 15 module/width combinations at 320/360/400px fit
 
 Final review regressions: removing or changing an SVG chart contract removes stale companions; a deferred quiet state refresh cannot overwrite a newer Apply action. Both reproduced failures now pass. Later native smoke coverage is recorded in INSTALLED-ACCEPTANCE.md; full acceptance remains open.
 
-## Fresh follow-up verification — 2026-11-07
+## Fresh follow-up verification â€” 2026-11-07
 
 On Windows, Node 24.21.0 / npm 11.19.0: npm ci succeeded (0 vulnerabilities reported), npm test passed 44 Vitest + 3 package checks, npm run package passed typechecking/build and verified 11 files. Documentation-only follow-up; no new browser or audible acceptance. See NEXT-CONTRIBUTOR.md for remaining native cases.
 
