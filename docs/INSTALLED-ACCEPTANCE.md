@@ -26,9 +26,10 @@ Corrected a fixture copy inconsistency: SVG metadata/table use units, but its st
 
 - Selected a full noneditable demo paragraph in the native page, then clicked Read selection in the installed side panel. Selection remained visibly highlighted after moving focus; extension reported Reading your selection.
 - Completion produced Speech stopped or finished. A later run at the validated minimum rate 0.7 showed Speech paused after Pause / resume, then Reading your selection after resuming. Stop returned the stopped/finished status.
-- The test did not record audio. Audible content, voice identity, audible pause timing and volume/rate quality remain unverified unless separately confirmed by the user. Escape, tab hide, pagehide and SPA lifecycle remain pending in native Chrome.
+- On another run, the panel reported active reading; clicked neutral article space to focus the native page and pressed Escape. The panel changed to stopped/finished. This covers native Escape control-state cancellation, with no audio assertion.
+- The test did not record audio. Audible content, voice identity, audible pause timing and volume/rate quality remain unverified unless separately confirmed by the user. Tab hide, pagehide and SPA lifecycle remain pending in native Chrome.
 - Native form used only controlled demo values; no real password was entered or saved. Browser offered its normal password-save toolbar icon after the demo submission; it was not opened or acted on.
 
 ## Remaining acceptance
 
-Audible speech/selection/pause/resume/Stop/Escape and lifecycle; native permission failures; dynamic chart contract invalidation; keyboard/screen-reader acceptance; full UI contrast/zoom; browser version and distribution licence. Automated/harness evidence remains separately recorded in TEST-MATRIX.md and BROWSER-EVIDENCE.md.
+Audible speech/pause/resume/Stop/Escape and hide/navigation lifecycle; native permission failures; dynamic chart contract invalidation; keyboard/screen-reader acceptance; full UI contrast/zoom; browser version and distribution licence. Automated/harness evidence remains separately recorded in TEST-MATRIX.md and BROWSER-EVIDENCE.md.
