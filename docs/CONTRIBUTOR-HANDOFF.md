@@ -2,6 +2,8 @@
 
 Checkpoint: **7 November 2026**. This document is for a new developer, tester or coding assistant. Read it with [feature status](FEATURE-STATUS.md) and [the copy-paste continuation prompt](CONTINUATION-PROMPT.md).
 
+Latest integration: PR #9 is merged at 2af581c and PR #10 at 73b98ef; fetch upstream main rather than starting from the older fork commands below. The continuation adds 35-check engine coverage and `/demo/advanced.html` for installed line/pie/mutation acceptance. See DEMO.md and BROWSER-EVIDENCE.md. Krish's additional Markdown frontend reference was reviewed; adaptation decisions are in FRONTEND-REFERENCE.md. Older branch-specific provenance/checks below remain historical.
+
 ## Get the correct work
 
 - Upstream: https://github.com/DhruvKhanna7777/extensionpwd

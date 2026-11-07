@@ -1,5 +1,6 @@
 import { PageEngine } from "../src/engine";
 import { defaults } from "../src/settings";
+import { advancedChecks } from "./advanced-checks";
 const fixture = document.querySelector<HTMLDivElement>("#fixture")!;
 const status = document.querySelector<HTMLParagraphElement>("#status")!;
 const results = document.querySelector<HTMLOListElement>("#results")!;
@@ -45,7 +46,11 @@ document.querySelector("#restore")!.addEventListener("click", () => {
   reset();
   status.textContent = "Fixture restored. You can run the checks again.";
 });
-document.querySelector("#run")!.addEventListener("click", () => {
+document.querySelector("#run")!.addEventListener("click", async () => {
+  const buttons = ["#run", "#restore"].map((selector) =>
+    document.querySelector<HTMLButtonElement>(selector)!,
+  );
+  buttons.forEach((button) => (button.disabled = true));
   reset();
   results.replaceChildren();
   const checks: boolean[] = [];
@@ -246,10 +251,13 @@ document.querySelector("#run")!.addEventListener("click", () => {
     );
     engine.restore();
     narrowHeading.remove();
+    checks.push(...(await advancedChecks(fixture, assert)));
     status.textContent = `${checks.filter(Boolean).length}/${checks.length} browser checks passed. Fixture restored; native extension/audio checks are separate.`;
   } catch (error) {
     engine.restore();
     assert("Unexpected browser error: " + String(error), false);
     status.textContent = "A browser check failed. See results.";
+  } finally {
+    buttons.forEach((button) => (button.disabled = false));
   }
 });

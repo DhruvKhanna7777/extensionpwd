@@ -13,4 +13,15 @@ Do not present the Vite interface preview as a functioning extension. Do not cla
 
 ## Repeatable browser-engine validation
 
-Open `/demo/validation.html` and select **Run browser checks**. The page imports the actual page engine and visibly reports 17 checks covering rendered heading size, protected fields/code/warnings, safe marked distraction hiding, motion/status exclusions, focus/controls, exact SVG labels/table, inline fill, canvas fallback, repeat application, restore, local form submission, newer site edits and palette contrast. This harness is explicitly labelled as separate from installed-extension transport and speech tests. It contains controlled demo-only values and makes no server requests.
+Open `/demo/validation.html` and select **Run browser checks**. The page imports the actual page engine and visibly reports 35 checks covering the original core, line/pie exact data and rendered patterns/dashes/markers, invalid percentage rejection, repeated Apply, exact restoration, reading width/spacing/alignment, pointer-transparent ruler/Escape and all three locally bundled fonts. This is separate from installed-extension transport, model inference, audible speech and screen-reader acceptance. It uses controlled demo-only values and loads fonts locally.
+
+## Repeatable installed dynamic-content fixture
+
+Open `/demo/advanced.html` with the installed extension. The page itself only supplies source data and website mutations; it does not simulate or activate AbleVerse.
+
+1. Enable Charts: line A Jan 10/Feb 20 and B Jan 8/Feb 12 units; pie Books 25%/Travel 75%. The invalid percentage example totals 50 and must remain unsupported. Inspect exact tables and optional encodings.
+2. Choose **Change line A February to 27**. Source metadata and geometry change together. Stale companions should disappear before you explicitly apply again; the new table should contain 27.
+3. From the original fixture, apply Charts then **Remove the pie chart contract**. Stale verified output must disappear while the source drawing remains.
+4. With Charts off and Reading on, change the line source. Reading should remain active. **Insert new website prose**; it should need another explicit Apply.
+5. Start fresh speech/adaptations, then **Change history-only route**. URL changes without a reload; record cleanup/cancellation and actual delay. This page does not measure listening or permissions for you.
+6. **Reload the original fixture** between independent cases; reload also resets temporary source changes. Finish with Restore and record source commit/browser/viewport/zoom and actual outcomes.

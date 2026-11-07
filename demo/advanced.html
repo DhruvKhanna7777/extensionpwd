@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AbleVerse · Advanced chart and navigation fixture</title>
+  <style>
+    body {
+      font: 17px/1.6 system-ui;
+      color: #142339;
+      background: #f7f9fc;
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 16px;
+    }
+    nav,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    figure,
+    section {
+      margin: 24px 0;
+      padding: 20px;
+      background: white;
+      border: 1px solid #6a7f94;
+      border-radius: 12px;
+    }
+    svg {
+      display: block;
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+    }
+    svg[id*="pie"],
+    #advanced-invalid {
+      max-width: 240px;
+    }
+    button {
+      font: inherit;
+      padding: 10px;
+      color: #142339;
+      background: white;
+      border: 1px solid #6a7f94;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    :focus-visible {
+      outline: 3px solid #3069cf;
+      outline-offset: 3px;
+    }
+    figcaption {
+      margin-top: 12px;
+    }
+  </style>
+  <nav aria-label="Demos">
+    <a href="article.html">Article</a><a href="charts.html">Bars</a>
+    <a href="sensory.html">Sensory &amp; forms</a
+    ><a href="validation.html">Engine checks</a>
+  </nav>
+  <section aria-label="Manual installed-extension test controls">
+    <h1>Installed extension test controls</h1>
+    <p>
+      This page only supplies demo data and website changes. It does not enable
+      or simulate the extension. Use the installed AbleVerse popup or side panel
+      to apply Charts or Reading first.
+    </p>
+    <div class="actions">
+      <button id="change-line">Change line A February to 27</button>
+      <button id="remove-contract">Remove the pie chart contract</button>
+      <button id="new-prose">Insert new website prose</button>
+      <button id="change-route">Change history-only route</button>
+      <button id="reset-fixture">Reload the original fixture</button>
+    </div>
+    <p id="fixture-status" role="status">Original source loaded.</p>
+    <p>
+      After a chart change, stale companions should disappear. Apply explicitly
+      again to rebuild valid charts. With Charts off and Reading on, a line edit
+      must not reset Reading. Inserted prose must wait for another Apply. A
+      route change should restore owned changes and stop owned speech; the page
+      itself is not reloaded.
+    </p>
+  </section>
+  <div id="advanced-fixture"></div>
+  <script type="module" src="./advanced.ts"></script>
+</html>

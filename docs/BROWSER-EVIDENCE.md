@@ -1,5 +1,13 @@
 # Browser evidence — 2026-11-07
 
+## Expanded current engine harness: 35/35 PASS
+
+In the in-app browser, clicked Run browser checks at `/demo/validation.html` on the continuation based on merged main 73b98ef. All 35 displayed checks passed. Fifteen new checks cover exact line/pie rows, differentiated rendered dashes/markers/patterns, malformed percentage rejection, repeated Apply, disabled visual encodings with retained tables, exact double Restore, width/27px paragraph spacing/left alignment, pointer-transparent ruler movement/Escape and actual loading of Lexend/Atkinson Hyperlegible/OpenDyslexic from local assets. The final check restores original markup and removes owned guides.
+
+Separately exercised all four mutation buttons at `/demo/advanced.html`: line February value became 27, pie contract became absent, a new prose paragraph appeared, and history query changed to demo-route=1 without reload. These establish that the controlled fixture works; installed companion invalidation and audible cancellation remain separate tests, not inferred passes.
+
+Measured actual preview Stop button border against its white background: 2.1138:1 before the change and 4.1369:1 after. Unselected font chips share the corrected border colour. No new full UI contrast, zoom, native transport, listening, model inference or screen-reader certification is claimed. See FRONTEND-REFERENCE.md.
+
 ## Method
 
 The in-app browser loaded the Vite-served `/demo/validation.html` and the tester clicked **Run browser checks** through browser UI. The harness imports the actual `PageEngine`, not a mock. All 17 displayed checks returned PASS. This evidence covers browser rendering and DOM behavior only; native Chrome extension permission/transport and actual audio remain separate pending gates.

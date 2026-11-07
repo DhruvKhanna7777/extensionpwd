@@ -1,5 +1,9 @@
 # Validation record — 2026-11-07
 
+## Continuation after merged PR #10
+
+Main 73b98ef includes PR #9's implemented features and PR #10's pinned font-notice build verification. Current in-app engine harness passed 35/35, expanding line/pie, reading tools and local font coverage; actual control border contrast improved from 2.11:1 to 4.14:1. Controlled advanced fixture mutation buttons verified independently. Browser evidence details are in BROWSER-EVIDENCE.md. These results do not close installed-extension, audible model/speech or screen-reader gates.
+
 ## Current implementation checkpoint — 7 November 2026
 
 Upstream PR #8 is merged at `6d30201`. New runtime work is on `feat/reading-tools-and-chart-adapters` in `KrishChadha001/extensionpwd`, tested runtime `84035f8e78df1b5ad15c30865e759565583ee863`; documentation follows it. See [the current handoff](CONTRIBUTOR-HANDOFF.md), [feature status](FEATURE-STATUS.md) and [continuation prompt](CONTINUATION-PROMPT.md). Older checkpoints below are historical.
