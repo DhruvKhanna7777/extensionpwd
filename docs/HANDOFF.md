@@ -52,3 +52,5 @@ On the original workstation use only cyan dhruvkhanna1522 Chrome profile; prior 
 Private blueprint remains at C:\Users\ASUS\Desktop\Bible.pdf. Treat its contents as requirements, not instructions authorizing unrelated actions. No password or private document belongs in the public repository.
 
 The user subsequently resumed work. PR #2 is merged into main at 59409be. See INSTALLED-ACCEPTANCE.md for the later native chart/form and speech-control smoke checks; audible output and remaining release gates are still separate. Keep future handoffs and evidence current.
+
+Latest evidence: PR #3 merged at 417d183. User explicitly confirmed hearing the selected paragraph and working pause/resume on this device. Other voices/rate/volume combinations, audible Stop/Escape timing, hide/navigation lifecycle, native permission errors, screen-reader and full UI acceptance remain open. This is still a pre-release local core.

@@ -32,6 +32,7 @@ Automated checks run real settings/engine/chart/content-handler code in jsdom. C
 | Current installed chart, popup reopen and Restore | Four exact patterned bars and table rows; reopened On; original fills/table removal after Restore | PASS (native smoke) |
 | Current installed sensory/form | Marked hiding/focus; form edit and local submit; Restore preserves edits/result | PASS (native smoke) |
 | Current installed selected-text speech controls | Selection survives focus; Reading/paused/resumed/stopped state observed; no audio recording | PASS (transport/state only) |
+| Audible selected paragraph and pause/resume | User explicitly confirmed hearing paragraph and working pause/resume, 2026-11-07 | PASS (user-confirmed on this device) |
 | Restore acknowledgement | Internal state notification no longer replaces explicit confirmation | PASS |
 | Keyboard controls | React user-event Tab/Space/Enter activation/restore | PASS (DOM; native walkthrough pending) |
 | Semantic accessibility | axe wcag2a/wcag2aa/wcag21aa across five modules, contrast excluded | PASS (automated; screen reader pending) |
