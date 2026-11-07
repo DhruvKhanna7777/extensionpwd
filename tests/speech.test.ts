@@ -113,3 +113,15 @@ it("reports asynchronous voice errors rather than leaving a reading claim active
       "Speech failed: network. Try another voice or check device speech settings.",
   });
 });
+it("stops route polling when a speech-only session finishes", () => {
+  vi.useFakeTimers();
+  try {
+    ask("READ");
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    utterances[0].onend();
+    expect(vi.getTimerCount()).toBe(0);
+  } finally {
+    ask("RESTORE");
+    vi.useRealTimers();
+  }
+});

@@ -32,6 +32,30 @@ describe("safe settings", () => {
 });
 
 describe("reversible page adaptation", () => {
+  it("does not hide marked custom widgets or keyboard targets", () => {
+    document.body.innerHTML =
+      '<main><div data-av-distractor role="button" tabindex="0">Custom action</div><div data-av-distractor><div tabindex="0">Keyboard target</div></div></main>';
+    expect(
+      new PageEngine(document).apply({ ...defaults, distractions: true })
+        .hidden,
+    ).toBe(0);
+  });
+  it("hides only marked noninteractive distractions and restores them", () => {
+    document.body.innerHTML =
+      '<main><div data-av-distractor id="banner">Decorative demo banner</div><div data-av-distractor><a href="#">Navigation</a></div><div data-av-distractor role="alert">Warning</div><div data-av-distractor><form><input value="keep"/></form></div><p>Unmarked prose</p></main>';
+    const before = document.body.innerHTML;
+    const engine = new PageEngine(document);
+    const result = engine.apply({ ...defaults, distractions: true });
+    expect(result.hidden).toBe(1);
+    expect(
+      document.querySelector("#banner")?.hasAttribute("data-ableverse-hidden"),
+    ).toBe(true);
+    expect(document.querySelectorAll("[data-ableverse-hidden]")).toHaveLength(
+      1,
+    );
+    engine.restore();
+    expect(document.body.innerHTML).toBe(before);
+  });
   it("preserves original heading hierarchy and scales each rendered size", () => {
     document.head.innerHTML =
       "<style>h1{font-size:36px}p{font-size:18px}</style>";
@@ -125,6 +149,17 @@ function chart(value = "30") {
   return `<svg data-av-chart="bar" data-av-unit="units" aria-label="Monthly results" viewBox="0 0 300 160"><rect data-av-label="March" data-av-value="${value}" x="30" y="80" width="40" height="60" fill="red"/><rect data-av-label="April" data-av-value="55" x="100" y="30" width="40" height="110" fill="green"/></svg>`;
 }
 describe("verified bar charts", () => {
+  it("applies patterns over an inline fill and restores that original style", () => {
+    document.body.innerHTML =
+      '<svg data-av-chart="bar"><rect x="0" y="20" width="40" height="60" style="fill:purple" data-av-label="A" data-av-value="30"/></svg>';
+    const before = document.body.innerHTML;
+    const bar = document.querySelector("rect")!;
+    const engine = new PageEngine(document);
+    engine.apply({ ...defaults, chroma: true });
+    expect(getComputedStyle(bar).fill).toMatch(/^url\(#ableverse-pattern-/);
+    engine.restore();
+    expect(document.body.innerHTML).toBe(before);
+  });
   it("leaves transformed bars unchanged rather than misplacing labels", () => {
     document.body.innerHTML = chart().replace(
       "<rect",

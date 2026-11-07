@@ -6,6 +6,7 @@ export const defaults = {
   letterSpacing: 0,
   wordSpacing: 0,
   motion: false,
+  distractions: false,
   focus: false,
   emphasis: false,
   calm: "default",
@@ -21,7 +22,14 @@ export function validateSettings(raw: unknown): Settings {
   const r = raw as Record<string, unknown>;
   if (typeof r.voiceURI === "string" && r.voiceURI.length <= 256)
     s.voiceURI = r.voiceURI;
-  for (const k of ["reading", "motion", "focus", "emphasis", "chroma"] as const)
+  for (const k of [
+    "reading",
+    "motion",
+    "focus",
+    "emphasis",
+    "chroma",
+    "distractions",
+  ] as const)
     if (typeof r[k] === "boolean") s[k] = r[k];
   const ranges = {
     fontScale: [90, 180],

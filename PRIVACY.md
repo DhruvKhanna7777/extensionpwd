@@ -13,3 +13,5 @@ Source text is never rewritten. Prose changes use owned data attributes and remo
 Unsupported: browser/store pages, file URLs, embedded PDFs, cross-origin frames, universal shadow DOM, image/canvas charts, automatic translation, diagnosis or universal accessibility certification. Motion reduction does not stop video, canvas or GIFs. Status/progress CSS animation is excluded. Focus outlines the reading region without hiding content.
 
 AI and ASL are not included. Future AI requires preview, explicit network consent, cancellation, failure states and server-side secrets. ASL requires verified, permissioned clips and attribution.
+
+Marked distraction hiding is off by default and limited to `data-av-distractor` elements. Anything containing or acting as a protected input, editable, alert, link, form, custom button/widget, keyboard target, or media control is excluded. Restore removes owned hide markers/CSS. No AI selects what to hide.

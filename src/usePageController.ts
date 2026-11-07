@@ -95,6 +95,8 @@ export function usePageController() {
                 tell("Speech paused. Choose Pause / resume to continue.");
               else if (reason === "restored")
                 tell("Original page restored. Speech stopped.");
+              else if (reason === "state" && result.speech?.state === "idle")
+                tell("Speech stopped or finished.");
               else if (!reason)
                 tell("Showing this page’s current preferences.");
             }
@@ -146,7 +148,7 @@ export function usePageController() {
   function run(type: string, next = settings) {
     // Start the query inside the click handler, before waiting for earlier operations.
     // A later tab switch must never retarget this action.
-    const generation = revision.current;
+    const generation = ++revision.current;
     const target = globalThis.chrome?.tabs
       ? chrome.tabs.query({ active: true, currentWindow: true }).then(
           (t) => ({ tab: t[0] }),
@@ -190,7 +192,7 @@ export function usePageController() {
           );
         } else if (type === "APPLY")
           tell(
-            `Preferences applied.${next.chroma ? ` ${result.charts} supported chart(s) enhanced.` : ""}${result.warnings?.length ? " " + result.warnings.join(" ") : ""}`,
+            `Preferences applied.${next.distractions ? ` ${result.hidden ?? 0} marked distraction(s) hidden.` : ""}${next.chroma ? ` ${result.charts} supported chart(s) enhanced.` : ""}${result.warnings?.length ? " " + result.warnings.join(" ") : ""}`,
           );
         else
           tell(

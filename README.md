@@ -6,10 +6,13 @@ A user-controlled Chrome accessibility extension: clearer reading, sensory comfo
 
 Version 0.1.0 is the first local core, **not release-certified**. Installed Chrome lifecycle, actual voice playback and screen-reader acceptance still require manual verification. See [handoff](docs/HANDOFF.md) and [test matrix](docs/TEST-MATRIX.md).
 
+The user requested a stopping checkpoint on 2026-11-07. New contributors should read [project instructions](AGENTS.md) and the [complete continuation prompt](docs/CONTINUATION-PROMPT.md). Current checks: 44 core/UI tests, 3 package checks, 17 browser-engine checks and 15 preview layout combinations passed. Native release gates remain open.
+
 - React popup and full side panel: Overview, Reading, Sensory, Charts and Settings.
 - Bounded font family, size, line/letter/word spacing; typography preview and reset.
 - Selected-prose speech, pause/resume, stop and Escape. Form fields and editable content excluded.
 - Reduced CSS motion, focus outline, control emphasis and warm/dark/high-contrast prose colours.
+- Opt-in hiding of explicitly marked noninteractive distractions; forms, links, alerts and keyboard targets remain visible.
 - Explicit SVG bar adapter: exact data labels, distinct textures and companion table. Unsupported charts untouched.
 - Explicit local preference saving and one-click restoration of owned changes.
 - No automatic site activation, AI uploads, account, analytics, remote code or sign videos.
@@ -23,10 +26,11 @@ Prerequisites: Node.js 22.12+ LTS, npm, Chrome 116+ desktop.
 ```sh
 git clone https://github.com/DhruvKhanna7777/extensionpwd.git
 cd extensionpwd
-git switch feat/ableverse-core
+git switch main
 npm ci
 npm test
 npm run build
+npm run package
 ```
 
 1. Open `chrome://extensions` in your chosen testing profile.
@@ -36,6 +40,10 @@ npm run build
 5. Enable only the controls you want. Finish with **Restore original page**.
 
 After rebuilding, reload the extension and demo tab. Browser-internal/store pages and file URLs are intentionally unsupported. Serve demo pages over localhost.
+
+`npm run package` rebuilds and creates `artifacts/ableverse-ai-0.1.0.zip`. It packages an explicit build-file allowlist, checks manifest paths stay inside dist, verifies ZIP contents byte for byte, and prints a SHA-256 checksum. Unrelated leftovers and `.env` files are excluded. Extract the ZIP before using Load unpacked. Keep the allowlist current when adding legitimate new shipped assets.
+
+`npm test` runs the 44 core/UI tests and 3 packaging checks. `/demo/validation.html` provides 17 real-browser page-engine checks; it does not impersonate an installed extension or prove actual voice playback.
 
 `npm run demo` also serves an interface-only preview at `/`. That preview cannot modify tabs or use extension APIs. See [demo script](DEMO.md).
 

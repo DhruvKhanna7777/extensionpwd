@@ -10,3 +10,7 @@ Build/load using README.md. Start `npm run demo`; use http rather than file URLs
 6. Restore twice on each fixture. No owned stylesheet/attributes/pattern group/table; original fills/content/forms remain.
 
 Do not present the Vite interface preview as a functioning extension. Do not claim AI, ASL, hover speech, universal charts or full release acceptance. Record installed-extension results in docs/TEST-MATRIX.md.
+
+## Repeatable browser-engine validation
+
+Open `/demo/validation.html` and select **Run browser checks**. The page imports the actual page engine and visibly reports 17 checks covering rendered heading size, protected fields/code/warnings, safe marked distraction hiding, motion/status exclusions, focus/controls, exact SVG labels/table, inline fill, canvas fallback, repeat application, restore, local form submission, newer site edits and palette contrast. This harness is explicitly labelled as separate from installed-extension transport and speech tests. It contains controlled demo-only values and makes no server requests.
