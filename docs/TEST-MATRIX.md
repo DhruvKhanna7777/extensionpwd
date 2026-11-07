@@ -1,5 +1,11 @@
 # Validation record — 2026-11-07
 
+## Current continuation on merged PR #7
+
+Source/build: `6d227bc3f52e8387f44c0849f5850c5bc4b045b4`. Windows NT 10.0.26300.0, Node 24.16.0 / npm 11.13.0. `npm ci` passed with zero vulnerabilities reported; `npm run package` passed production typecheck/build and verified 11 ZIP files. SHA-256: `0238a53ea0bac1213fa9e28979ca395cc49f8d2ea20be867c3e5ef5c318dd9df`. Existing automated/browser PASS evidence remains historical; those suites were not rerun.
+
+Installed reflow P0-RF is BLOCKED: supported Computer Use could locate Chrome but stopped before browser inspection because current-URL verification failed. No installed build/profile/version, viewport or zoom was established, and no bypass was attempted. P0-RD/AC/DY/SP/AX/RL remain NOT RUN in this continuation. See [the current installed record](INSTALLED-ACCEPTANCE.md#current-continuation-installed-verification-blocked-2026-11-07) for individual steps, outcomes and limitations. No new native/audio/screen-reader acceptance or release sign-off is claimed.
+
 Automated checks run real settings/engine/chart/content-handler code in jsdom. Chrome transport and device voice are boundary fakes; they do not prove installation or audible playback.
 
 | Area | Evidence | Status |
